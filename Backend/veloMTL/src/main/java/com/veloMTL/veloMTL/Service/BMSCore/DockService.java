@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.Service;
+package com.veloMTL.veloMTL.Service.BMSCore;
 
 import com.veloMTL.veloMTL.DTO.DockDTO;
 import com.veloMTL.veloMTL.Model.Dock;

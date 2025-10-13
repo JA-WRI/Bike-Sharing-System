@@ -2,7 +2,7 @@ package com.veloMTL.veloMTL.Controller;
 
 
 import com.veloMTL.veloMTL.DTO.StationDTO;
-import com.veloMTL.veloMTL.Service.StationService;
+import com.veloMTL.veloMTL.Service.BMSCore.StationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

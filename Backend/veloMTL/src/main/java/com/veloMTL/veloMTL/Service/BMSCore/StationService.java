@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.Service;
+package com.veloMTL.veloMTL.Service.BMSCore;
 
 import com.veloMTL.veloMTL.DTO.StationDTO;
 import com.veloMTL.veloMTL.Model.Station;
