@@ -9,7 +9,7 @@ public class RiderDTO {
 
     public RiderDTO() {}
 
-    // Constructor to create DTO from User entity
+    // Constructor to create DTO from User Model
     public RiderDTO(Rider rider) {
         this.name = rider.getName();
         this.email = rider.getEmail();
