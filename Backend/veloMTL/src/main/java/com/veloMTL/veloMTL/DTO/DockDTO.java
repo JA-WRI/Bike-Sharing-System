@@ -1,14 +1,16 @@
 package com.veloMTL.veloMTL.DTO;
 
 
+import com.veloMTL.veloMTL.Model.Enums.DockStatus;
+
 public class DockDTO {
     private String id;
-    private String status;
+    private DockStatus status;
     private String stationId;
 
     public DockDTO(){};
 
-    public DockDTO(String id, String status, String stationId) {
+    public DockDTO(String id, DockStatus status, String stationId) {
         this.id = id;
         this.status = status;
         this.stationId = stationId;
@@ -22,11 +24,11 @@ public class DockDTO {
         this.id = id;
     }
 
-    public String getStatus() {
+    public DockStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(DockStatus status) {
         this.status = status;
     }
 

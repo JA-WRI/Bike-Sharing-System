@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Model;
 
+import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,15 +10,15 @@ public class Dock {
 
     @Id
     private String id;
-    private String status;
+    private DockStatus status;
 
     @DBRef(lazy = true)
     private Station station;
 
     public Dock(){};
 
-    public Dock(String status, Station station) {
-        this.status = status;
+    public Dock(Station station) {
+        this.status = DockStatus.EMPTY;
         this.station = station;
     }
 
@@ -29,11 +30,11 @@ public class Dock {
         this.id = id;
     }
 
-    public String getStatus() {
+    public DockStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(DockStatus status) {
         this.status = status;
     }
 

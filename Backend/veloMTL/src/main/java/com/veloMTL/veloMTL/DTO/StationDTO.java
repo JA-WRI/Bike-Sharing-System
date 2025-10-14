@@ -1,4 +1,5 @@
 package com.veloMTL.veloMTL.DTO;
+import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 import com.veloMTL.veloMTL.Model.Station;
 import com.veloMTL.veloMTL.Model.Dock;
 import java.util.List;
@@ -9,13 +10,13 @@ public class StationDTO {
     private String stationName;
     private String position;
     private String streetAddress;
-    private String stationStatus;
+    private StationStatus stationStatus;
     private int capacity;
     private List<DockDTO> docks;
 
     public StationDTO(){};
 
-    public StationDTO(List<DockDTO> docks, int capacity, String stationStatus, String streetAddress, String position, String stationName, String id) {
+    public StationDTO(List<DockDTO> docks, int capacity, StationStatus stationStatus, String streetAddress, String position, String stationName, String id) {
         this.docks = docks;
         this.capacity = capacity;
         this.stationStatus = stationStatus;
@@ -57,11 +58,11 @@ public class StationDTO {
         this.streetAddress = streetAddress;
     }
 
-    public String getStationStatus() {
+    public StationStatus getStationStatus() {
         return stationStatus;
     }
 
-    public void setStationStatus(String stationStatus) {
+    public void setStationStatus(StationStatus stationStatus) {
         this.stationStatus = stationStatus;
     }
 

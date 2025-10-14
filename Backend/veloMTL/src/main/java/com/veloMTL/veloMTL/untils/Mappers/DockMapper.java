@@ -7,9 +7,8 @@ public class DockMapper {
 
     public static Dock dtoToEntity(DockDTO dto) {
         Dock dock = new Dock();
-        dock.setId(dto.getId()); // can be null; Mongo will generate if so
+        dock.setId(dto.getId());
         dock.setStatus(dto.getStatus());
-        // station reference is set in the service
         return dock;
     }
 

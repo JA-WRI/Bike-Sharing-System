@@ -8,7 +8,7 @@ public class OperatorMapper {
         Operator operator = new Operator(
                 dto.getName(),
                 dto.getEmail(),
-                null // password should be set separately or hashed in service
+                null
         );
         operator.setId(dto.getId());
 

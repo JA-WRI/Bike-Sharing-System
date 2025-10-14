@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Model;
 
+import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,7 +16,7 @@ public class Station {
     private String stationName;
     private String position;
     private String streetAddress;
-    private String stationStatus;
+    private StationStatus stationStatus;
     private int capacity;
 
     @DBRef(lazy = true) //will only load the docks when needed
@@ -23,10 +24,10 @@ public class Station {
 
     public Station(){};
 
-    public Station(List<Dock> docks, int capacity, String stationStatus, String streetAddress, String position, String stationName) {
+    public Station(List<Dock> docks, int capacity, String streetAddress, String position, String stationName) {
         this.docks = docks;
         this.capacity = capacity;
-        this.stationStatus = stationStatus;
+        this.stationStatus = StationStatus.EMPTY;
         this.streetAddress = streetAddress;
         this.position = position;
         this.stationName = stationName;
@@ -64,11 +65,11 @@ public class Station {
         this.streetAddress = streetAddress;
     }
 
-    public String getStationStatus() {
+    public StationStatus getStationStatus() {
         return stationStatus;
     }
 
-    public void setStationStatus(String stationStatus) {
+    public void setStationStatus(StationStatus stationStatus) {
         this.stationStatus = stationStatus;
     }
 
