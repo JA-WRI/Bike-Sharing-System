@@ -1,28 +1,43 @@
 package com.veloMTL.veloMTL.Config;
-
+import com.veloMTL.veloMTL.Service.Auth.GoogleRegistrationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+
+    private final GoogleRegistrationService googleRegistrationService;
+
+
+    public SecurityConfig(GoogleRegistrationService googleRegistrationService) {
+        this.googleRegistrationService = googleRegistrationService;
     }
+
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // disable CSRF for simplicity (needed for APIs)
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register").permitAll() // allow registration without login
-                        .anyRequest().authenticated() // everything else requires authentication (for later)
+                        .requestMatchers(
+                                "/api/auth/register",   // normal registration
+                                "/api/auth/",         // all auth endpoints
+                                "/oauth2/",           // google oauth entry
+                                "/login/**"             // google oauth redirect
+                        ).permitAll()
+                        .anyRequest().authenticated() // everything else requires auth
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(googleRegistrationService) // tell Spring to use your service
+                        )
+                        .defaultSuccessUrl("/api/auth/success", true) // redirect after successful login
                 );
 
         return http.build();
     }
 }
+

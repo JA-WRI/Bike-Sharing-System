@@ -6,7 +6,9 @@ import com.veloMTL.veloMTL.Repository.RiderRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Optional;
+
 
 @Service
 public class RegistrationService {
@@ -29,5 +31,19 @@ public class RegistrationService {
             encodedPassword
     );
         return riderRepository.save(rider);
+    }
+
+    public Rider registerGoogleUser(String name, String email) {
+        Optional<Rider> existing = riderRepository.findByEmail(email);
+
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        Rider newRider = new Rider(
+        name,
+        email,
+        null);
+        return riderRepository.save(newRider);
     }
 }
