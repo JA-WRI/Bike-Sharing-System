@@ -13,6 +13,6 @@ public class Operator extends User{
     }
 
     public Operator(String name, String email, String password) {
-        super(name, email, password, "OPERATOR");
+        super(name, email, password, "OPERATOR", null);
     }
 }

@@ -17,11 +17,12 @@ public abstract class User {
     public User() {
     }
 
-    public User(String name, String email, String password, String role) {
+    public User(String name, String email, String password, String role, List<String> permissions) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.permissions = permissions;
     }
 
     public String getId() {

@@ -16,20 +16,4 @@ public class RiderService {
     public RiderService(RiderRepository riderRepository) {
         this.riderRepository = riderRepository;
     }
-
-    public RiderDTO createRider(RiderDTO riderDTO) {
-        // Add validation later (for login and registration)
-
-        // Convert DTO to entity
-        Rider rider = RiderMapper.dtoToEntity(riderDTO);
-        if (rider.getPermissions() == null || rider.getPermissions().isEmpty()) {
-            rider.setPermissions(List.of("RESERVE_DOCK", "UNLOCK_BIKE", "VIEW_STATION"));
-        }
-
-        // Save entity to DB
-        Rider savedRider = riderRepository.save(rider);
-
-        // Convert back to DTO and return
-        return RiderMapper.entityToDto(savedRider);
-    }
 }

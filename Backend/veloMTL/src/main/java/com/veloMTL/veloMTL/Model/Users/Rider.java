@@ -2,6 +2,8 @@ package com.veloMTL.veloMTL.Model.Users;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 
 @Document(collection = "Riders")
 public class Rider extends User{
@@ -14,8 +16,8 @@ public class Rider extends User{
         this.setRole("RIDER");
     }
 
-    public Rider(String name, String email) {
-        super(name, email, null, "RIDER");
+    public Rider(String name, String email, String password) {
+        super(name, email, password, "RIDER", List.of("RESERVE_DOCK", "UNLOCK_BIKE", "VIEW_STATION"));
     }
 
     public String getPaymentInfo() {

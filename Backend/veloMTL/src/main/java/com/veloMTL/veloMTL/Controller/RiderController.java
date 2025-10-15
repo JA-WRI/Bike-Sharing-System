@@ -18,10 +18,5 @@ public class RiderController {
     public RiderController(RiderService riderService) {
         this.riderService = riderService;
     }
-
-    @PostMapping("/createRider")
-    public ResponseEntity<RiderDTO> createRider(@RequestBody RiderDTO riderDTO) {
-        RiderDTO createdRider = riderService.createRider(riderDTO);
-        return new ResponseEntity<>(createdRider, HttpStatus.CREATED);
-    }
+    
 }

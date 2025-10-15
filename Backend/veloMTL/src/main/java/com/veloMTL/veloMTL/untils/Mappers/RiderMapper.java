@@ -4,12 +4,13 @@ import com.veloMTL.veloMTL.DTO.Users.RiderDTO;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 
 public class RiderMapper {
-    public static Rider dtoToEntity(RiderDTO dto){
+    public static Rider dtoToEntity(RiderDTO dto, String encodedPassword){
         Rider rider = new Rider(
                 dto.getName(),
-                dto.getEmail()
-        );
+                dto.getEmail(),
+                encodedPassword
 
+        );
         rider.setId(dto.getId());
         rider.setReservationId(dto.getReservationId());
 
