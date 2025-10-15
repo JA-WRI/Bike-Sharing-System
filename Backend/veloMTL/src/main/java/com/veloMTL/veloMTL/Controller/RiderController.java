@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RiderController {
 
-    private final RiderService riderService;
+    private final RiderService riderService; // change to facade obj
 
     public RiderController(RiderService riderService) {
         this.riderService = riderService;
