@@ -35,7 +35,6 @@ public class StationService {
 
         // Update the station status
         station.setStationStatus(newStatus);
-        stationRepository.save(station);
 
         // If station is OUT_OF_SERVICE, update all docks as well
         if (newStatus == StationStatus.OUT_OF_SERVICE) {
@@ -44,6 +43,13 @@ public class StationService {
                 dock.setStatus(DockStatus.OUT_OF_SERVICE);
             }
             dockRepository.saveAll(docks);
+        } else if (newStatus == StationStatus.EMPTY) {
+            List<Dock> docks = dockRepository.findByStationId(stationId);
+            for (Dock dock : docks) {
+                dock.setStatus(DockStatus.EMPTY);
+            }
+            dockRepository.saveAll(docks);
+
         }
         Station updatedStation = stationRepository.save(station);
         return StationMapper.entityToDto(updatedStation);

@@ -36,7 +36,7 @@ public class DockService {
         return DockMapper.entityToDto(savedDock);
    }
 
-   public DockDTO updateDockStatus(String dockId, DockStatus newStatus){
+   public void updateDockStatus(String dockId, DockStatus newStatus){
        System.out.println("Updating dock " + dockId + " to status " + newStatus);
         Dock dock = dockRepo.findById(dockId)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dock not found: " + dockId));
@@ -44,7 +44,7 @@ public class DockService {
         dock.setStatus(newStatus);
 
         Dock dockSaved = dockRepo.save(dock);
-        return DockMapper.entityToDto(dockSaved);
+//      return DockMapper.entityToDto(dockSaved);
 
 
 
