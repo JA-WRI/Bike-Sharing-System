@@ -15,14 +15,7 @@ public class DockController {
     public DockController(DockService dockService){
         this.dockService = dockService;
     }
+    //Add get request to get the docks
 
-    @PostMapping("/{stationId}")
-    public ResponseEntity<DockDTO> createDock(
-            @PathVariable String stationId,
-            @RequestBody DockDTO dockDTO) {
-
-        DockDTO savedDock = dockService.createDock(stationId, dockDTO);
-        return new ResponseEntity<>(savedDock, HttpStatus.CREATED);
-    }
 
 }

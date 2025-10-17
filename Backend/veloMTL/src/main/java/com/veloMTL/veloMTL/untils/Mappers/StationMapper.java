@@ -16,7 +16,6 @@ public class StationMapper {
         station.setPosition(dto.getPosition());
         station.setStationStatus(dto.getStationStatus());
         station.setCapacity(dto.getCapacity());
-        // docks will be added separately in DockService
         return station;
     }
 
@@ -31,7 +30,7 @@ public class StationMapper {
 
         if (station.getDocks() != null) {
             List<DockDTO> dockDTOs = station.getDocks().stream()
-                    .map(DockMapper :: entityToDto)
+                    .map(DockMapper:: entityToDto)
                     .collect(Collectors.toList());
             dto.setDocks(dockDTOs);
         }

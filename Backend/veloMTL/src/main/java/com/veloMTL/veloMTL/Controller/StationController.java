@@ -16,11 +16,7 @@ public class StationController {
     public StationController(StationService service) {
         this.stationService = service;
     }
-    @PostMapping
-    public ResponseEntity<StationDTO> createStation(@RequestBody StationDTO stationDTO) {
-        StationDTO createdStation = stationService.createStation(stationDTO);
-        return new ResponseEntity<>(createdStation, HttpStatus.CREATED);
-    }
+    //Add get requests to get the stations
 
 }
 

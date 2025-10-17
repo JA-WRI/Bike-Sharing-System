@@ -28,11 +28,6 @@ public class OperatorController {
         this.commandFactory = commandFactory;
     }
 
-    @PostMapping("/createOperator")
-    public ResponseEntity<OperatorDTO> createRider(@RequestBody OperatorDTO operatorDTO) {
-        OperatorDTO createdOperator = operatorService.createOperator(operatorDTO);
-        return new ResponseEntity<>(createdOperator, HttpStatus.CREATED);
-    }
 
     //Create DTO
     @PostMapping("/execute")

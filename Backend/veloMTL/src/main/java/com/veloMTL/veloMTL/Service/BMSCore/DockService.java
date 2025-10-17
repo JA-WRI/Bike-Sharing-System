@@ -6,7 +6,6 @@ import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Station;
 import com.veloMTL.veloMTL.Repository.DockRepository;
 import com.veloMTL.veloMTL.Repository.StationRepository;
-import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,17 +22,16 @@ public class DockService {
     }
 
     // Create a new dock and link it to a station
-   public DockDTO createDock(String stationId, DockDTO dockDTO){
-        Station station = stationRepo.findById(stationId).orElseThrow(() -> new RuntimeException("Station not found"));
-        Dock dock = DockMapper.dtoToEntity(dockDTO);
-        dock.setStation(station);
+   public DockDTO createDock(DockDTO dockDTO){
+        Station station = stationRepo.findById(dockDTO.getStationId()).orElseThrow(() -> new RuntimeException("Station not found"));
+        Dock dock = new Dock(station);
 
         Dock savedDock = dockRepo.save(dock);
 
         station.getDocks().add(savedDock);
         stationRepo.save(station);
 
-        return DockMapper.entityToDto(savedDock);
+        return new DockDTO(savedDock.getId(), savedDock.getStatus(), savedDock.getStation().getId());
    }
 
    public void updateDockStatus(String dockId, DockStatus newStatus){
