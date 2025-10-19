@@ -1,15 +1,17 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
-import com.veloMTL.veloMTL.DTO.StationDTO;
-import com.veloMTL.veloMTL.Model.Dock;
-import com.veloMTL.veloMTL.Model.Enums.DockStatus;
+import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
-import com.veloMTL.veloMTL.Model.Station;
-import com.veloMTL.veloMTL.Repository.DockRepository;
-import com.veloMTL.veloMTL.Repository.StationRepository;
+import com.veloMTL.veloMTL.Model.BMSCore.Station;
+import com.veloMTL.veloMTL.Patterns.State.Stations.*;
+import com.veloMTL.veloMTL.Model.BMSCore.Dock;
+import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
+import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.StationMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,31 +26,48 @@ public class StationService {
     }
 
     public StationDTO createStation(StationDTO stationDTO) {
-        Station newstation = StationMapper.dtoToEntity(stationDTO);
+        Station newstation = StationMapper.dtoToEntity(stationDTO, new ArrayList<>());
         Station savedStation = stationRepository.save(newstation);
         return StationMapper.entityToDto(savedStation);
     }
 
-    public StationDTO updateStationStatus(String stationId, StationStatus newStatus) {
-        Station station = stationRepository.findById(stationId)
-                .orElseThrow(() -> new RuntimeException("Station not found"));
-
-        // Update the station status
-        station.setStationStatus(newStatus);
+    public ResponseDTO<StationDTO> markStationOutOfService(String stationId){
+        Station station = loadDockWithState(stationId);
+        String message = station.getStationState().markStationOutOfService(station);
         stationRepository.save(station);
 
-        // If station is OUT_OF_SERVICE, update all docks as well
-        if (newStatus == StationStatus.OUT_OF_SERVICE) {
-            List<Dock> docks = dockRepository.findByStationId(stationId);
-            for (Dock dock : docks) {
-                dock.setStatus(DockStatus.OUT_OF_SERVICE);
-            }
-            dockRepository.saveAll(docks);
+        List<Dock> docks = station.getDocks();
+        for(Dock dock: docks){
+            dockRepository.save(dock);
         }
-        Station updatedStation = stationRepository.save(station);
-        return StationMapper.entityToDto(updatedStation);
+        return new ResponseDTO<>(true, message, StationMapper.entityToDto(station));
     }
 
+    public ResponseDTO<StationDTO> restoreStation(String stationId){
+        Station station = loadDockWithState(stationId);
+        String message = station.getStationState().restoreStation(station);
+        stationRepository.save(station);
 
+        List<Dock> docks = station.getDocks();
+        for(Dock dock: docks){
+            dockRepository.save(dock);
+        }
+        return new ResponseDTO<>(true, message, StationMapper.entityToDto(station));
+    }
 
+    private Station loadDockWithState(String stationId) {
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Dock not found with ID: " + stationId));
+        station.setStationState(createStateFromStatus(station.getStationStatus()));
+        return station;
+    }
+
+    private StationState createStateFromStatus(StationStatus status) {
+        return switch (status) {
+            case EMPTY -> new EmptyStationState();
+            case FULL -> new FullStationState();
+            case OCCUPIED -> new OccupiedStationState();
+            case OUT_OF_SERVICE -> new MaintenanceStationState();
+        };
+    }
 }

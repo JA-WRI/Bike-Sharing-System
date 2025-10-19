@@ -4,12 +4,13 @@ import com.veloMTL.veloMTL.DTO.Users.OperatorDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 
 public class OperatorMapper {
-    public static Operator dtoToEntity(OperatorDTO dto){
+    public static Operator dtoToEntity(OperatorDTO dto, String password){
         Operator operator = new Operator(
                 dto.getName(),
                 dto.getEmail(),
-                null
+                password
         );
+
         operator.setId(dto.getId());
 
         return operator;

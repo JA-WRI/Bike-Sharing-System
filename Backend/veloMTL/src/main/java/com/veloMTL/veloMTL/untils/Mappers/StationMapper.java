@@ -1,14 +1,15 @@
 package com.veloMTL.veloMTL.untils.Mappers;
 
-import com.veloMTL.veloMTL.DTO.DockDTO;
-import com.veloMTL.veloMTL.DTO.StationDTO;
-import com.veloMTL.veloMTL.Model.Station;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
+import com.veloMTL.veloMTL.Model.BMSCore.Dock;
+import com.veloMTL.veloMTL.Model.BMSCore.Station;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class StationMapper {
-    public static Station dtoToEntity(StationDTO dto) {
+
+    public static Station dtoToEntity(StationDTO dto, List<Dock> docks) {
         Station station = new Station();
         station.setId(dto.getId());
         station.setStreetAddress(dto.getStreetAddress());
@@ -16,7 +17,8 @@ public class StationMapper {
         station.setPosition(dto.getPosition());
         station.setStationStatus(dto.getStationStatus());
         station.setCapacity(dto.getCapacity());
-        // docks will be added separately in DockService
+        station.setDocks(docks);
+
         return station;
     }
 
@@ -28,14 +30,14 @@ public class StationMapper {
         dto.setPosition(station.getPosition());
         dto.setStationStatus(station.getStationStatus());
         dto.setCapacity(station.getCapacity());
+        dto.setDocks(new ArrayList<>());
 
         if (station.getDocks() != null) {
-            List<DockDTO> dockDTOs = station.getDocks().stream()
-                    .map(DockMapper :: entityToDto)
-                    .collect(Collectors.toList());
-            dto.setDocks(dockDTOs);
+            List<Dock> docks = station.getDocks();
+            for (Dock dock: docks){
+                dto.getDocks().add(dock.getDockId());
+            }
         }
-
         return dto;
     }
 

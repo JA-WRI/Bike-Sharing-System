@@ -1,12 +1,11 @@
 package com.veloMTL.veloMTL.Service.Users;
 
+import com.veloMTL.veloMTL.DTO.Users.CreateOperatorDTO;
 import com.veloMTL.veloMTL.DTO.Users.OperatorDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
-import com.veloMTL.veloMTL.Repository.OperatorRepository;
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.untils.Mappers.OperatorMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class OperatorService {
@@ -16,15 +15,11 @@ public class OperatorService {
         this.operatorRepo = operatorRepo;
     }
 
-    public OperatorDTO createOperator(OperatorDTO operatorDTO){
-        Operator operator = OperatorMapper.dtoToEntity(operatorDTO);
+    public OperatorDTO createOperator(CreateOperatorDTO operator){
+        Operator createdOperator = new Operator(operator.getName(), operator.getEmail(), operator.getPassword());
+        Operator savedOperator = operatorRepo.save(createdOperator);
 
-        if (operator.getPermissions() == null || operator.getPermissions().isEmpty()) {
-            operator.setPermissions(List.of("MANAGE_STATIONS", "VIEW_REPORTS"));
-        }
-        Operator savedOperator = operatorRepo.save(operator);
-
-        return OperatorMapper.entityToDto(operator);
+        return OperatorMapper.entityToDto(savedOperator);
     }
 
 }
