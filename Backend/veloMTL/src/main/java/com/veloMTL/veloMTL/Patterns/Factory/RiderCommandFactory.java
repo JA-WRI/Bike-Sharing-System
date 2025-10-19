@@ -16,7 +16,7 @@ public class RiderCommandFactory extends CommandFactory{
 
 
     @Override
-    public Command createCommand(CommandDTO commandDTO) {
+    public Command<?> createCommand(CommandDTO commandDTO) {
         return null;
     }
 }

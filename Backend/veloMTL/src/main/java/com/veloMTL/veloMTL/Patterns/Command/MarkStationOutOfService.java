@@ -1,14 +1,16 @@
 package com.veloMTL.veloMTL.Patterns.Command;
 
+import com.veloMTL.veloMTL.DTO.ResponseDTO;
+import com.veloMTL.veloMTL.DTO.StationDTO;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 import com.veloMTL.veloMTL.Service.BMSCore.StationService;
 
-public class StationMaintenanceCommand implements Command{
+public class MarkStationOutOfService implements Command<ResponseDTO<StationDTO>>{
     private final StationService stationService;
     private String stationId;
     private String operatorId;
 
-    public StationMaintenanceCommand(StationService stationService, String stationId, String operatorId){
+    public MarkStationOutOfService(StationService stationService, String stationId, String operatorId){
         this.operatorId = operatorId;
         this.stationId = stationId;
         this.stationService = stationService;
@@ -16,7 +18,7 @@ public class StationMaintenanceCommand implements Command{
 
 
     @Override
-    public void execute() {
-        stationService.updateStationStatus(stationId, StationStatus.OUT_OF_SERVICE);
+    public ResponseDTO<StationDTO> execute() {
+        return stationService.markStationOutOfService(stationId);
     }
 }

@@ -6,5 +6,5 @@ import com.veloMTL.veloMTL.Patterns.Command.Command;
 
 
 public abstract class CommandFactory {
-    public abstract Command createCommand(CommandDTO commandDTO);
+    public abstract Command<?> createCommand(CommandDTO commandDTO);
 }
