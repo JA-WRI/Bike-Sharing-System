@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.Controller;
+package com.veloMTL.veloMTL.Controller.BMSCore;
 
 import com.veloMTL.veloMTL.Service.BMSCore.DockService;
 import org.springframework.web.bind.annotation.*;

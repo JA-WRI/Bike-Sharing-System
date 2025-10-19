@@ -1,6 +1,6 @@
 package com.veloMTL.veloMTL.Patterns.State.Docks;
 
-import com.veloMTL.veloMTL.Model.Dock;
+import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 
 public class EmptyDockState implements DockState{

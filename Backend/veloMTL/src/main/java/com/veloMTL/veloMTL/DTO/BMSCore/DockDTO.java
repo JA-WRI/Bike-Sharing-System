@@ -1,27 +1,29 @@
-package com.veloMTL.veloMTL.DTO;
+package com.veloMTL.veloMTL.DTO.BMSCore;
 
 
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 
 public class DockDTO {
-    private String id;
+    private String dockId;
     private DockStatus status;
     private String stationId;
+    private String bikeId;
 
     public DockDTO(){};
 
-    public DockDTO(String id, DockStatus status, String stationId) {
-        this.id = id;
+    public DockDTO(String dockId, DockStatus status, String stationId, String bikeId) {
+        this.dockId = dockId;
         this.status = status;
         this.stationId = stationId;
+        this.bikeId = bikeId;
     }
 
-    public String getId() {
-        return id;
+    public String getDockId() {
+        return dockId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setDockId(String dockId) {
+        this.dockId = dockId;
     }
 
     public DockStatus getStatus() {
@@ -38,5 +40,13 @@ public class DockDTO {
 
     public void setStationId(String stationId) {
         this.stationId = stationId;
+    }
+
+    public String getBikeId() {
+        return bikeId;
+    }
+
+    public void setBikeId(String bikeId) {
+        this.bikeId = bikeId;
     }
 }

@@ -3,12 +3,9 @@ package com.veloMTL.veloMTL.Service.Users;
 import com.veloMTL.veloMTL.DTO.Users.CreateOperatorDTO;
 import com.veloMTL.veloMTL.DTO.Users.OperatorDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
-import com.veloMTL.veloMTL.Repository.OperatorRepository;
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.untils.Mappers.OperatorMapper;
 import org.springframework.stereotype.Service;
-
-import java.security.SecureRandom;
-import java.util.List;
 
 @Service
 public class OperatorService {

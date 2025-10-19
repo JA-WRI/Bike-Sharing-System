@@ -1,6 +1,6 @@
 package com.veloMTL.veloMTL.Patterns.State.Stations;
 
-import com.veloMTL.veloMTL.Model.Station;
+import com.veloMTL.veloMTL.Model.BMSCore.Station;
 
 public interface StationState {
     String markStationOutOfService(Station station);

@@ -1,7 +1,7 @@
 package com.veloMTL.veloMTL.Patterns.Command;
 
-import com.veloMTL.veloMTL.DTO.ResponseDTO;
-import com.veloMTL.veloMTL.DTO.StationDTO;
+import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Service.BMSCore.StationService;
 
 public class RestoreStation implements Command<ResponseDTO<StationDTO>>{

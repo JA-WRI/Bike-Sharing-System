@@ -1,12 +1,11 @@
 package com.veloMTL.veloMTL.Service.Auth;
 
-import com.veloMTL.veloMTL.DTO.RegistrationDTO;
+import com.veloMTL.veloMTL.DTO.Users.RegistrationDTO;
 import com.veloMTL.veloMTL.Model.Users.Rider;
-import com.veloMTL.veloMTL.Repository.RiderRepository;
+import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Optional;
 
 

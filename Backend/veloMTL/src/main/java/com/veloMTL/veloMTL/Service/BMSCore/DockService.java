@@ -1,13 +1,13 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
-import com.veloMTL.veloMTL.DTO.DockDTO;
-import com.veloMTL.veloMTL.DTO.ResponseDTO;
-import com.veloMTL.veloMTL.Model.Dock;
+import com.veloMTL.veloMTL.DTO.BMSCore.DockDTO;
+import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
+import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
-import com.veloMTL.veloMTL.Model.Station;
+import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Patterns.State.Docks.*;
-import com.veloMTL.veloMTL.Repository.DockRepository;
-import com.veloMTL.veloMTL.Repository.StationRepository;
+import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
+import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +22,15 @@ public class DockService {
         this.stationRepo = stationRepo;
     }
 
-    // Create a new dock and link it to a station
    public DockDTO createDock(DockDTO dockDTO){
         Station station = stationRepo.findById(dockDTO.getStationId()).orElseThrow(() -> new RuntimeException("Station not found"));
-        Dock dock = new Dock(station);
+        Dock dock = new Dock(dockDTO.getDockId(),station);
 
         Dock savedDock = dockRepo.save(dock);
-
         station.getDocks().add(savedDock);
         stationRepo.save(station);
 
-        return new DockDTO(savedDock.getId(), savedDock.getStatus(), savedDock.getStation().getId());
+        return new DockDTO(savedDock.getDockId(), savedDock.getStatus(), savedDock.getStation().getId(), null);
    }
 
    public ResponseDTO<DockDTO> reserveDock(String dockId){
@@ -84,10 +82,4 @@ public class DockService {
             case OUT_OF_SERVICE -> new MaintenanceDockState();
         };
     }
-
-
-
-
-
-
 }

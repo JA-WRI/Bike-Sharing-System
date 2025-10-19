@@ -1,8 +1,7 @@
 package com.veloMTL.veloMTL.Patterns.Command;
 
-import com.veloMTL.veloMTL.DTO.ResponseDTO;
-import com.veloMTL.veloMTL.DTO.StationDTO;
-import com.veloMTL.veloMTL.Model.Enums.StationStatus;
+import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Service.BMSCore.StationService;
 
 public class MarkStationOutOfService implements Command<ResponseDTO<StationDTO>>{
@@ -10,7 +9,7 @@ public class MarkStationOutOfService implements Command<ResponseDTO<StationDTO>>
     private String stationId;
     private String operatorId;
 
-    public MarkStationOutOfService(StationService stationService, String stationId, String operatorId){
+    public MarkStationOutOfService(StationService stationService, String operatorId, String stationId) {
         this.operatorId = operatorId;
         this.stationId = stationId;
         this.stationService = stationService;

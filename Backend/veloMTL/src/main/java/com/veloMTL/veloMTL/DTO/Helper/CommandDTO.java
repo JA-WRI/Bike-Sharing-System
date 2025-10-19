@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.DTO;
+package com.veloMTL.veloMTL.DTO.Helper;
 
 public class CommandDTO {
     private String command;

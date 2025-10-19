@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.Model;
+package com.veloMTL.veloMTL.Model.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 import com.veloMTL.veloMTL.Patterns.State.Stations.StationState;

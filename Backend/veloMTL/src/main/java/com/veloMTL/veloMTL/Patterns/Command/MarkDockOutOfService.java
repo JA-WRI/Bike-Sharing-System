@@ -1,7 +1,7 @@
 package com.veloMTL.veloMTL.Patterns.Command;
 
-import com.veloMTL.veloMTL.DTO.DockDTO;
-import com.veloMTL.veloMTL.DTO.ResponseDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.DockDTO;
+import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Service.BMSCore.DockService;
 
 public class MarkDockOutOfService implements Command<ResponseDTO<DockDTO>>{

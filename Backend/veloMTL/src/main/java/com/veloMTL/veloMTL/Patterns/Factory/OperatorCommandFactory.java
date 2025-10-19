@@ -1,6 +1,6 @@
 package com.veloMTL.veloMTL.Patterns.Factory;
 
-import com.veloMTL.veloMTL.DTO.CommandDTO;
+import com.veloMTL.veloMTL.DTO.Helper.CommandDTO;
 import com.veloMTL.veloMTL.Patterns.Command.*;
 import com.veloMTL.veloMTL.Service.BMSCore.DockService;
 import com.veloMTL.veloMTL.Service.BMSCore.StationService;

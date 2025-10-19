@@ -1,27 +1,32 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
-import com.veloMTL.veloMTL.DTO.DockDTO;
-import com.veloMTL.veloMTL.DTO.ResponseDTO;
-import com.veloMTL.veloMTL.DTO.StationDTO;
+import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
-import com.veloMTL.veloMTL.Model.Station;
+import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Patterns.State.Stations.*;
-import com.veloMTL.veloMTL.Repository.DockRepository;
-import com.veloMTL.veloMTL.Repository.StationRepository;
+import com.veloMTL.veloMTL.Model.BMSCore.Dock;
+import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
+import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.StationMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class StationService {
 
     private final StationRepository stationRepository;
+    private final DockRepository dockRepository;
 
-    public StationService(StationRepository repository) {
+    public StationService(StationRepository repository, DockRepository dockRepository) {
         this.stationRepository = repository;
+        this.dockRepository = dockRepository;
     }
 
     public StationDTO createStation(StationDTO stationDTO) {
-        Station newstation = StationMapper.dtoToEntity(stationDTO);
+        Station newstation = StationMapper.dtoToEntity(stationDTO, new ArrayList<>());
         Station savedStation = stationRepository.save(newstation);
         return StationMapper.entityToDto(savedStation);
     }
@@ -30,6 +35,11 @@ public class StationService {
         Station station = loadDockWithState(stationId);
         String message = station.getStationState().markStationOutOfService(station);
         stationRepository.save(station);
+
+        List<Dock> docks = station.getDocks();
+        for(Dock dock: docks){
+            dockRepository.save(dock);
+        }
         return new ResponseDTO<>(true, message, StationMapper.entityToDto(station));
     }
 
@@ -37,6 +47,11 @@ public class StationService {
         Station station = loadDockWithState(stationId);
         String message = station.getStationState().restoreStation(station);
         stationRepository.save(station);
+
+        List<Dock> docks = station.getDocks();
+        for(Dock dock: docks){
+            dockRepository.save(dock);
+        }
         return new ResponseDTO<>(true, message, StationMapper.entityToDto(station));
     }
 
