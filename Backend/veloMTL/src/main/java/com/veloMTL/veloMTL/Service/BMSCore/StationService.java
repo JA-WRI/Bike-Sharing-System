@@ -9,6 +9,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.StationMapper;
+import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,26 +34,26 @@ public class StationService {
 
     public ResponseDTO<StationDTO> markStationOutOfService(String stationId){
         Station station = loadDockWithState(stationId);
-        String message = station.getStationState().markStationOutOfService(station);
+        StateChangeResponse message = station.getStationState().markStationOutOfService(station);
         stationRepository.save(station);
 
         List<Dock> docks = station.getDocks();
         for(Dock dock: docks){
             dockRepository.save(dock);
         }
-        return new ResponseDTO<>(true, message, StationMapper.entityToDto(station));
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), StationMapper.entityToDto(station));
     }
 
     public ResponseDTO<StationDTO> restoreStation(String stationId){
         Station station = loadDockWithState(stationId);
-        String message = station.getStationState().restoreStation(station);
+        StateChangeResponse message = station.getStationState().restoreStation(station);
         stationRepository.save(station);
 
         List<Dock> docks = station.getDocks();
         for(Dock dock: docks){
             dockRepository.save(dock);
         }
-        return new ResponseDTO<>(true, message, StationMapper.entityToDto(station));
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), StationMapper.entityToDto(station));
     }
 
     private Station loadDockWithState(String stationId) {

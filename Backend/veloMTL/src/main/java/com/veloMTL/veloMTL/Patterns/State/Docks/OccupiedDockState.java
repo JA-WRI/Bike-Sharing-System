@@ -2,22 +2,24 @@ package com.veloMTL.veloMTL.Patterns.State.Docks;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
+import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
+import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
 public class OccupiedDockState implements DockState{
     @Override
-    public String reserveDock(Dock dock) {
-        return ("Dock is currently occupied select another dock to reserve");
+    public StateChangeResponse reserveDock(Dock dock) {
+        return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Dock is currently occupied");
 
     }
 
     @Override
-    public String markDockOutOfService(Dock dock) {
-        return ("Please remove bike from dock before setting it to out of service");
+    public StateChangeResponse markDockOutOfService(Dock dock) {
+        return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Bike needs to be removed first");
 
     }
 
     @Override
-    public String restoreService(Dock dock) {
-        return ("Dock is already in service");
+    public StateChangeResponse restoreService(Dock dock) {
+        return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Dock is already in service");
     }
 }

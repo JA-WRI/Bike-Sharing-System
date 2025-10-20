@@ -4,18 +4,22 @@ import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
+import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
 import com.veloMTL.veloMTL.Patterns.State.Docks.OccupiedDockState;
+import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
 public class MaintenanceBikeState implements BikeState {
 
     @Override
-    public String unlockBike(Bike bike, Dock dock) {
-        return "";
+    public StateChangeResponse unlockBike(Bike bike, Dock dock) {
+
+        return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Bike is already undocked and out of service");
     }
 
     @Override
-    public String lockBike(Bike bike, Dock dock) {
+    public StateChangeResponse lockBike(Bike bike, Dock dock) {
+        //only operators can do this
         bike.setBikeStatus(BikeStatus.AVAILABLE);
         bike.setState(new AvailableBikeState());
         bike.setDock(dock);
@@ -24,16 +28,16 @@ public class MaintenanceBikeState implements BikeState {
         dock.setStatus(DockStatus.OCCUPIED);
         dock.setState(new OccupiedDockState());
 
-        return "Bike is back in service and docked";
+        return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike is back in service and docked");
     }
 
     @Override
-    public String reserveBike(Bike bike) {
-        return "";
+    public StateChangeResponse reserveBike(Bike bike) {
+        return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Cannot reserve a bike that is out of service");
     }
 
     @Override
-    public String markOutOfService(Bike bike) {
-        return "";
+    public StateChangeResponse markOutOfService(Bike bike) {
+        return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Bike is already out of service");
     }
 }

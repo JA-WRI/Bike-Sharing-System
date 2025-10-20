@@ -2,14 +2,15 @@ package com.veloMTL.veloMTL.Patterns.State.Bikes;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
+import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
 public interface BikeState {
 
-    String unlockBike(Bike bike, Dock dock);
+    StateChangeResponse unlockBike(Bike bike, Dock dock);
 
-    String lockBike(Bike bike, Dock dock);
+    StateChangeResponse lockBike(Bike bike, Dock dock);
 
-    String reserveBike(Bike bike);
+    StateChangeResponse reserveBike(Bike bike);
 
-    String markOutOfService(Bike bike);
+    StateChangeResponse markOutOfService(Bike bike);
 }

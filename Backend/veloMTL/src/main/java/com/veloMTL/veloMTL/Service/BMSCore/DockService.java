@@ -9,6 +9,7 @@ import com.veloMTL.veloMTL.Patterns.State.Docks.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
+import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 
@@ -35,23 +36,23 @@ public class DockService {
 
    public ResponseDTO<DockDTO> reserveDock(String dockId){
         Dock dock = loadDockWithState(dockId);
-        String message = dock.getState().reserveDock(dock);
+        StateChangeResponse message = dock.getState().reserveDock(dock);
         dockRepo.save(dock);
-        return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
+        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
    }
 
    public ResponseDTO<DockDTO> markDockOutOfService(String dockId){
        Dock dock = loadDockWithState(dockId);
-       String message = dock.getState().markDockOutOfService(dock);
+       StateChangeResponse message = dock.getState().markDockOutOfService(dock);
        dockRepo.save(dock);
-       return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
+       return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
    }
 
     public ResponseDTO<DockDTO> restoreDockStatus(String dockId){
         Dock dock = loadDockWithState(dockId);
-        String message = dock.getState().restoreService(dock);
+        StateChangeResponse message = dock.getState().restoreService(dock);
         dockRepo.save(dock);
-        return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
+        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
     }
 
     private Dock loadDockWithState(String dockId) {

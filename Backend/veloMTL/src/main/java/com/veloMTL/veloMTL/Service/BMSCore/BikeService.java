@@ -13,6 +13,7 @@ import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.BikeMapper;
+import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 
@@ -54,7 +55,7 @@ public class BikeService {
         Bike bike = loadDockWithState(bikeId);
         Dock dock = bike.getDock();
         Station station = dock.getStation();
-        String message = bike.getState().unlockBike(bike,dock);
+        StateChangeResponse message = bike.getState().unlockBike(bike,dock);
 
         station.removeBike();
         dock.setBike(null);
@@ -64,14 +65,14 @@ public class BikeService {
         dockRepository.save(dock);
         stationRepository.save(station);
 
-        return new ResponseDTO<>(true, message, BikeMapper.entityToDto(bike));
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
     }
 
     public ResponseDTO<BikeDTO> lockBike(String bikeId, String operatorId, String dockId){
         Bike bike = loadDockWithState(bikeId);
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
         Station station = dock.getStation();
-        String message = bike.getState().lockBike(bike, dock);
+        StateChangeResponse message = bike.getState().lockBike(bike, dock);
 
         station.addBike();
 
@@ -80,7 +81,7 @@ public class BikeService {
         dockRepository.save(dock);
         stationRepository.save(station);
 
-        return new ResponseDTO<>(true, message, BikeMapper.entityToDto(bike));
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
     }
 
     private Bike loadDockWithState(String bikeId) {
