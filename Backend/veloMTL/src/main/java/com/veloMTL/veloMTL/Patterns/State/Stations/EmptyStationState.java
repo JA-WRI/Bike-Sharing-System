@@ -6,11 +6,18 @@ import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Patterns.State.Docks.MaintenanceDockState;
+import com.veloMTL.veloMTL.Service.NotificationService;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
 import java.util.List;
 
-public class EmptyStationState implements StationState{
+public class EmptyStationState implements StationState, OccupancyChange{
+
+    private NotificationService notificationService;
+
+    public EmptyStationState(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     @Override
     public StateChangeResponse markStationOutOfService(Station station) {
@@ -20,7 +27,7 @@ public class EmptyStationState implements StationState{
             dock.setState(new MaintenanceDockState());
         }
         station.setStationStatus(StationStatus.OUT_OF_SERVICE);
-        station.setStationState(new MaintenanceStationState());
+        station.setStationState(new MaintenanceStationState(notificationService));
         return new StateChangeResponse(StateChangeStatus.SUCCESS,"Station was marked out of service");
 
 
@@ -29,5 +36,11 @@ public class EmptyStationState implements StationState{
     @Override
     public StateChangeResponse restoreStation(Station station) {
         return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Station is already in service");
+    }
+
+    @Override
+    public void handleOccupancyChange(Station station) {
+        String message = "Station '" + station.getStationName() + "' is now EMPTY!";
+        notificationService.notifyOperators(message);
     }
 }

@@ -114,13 +114,9 @@ public class Station {
     public void setOccupancy(int occupancy) {
         this.occupancy = occupancy;
     }
-    public void addBike() {
-        setOccupancy(--occupancy);
-    }
 
-    public void removeBike() {
-        setOccupancy(++occupancy);
-
+    public void setStateFromStatus(StationState state) {
+        this.stationState = state;
     }
 }
 

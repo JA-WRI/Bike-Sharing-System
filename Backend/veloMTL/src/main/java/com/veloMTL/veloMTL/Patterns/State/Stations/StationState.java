@@ -7,4 +7,5 @@ public interface StationState {
     StateChangeResponse markStationOutOfService(Station station);
     StateChangeResponse restoreStation(Station station);
 
+
 }

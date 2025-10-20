@@ -16,4 +16,5 @@ public class OccupiedStationState implements StationState{
     public StateChangeResponse restoreStation(Station station) {
         return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Station is already in service");
     }
+
 }

@@ -8,6 +8,7 @@ import com.veloMTL.veloMTL.Patterns.State.Stations.*;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
+import com.veloMTL.veloMTL.Service.NotificationService;
 import com.veloMTL.veloMTL.untils.Mappers.StationMapper;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,12 @@ public class StationService {
 
     private final StationRepository stationRepository;
     private final DockRepository dockRepository;
+    private final NotificationService notificationService;
 
-    public StationService(StationRepository repository, DockRepository dockRepository) {
+    public StationService(StationRepository repository, DockRepository dockRepository, NotificationService notificationService) {
         this.stationRepository = repository;
         this.dockRepository = dockRepository;
+        this.notificationService = notificationService;
     }
 
     public StationDTO createStation(StationDTO stationDTO) {
@@ -63,12 +66,31 @@ public class StationService {
         return station;
     }
 
+    public void updateStationOccupancy(Station station, int newOccupancy) {
+        station.setOccupancy(newOccupancy);
+
+        if (newOccupancy == 0) {
+            station.setStationStatus(StationStatus.EMPTY);
+            station.setStationState(new EmptyStationState(notificationService));
+            notificationService.notifyOperators("Station " + station.getStationName() + " is now EMPTY.");
+        } else if (newOccupancy == station.getCapacity()) {
+            station.setStationStatus(StationStatus.FULL);
+            station.setStationState(new FullStationState(notificationService));
+            notificationService.notifyOperators("Station " + station.getStationName() + " is now FULL.");
+        } else {
+            station.setStationStatus(StationStatus.OCCUPIED);
+            station.setStationState(new OccupiedStationState());
+        }
+
+        stationRepository.save(station);
+    }
+
     private StationState createStateFromStatus(StationStatus status) {
         return switch (status) {
-            case EMPTY -> new EmptyStationState();
-            case FULL -> new FullStationState();
+            case EMPTY -> new EmptyStationState(notificationService);
+            case FULL -> new FullStationState(notificationService);
             case OCCUPIED -> new OccupiedStationState();
-            case OUT_OF_SERVICE -> new MaintenanceStationState();
+            case OUT_OF_SERVICE -> new MaintenanceStationState(notificationService);
         };
     }
 }

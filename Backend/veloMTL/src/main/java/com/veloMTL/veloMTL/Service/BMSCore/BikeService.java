@@ -22,11 +22,13 @@ public class BikeService {
     private final BikeRepository bikeRepository;
     private final DockRepository dockRepository;
     private final StationRepository stationRepository;
+    private final StationService stationService;
 
-    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository) {
+    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService) {
         this.bikeRepository = bikeRepository;
         this.dockRepository = dockRepository;
         this.stationRepository = stationRepository;
+        this.stationService = stationService;
     }
 
     //can change this later if needed
@@ -34,6 +36,7 @@ public class BikeService {
         //Find the dock
         Dock dock = dockRepository.findById(bikeDTO.getDockId()).orElseThrow(() -> new RuntimeException("Dock not found"));;
         Bike bike = BikeMapper.dtoToEntity(bikeDTO, dock);
+        Station station = dock.getStation();
 
         //save the bike
         bikeRepository.save(bike);
@@ -44,8 +47,11 @@ public class BikeService {
         //save the dock
         dockRepository.save(dock);
         //change the station status
-        dock.getStation().setStationStatus(StationStatus.OCCUPIED);
-        dock.getStation().addBike();
+        station.setStationStatus(StationStatus.OCCUPIED);
+        //change station occupancy
+        int newOccupancy = station.getOccupancy()+1;
+        stationService.updateStationOccupancy(station, newOccupancy);
+
         //save the station
         stationRepository.save(dock.getStation());
         return BikeMapper.entityToDto(bike);
@@ -57,7 +63,10 @@ public class BikeService {
         Station station = dock.getStation();
         StateChangeResponse message = bike.getState().unlockBike(bike,dock);
 
-        station.removeBike();
+        //update station occupancy
+        int newOccupancy = station.getOccupancy()-1;
+        stationService.updateStationOccupancy(station, newOccupancy);
+
         dock.setBike(null);
         bike.setDock(null);
 
@@ -74,7 +83,9 @@ public class BikeService {
         Station station = dock.getStation();
         StateChangeResponse message = bike.getState().lockBike(bike, dock);
 
-        station.addBike();
+        //update station occupancy
+        int newOccupancy = station.getOccupancy()+1;
+        stationService.updateStationOccupancy(station, newOccupancy);
 
 
         bikeRepository.save(bike);
