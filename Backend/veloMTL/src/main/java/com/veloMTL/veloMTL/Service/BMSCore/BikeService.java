@@ -44,6 +44,7 @@ public class BikeService {
         dockRepository.save(dock);
         //change the station status
         dock.getStation().setStationStatus(StationStatus.OCCUPIED);
+        dock.getStation().addBike();
         //save the station
         stationRepository.save(dock.getStation());
         return BikeMapper.entityToDto(bike);
