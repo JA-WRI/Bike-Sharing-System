@@ -11,6 +11,8 @@ import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class DockService {
@@ -44,6 +46,10 @@ public class DockService {
        Dock dock = loadDockWithState(dockId);
        String message = dock.getState().occupyDock(dock);
        dockRepo.save(dock);
+
+       boolean isAllFull = checkIfAllDocksFull(dock.getStation().getId());
+       //add function to handle notification
+
        return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
    }
 
@@ -57,6 +63,10 @@ public class DockService {
         Dock dock = loadDockWithState(dockId);
         String message = dock.getState().emptyDock(dock);
         dockRepo.save(dock);
+
+        boolean isAllEmpty = checkIfAllDocksEmpty(dock.getStation().getId());
+        //add function to handle notification
+
         return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
 
     }
@@ -81,5 +91,30 @@ public class DockService {
             case OCCUPIED -> new OccupiedDockState();
             case OUT_OF_SERVICE -> new MaintenanceDockState();
         };
+    }
+
+    private boolean checkIfAllDocksEmpty(String stationId){
+        Station station = stationRepo.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Station not found"));
+
+        List<Dock> docks = station.getDocks();
+        if (docks == null || docks.isEmpty()) {
+            return false;
+        }
+        return docks.stream()
+                .allMatch(dock -> dock.getStatus() == DockStatus.EMPTY);
+
+    }
+    private boolean checkIfAllDocksFull(String stationId){
+        Station station = stationRepo.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Station not found"));
+
+        List<Dock> docks = station.getDocks();
+        if (docks == null || docks.isEmpty()) {
+            return false;
+        }
+        return docks.stream()
+                .allMatch(dock -> dock.getStatus() == DockStatus.OCCUPIED);
+
     }
 }
