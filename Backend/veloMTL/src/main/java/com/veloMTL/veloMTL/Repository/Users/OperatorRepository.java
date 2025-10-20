@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.Repository;
+package com.veloMTL.veloMTL.Repository.Users;
 
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import org.springframework.data.mongodb.repository.MongoRepository;

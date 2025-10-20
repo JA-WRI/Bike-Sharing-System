@@ -1,7 +1,9 @@
-package com.veloMTL.veloMTL.Model;
+package com.veloMTL.veloMTL.Model.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
+import com.veloMTL.veloMTL.Patterns.State.Docks.DockState;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,25 +11,32 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Dock {
 
     @Id
-    private String id;
+    private String dockId;
     private DockStatus status;
 
     @DBRef(lazy = true)
     private Station station;
 
+    @DBRef(lazy = true)
+    private Bike bike;
+
+    @Transient
+    private DockState state;
+
     public Dock(){};
 
-    public Dock(Station station) {
+    public Dock(String dockId, Station station) {
+        this.dockId = dockId;
         this.status = DockStatus.EMPTY;
         this.station = station;
     }
 
-    public String getId() {
-        return id;
+    public String getDockId() {
+        return dockId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setDockId(String dockId) {
+        this.dockId = dockId;
     }
 
     public DockStatus getStatus() {
@@ -45,4 +54,21 @@ public class Dock {
     public void setStation(Station station) {
         this.station = station;
     }
+
+    public DockState getState() {
+        return state;
+    }
+
+    public void setState(DockState state) {
+        this.state = state;
+    }
+
+    public Bike getBike() {
+        return bike;
+    }
+
+    public void setBike(Bike bike) {
+        this.bike = bike;
+    }
+
 }

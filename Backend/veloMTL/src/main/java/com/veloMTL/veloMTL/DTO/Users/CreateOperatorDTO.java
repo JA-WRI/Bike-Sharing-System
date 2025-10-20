@@ -1,19 +1,15 @@
-package com.veloMTL.veloMTL.DTO;
+package com.veloMTL.veloMTL.DTO.Users;
 
-public class RegistrationDTO {
-
+public class CreateOperatorDTO{
     private String name;
     private String email;
     private String password;
 
-
-    public RegistrationDTO(String name, String email, String password){
+    public CreateOperatorDTO(String id, String name, String email, String password, String role) {
+        this.name = name;
         this.email = email;
         this.password = password;
-    }
 
-    public String getEmail() {
-        return email;
     }
 
     public String getName() {
@@ -22,6 +18,10 @@ public class RegistrationDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void setEmail(String email) {

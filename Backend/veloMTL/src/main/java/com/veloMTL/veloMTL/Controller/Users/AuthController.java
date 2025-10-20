@@ -1,6 +1,6 @@
-package com.veloMTL.veloMTL.Controller;
+package com.veloMTL.veloMTL.Controller.Users;
 
-import com.veloMTL.veloMTL.DTO.RegistrationDTO;
+import com.veloMTL.veloMTL.DTO.Users.RegistrationDTO;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.Service.Auth.RegistrationService;
 import org.springframework.http.ResponseEntity;
@@ -28,4 +28,5 @@ public class AuthController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 }

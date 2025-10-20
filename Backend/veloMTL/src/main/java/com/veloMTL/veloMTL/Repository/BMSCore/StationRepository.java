@@ -1,6 +1,6 @@
-package com.veloMTL.veloMTL.Repository;
+package com.veloMTL.veloMTL.Repository.BMSCore;
 
-import com.veloMTL.veloMTL.Model.Station;
+import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
