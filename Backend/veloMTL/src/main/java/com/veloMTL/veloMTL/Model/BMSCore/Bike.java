@@ -1,7 +1,10 @@
 package com.veloMTL.veloMTL.Model.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
+import com.veloMTL.veloMTL.Patterns.State.Bikes.BikeState;
+import com.veloMTL.veloMTL.Patterns.State.Docks.DockState;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,6 +19,10 @@ public class Bike {
 
     @DBRef(lazy = true)
     private Dock dock;
+
+    @Transient
+    private BikeState state;
+
 
     public Bike(String bikeId, String bikeType, BikeStatus bikeStatus, Dock dock) {
         this.bikeType = bikeType;
@@ -54,5 +61,13 @@ public class Bike {
 
     public void setDock(Dock dock) {
         this.dock = dock;
+    }
+
+    public BikeState getState() {
+        return state;
+    }
+
+    public void setState(BikeState state) {
+        this.state = state;
     }
 }

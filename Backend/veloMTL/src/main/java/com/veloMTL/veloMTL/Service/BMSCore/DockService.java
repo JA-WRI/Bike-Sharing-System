@@ -40,26 +40,13 @@ public class DockService {
         return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
    }
 
-   public ResponseDTO<DockDTO> occupyDock(String dockId){
-       Dock dock = loadDockWithState(dockId);
-       String message = dock.getState().occupyDock(dock);
-       dockRepo.save(dock);
-       return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
-   }
-
    public ResponseDTO<DockDTO> markDockOutOfService(String dockId){
        Dock dock = loadDockWithState(dockId);
        String message = dock.getState().markDockOutOfService(dock);
        dockRepo.save(dock);
        return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
    }
-    public ResponseDTO<DockDTO> emptyDock(String dockId){
-        Dock dock = loadDockWithState(dockId);
-        String message = dock.getState().emptyDock(dock);
-        dockRepo.save(dock);
-        return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
 
-    }
     public ResponseDTO<DockDTO> restoreDockStatus(String dockId){
         Dock dock = loadDockWithState(dockId);
         String message = dock.getState().restoreService(dock);

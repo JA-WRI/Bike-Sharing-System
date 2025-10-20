@@ -10,17 +10,6 @@ public class MaintenanceDockState implements DockState{
     }
 
     @Override
-    public String emptyDock(Dock dock) {
-        return "Cannot take out bike from this dock";
-
-    }
-
-    @Override
-    public String occupyDock(Dock dock) {
-        return "Cannot return bike to this dock";
-    }
-
-    @Override
     public String markDockOutOfService(Dock dock) {
         return "Dock is already out of service";
     }

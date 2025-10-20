@@ -9,17 +9,6 @@ public class OccupiedDockState implements DockState{
         return ("Dock is currently occupied select another dock to reserve");
 
     }
-    @Override
-    public String emptyDock(Dock dock) {
-        dock.setStatus(DockStatus.EMPTY);
-        dock.setState(new EmptyDockState());
-        return ("Bike was successfully undocked");
-    }
-
-    @Override
-    public String occupyDock(Dock dock) {
-        return ("Dock is occupied, please return bike to empty dock");
-    }
 
     @Override
     public String markDockOutOfService(Dock dock) {

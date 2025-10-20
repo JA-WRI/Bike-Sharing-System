@@ -10,17 +10,6 @@ public class ReservedDockState implements DockState{
         return("Dock already reserved, please chose another dock");
     }
 
-    @Override
-    public String emptyDock(Dock dock) {
-        dock.setStatus(DockStatus.EMPTY);
-        dock.setState(new EmptyDockState());
-        return ("Your reserved bike has been unlocked");
-    }
-
-    @Override
-    public String occupyDock(Dock dock) {
-        return ("Cannot return bike here, please chose an available dock");
-    }
 
     @Override
     public String markDockOutOfService(Dock dock) {
