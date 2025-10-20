@@ -20,6 +20,7 @@ public class Station {
     private String streetAddress;
     private StationStatus stationStatus;
     private int capacity;
+    private int occupancy;
 
     @DBRef(lazy = true) //will only load the docks when needed
     private List<Dock> docks;
@@ -36,6 +37,7 @@ public class Station {
         this.streetAddress = streetAddress;
         this.position = position;
         this.stationName = stationName;
+        this.occupancy = 0;
     }
 
     public String getId() {
@@ -104,4 +106,22 @@ public class Station {
     public void setStationState(StationState stationState) {
         this.stationState = stationState;
     }
+
+    public int getOccupancy() {
+        return occupancy;
+    }
+
+    public void setOccupancy(int occupancy) {
+        this.occupancy = occupancy;
+    }
+    public void addBike() {
+        setOccupancy(--occupancy);
+    }
+
+    public void removeBike() {
+        setOccupancy(++occupancy);
+
+    }
 }
+
+

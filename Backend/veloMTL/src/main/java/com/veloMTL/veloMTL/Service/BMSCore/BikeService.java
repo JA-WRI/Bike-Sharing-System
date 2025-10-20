@@ -4,6 +4,7 @@ import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
+import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
@@ -51,13 +52,16 @@ public class BikeService {
     public ResponseDTO<BikeDTO> unlockBike(String bikeId, String userId){
         Bike bike = loadDockWithState(bikeId);
         Dock dock = bike.getDock();
+        Station station = dock.getStation();
         String message = bike.getState().unlockBike(bike,dock);
 
+        station.removeBike();
         dock.setBike(null);
         bike.setDock(null);
 
         bikeRepository.save(bike);
         dockRepository.save(dock);
+        stationRepository.save(station);
 
         return new ResponseDTO<>(true, message, BikeMapper.entityToDto(bike));
     }
@@ -65,10 +69,15 @@ public class BikeService {
     public ResponseDTO<BikeDTO> lockBike(String bikeId, String operatorId, String dockId){
         Bike bike = loadDockWithState(bikeId);
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
+        Station station = dock.getStation();
         String message = bike.getState().lockBike(bike, dock);
+
+        station.addBike();
+
 
         bikeRepository.save(bike);
         dockRepository.save(dock);
+        stationRepository.save(station);
 
         return new ResponseDTO<>(true, message, BikeMapper.entityToDto(bike));
     }
