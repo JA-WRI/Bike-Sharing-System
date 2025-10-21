@@ -9,9 +9,11 @@ public class ReservedBikeState implements BikeState{
 
 
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock) { //This needs to check the user + reservation
 
         //**add logic here**
+
+        
 
         StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike was unlocked with reservation");
         StateChangeResponse reponse2 = new StateChangeResponse(StateChangeStatus.FAILURE, "Not your reservation");

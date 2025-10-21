@@ -35,6 +35,8 @@ public class AvailableBikeState implements BikeState{
     @Override
     public StateChangeResponse reserveBike(Bike bike) {
         //*****add logic to reserve the bike***
+        bike.setBikeStatus(BikeStatus.RESERVED);
+        bike.setState(new ReservedBikeState());
 
         return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike has been reserved");
     }
