@@ -13,6 +13,10 @@ public class Operator extends User{
     }
 
     public Operator(String name, String email, String password) {
+<<<<<<< HEAD
         super(name, email, password, "OPERATOR", List.of("MANAGE_STATIONS", "MANAGE-DOCKS", "MANAGE_BIKES"));
+=======
+        super(name, email, password, "OPERATOR", null);
+>>>>>>> uroosa2
     }
 }

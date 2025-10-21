@@ -4,6 +4,7 @@ import com.veloMTL.veloMTL.DTO.Users.OperatorDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 
 public class OperatorMapper {
+<<<<<<< HEAD
     public static Operator dtoToEntity(OperatorDTO dto, String password){
         Operator operator = new Operator(
                 dto.getName(),
@@ -11,6 +12,14 @@ public class OperatorMapper {
                 password
         );
 
+=======
+    public static Operator dtoToEntity(OperatorDTO dto){
+        Operator operator = new Operator(
+                dto.getName(),
+                dto.getEmail(),
+                null
+        );
+>>>>>>> uroosa2
         operator.setId(dto.getId());
 
         return operator;

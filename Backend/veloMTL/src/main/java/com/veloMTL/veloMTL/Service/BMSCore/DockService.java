@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
+<<<<<<< HEAD
 import com.veloMTL.veloMTL.DTO.BMSCore.DockDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
@@ -11,6 +12,18 @@ import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
+=======
+import com.veloMTL.veloMTL.DTO.DockDTO;
+import com.veloMTL.veloMTL.Model.Dock;
+import com.veloMTL.veloMTL.Model.Enums.DockStatus;
+import com.veloMTL.veloMTL.Model.Station;
+import com.veloMTL.veloMTL.Repository.DockRepository;
+import com.veloMTL.veloMTL.Repository.StationRepository;
+import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+>>>>>>> uroosa2
 
 
 @Service
@@ -23,6 +36,7 @@ public class DockService {
         this.stationRepo = stationRepo;
     }
 
+<<<<<<< HEAD
    public DockDTO createDock(DockDTO dockDTO){
         Station station = stationRepo.findById(dockDTO.getStationId()).orElseThrow(() -> new RuntimeException("Station not found"));
         Dock dock = new Dock(dockDTO.getDockId(),station);
@@ -70,4 +84,36 @@ public class DockService {
             case OUT_OF_SERVICE -> new MaintenanceDockState();
         };
     }
+=======
+    // Create a new dock and link it to a station
+   public DockDTO createDock(String stationId, DockDTO dockDTO){
+        Station station = stationRepo.findById(stationId).orElseThrow(() -> new RuntimeException("Station not found"));
+        Dock dock = DockMapper.dtoToEntity(dockDTO);
+        dock.setStation(station);
+
+        Dock savedDock = dockRepo.save(dock);
+
+        station.getDocks().add(savedDock);
+        stationRepo.save(station);
+
+        return DockMapper.entityToDto(savedDock);
+   }
+
+   public DockDTO updateDockStatus(String dockId, DockStatus newStatus){
+       System.out.println("Updating dock " + dockId + " to status " + newStatus);
+        Dock dock = dockRepo.findById(dockId)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dock not found: " + dockId));
+       System.out.println("Updating dock " + dockId + " to status " + newStatus);
+        dock.setStatus(newStatus);
+
+        Dock dockSaved = dockRepo.save(dock);
+        return DockMapper.entityToDto(dockSaved);
+
+
+
+   }
+
+
+
+>>>>>>> uroosa2
 }

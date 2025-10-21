@@ -1,8 +1,19 @@
 package com.veloMTL.veloMTL.Service.Users;
 
+<<<<<<< HEAD
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.stereotype.Service;
 
+=======
+import com.veloMTL.veloMTL.DTO.Users.RiderDTO;
+import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Repository.RiderRepository;
+import com.veloMTL.veloMTL.untils.Mappers.RiderMapper;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+>>>>>>> uroosa2
 @Service
 public class RiderService {
 

@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
+<<<<<<< HEAD
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
@@ -14,6 +15,18 @@ import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+=======
+import com.veloMTL.veloMTL.DTO.StationDTO;
+import com.veloMTL.veloMTL.Model.Dock;
+import com.veloMTL.veloMTL.Model.Enums.DockStatus;
+import com.veloMTL.veloMTL.Model.Enums.StationStatus;
+import com.veloMTL.veloMTL.Model.Station;
+import com.veloMTL.veloMTL.Repository.DockRepository;
+import com.veloMTL.veloMTL.Repository.StationRepository;
+import com.veloMTL.veloMTL.untils.Mappers.StationMapper;
+import org.springframework.stereotype.Service;
+
+>>>>>>> uroosa2
 import java.util.List;
 
 @Service
@@ -21,6 +34,7 @@ public class StationService {
 
     private final StationRepository stationRepository;
     private final DockRepository dockRepository;
+<<<<<<< HEAD
     private final NotificationService notificationService;
 
     public StationService(StationRepository repository, DockRepository dockRepository, NotificationService notificationService) {
@@ -31,10 +45,21 @@ public class StationService {
 
     public StationDTO createStation(StationDTO stationDTO) {
         Station newstation = StationMapper.dtoToEntity(stationDTO, new ArrayList<>());
+=======
+
+    public StationService(StationRepository repository, DockRepository dockRepository) {
+        this.stationRepository = repository;
+        this.dockRepository = dockRepository;
+    }
+
+    public StationDTO createStation(StationDTO stationDTO) {
+        Station newstation = StationMapper.dtoToEntity(stationDTO);
+>>>>>>> uroosa2
         Station savedStation = stationRepository.save(newstation);
         return StationMapper.entityToDto(savedStation);
     }
 
+<<<<<<< HEAD
     public ResponseDTO<StationDTO> markStationOutOfService(String stationId){
         Station station = loadDockWithState(stationId);
         StateChangeResponse message = station.getStationState().markStationOutOfService(station);
@@ -93,4 +118,28 @@ public class StationService {
             case OUT_OF_SERVICE -> new MaintenanceStationState(notificationService);
         };
     }
+=======
+    public StationDTO updateStationStatus(String stationId, StationStatus newStatus) {
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Station not found"));
+
+        // Update the station status
+        station.setStationStatus(newStatus);
+        stationRepository.save(station);
+
+        // If station is OUT_OF_SERVICE, update all docks as well
+        if (newStatus == StationStatus.OUT_OF_SERVICE) {
+            List<Dock> docks = dockRepository.findByStationId(stationId);
+            for (Dock dock : docks) {
+                dock.setStatus(DockStatus.OUT_OF_SERVICE);
+            }
+            dockRepository.saveAll(docks);
+        }
+        Station updatedStation = stationRepository.save(station);
+        return StationMapper.entityToDto(updatedStation);
+    }
+
+
+
+>>>>>>> uroosa2
 }
