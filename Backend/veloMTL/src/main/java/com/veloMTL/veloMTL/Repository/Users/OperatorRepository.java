@@ -3,5 +3,8 @@ package com.veloMTL.veloMTL.Repository.Users;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Optional;
+
 public interface OperatorRepository extends MongoRepository<Operator, String> {
+    Optional<Object> findByEmail(String email);
 }
