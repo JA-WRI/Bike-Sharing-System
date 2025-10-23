@@ -9,9 +9,8 @@ import com.veloMTL.veloMTL.Patterns.State.Docks.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
+import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 
 @Service
@@ -37,44 +36,23 @@ public class DockService {
 
    public ResponseDTO<DockDTO> reserveDock(String dockId){
         Dock dock = loadDockWithState(dockId);
-        String message = dock.getState().reserveDock(dock);
+        StateChangeResponse message = dock.getState().reserveDock(dock);
         dockRepo.save(dock);
-        return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
-   }
-
-   public ResponseDTO<DockDTO> occupyDock(String dockId){
-       Dock dock = loadDockWithState(dockId);
-       String message = dock.getState().occupyDock(dock);
-       dockRepo.save(dock);
-
-       boolean isAllFull = checkIfAllDocksFull(dock.getStation().getId());
-       //add function to handle notification
-
-       return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
+        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
    }
 
    public ResponseDTO<DockDTO> markDockOutOfService(String dockId){
        Dock dock = loadDockWithState(dockId);
-       String message = dock.getState().markDockOutOfService(dock);
+       StateChangeResponse message = dock.getState().markDockOutOfService(dock);
        dockRepo.save(dock);
-       return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
+       return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
    }
-    public ResponseDTO<DockDTO> emptyDock(String dockId){
-        Dock dock = loadDockWithState(dockId);
-        String message = dock.getState().emptyDock(dock);
-        dockRepo.save(dock);
 
-        boolean isAllEmpty = checkIfAllDocksEmpty(dock.getStation().getId());
-        //add function to handle notification
-
-        return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
-
-    }
     public ResponseDTO<DockDTO> restoreDockStatus(String dockId){
         Dock dock = loadDockWithState(dockId);
-        String message = dock.getState().restoreService(dock);
+        StateChangeResponse message = dock.getState().restoreService(dock);
         dockRepo.save(dock);
-        return new ResponseDTO<>(true,message,DockMapper.entityToDto(dock));
+        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
     }
 
     private Dock loadDockWithState(String dockId) {
@@ -91,30 +69,5 @@ public class DockService {
             case OCCUPIED -> new OccupiedDockState();
             case OUT_OF_SERVICE -> new MaintenanceDockState();
         };
-    }
-
-    private boolean checkIfAllDocksEmpty(String stationId){
-        Station station = stationRepo.findById(stationId)
-                .orElseThrow(() -> new RuntimeException("Station not found"));
-
-        List<Dock> docks = station.getDocks();
-        if (docks == null || docks.isEmpty()) {
-            return false;
-        }
-        return docks.stream()
-                .allMatch(dock -> dock.getStatus() == DockStatus.EMPTY);
-
-    }
-    private boolean checkIfAllDocksFull(String stationId){
-        Station station = stationRepo.findById(stationId)
-                .orElseThrow(() -> new RuntimeException("Station not found"));
-
-        List<Dock> docks = station.getDocks();
-        if (docks == null || docks.isEmpty()) {
-            return false;
-        }
-        return docks.stream()
-                .allMatch(dock -> dock.getStatus() == DockStatus.OCCUPIED);
-
     }
 }

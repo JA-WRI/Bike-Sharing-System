@@ -1,20 +1,16 @@
 package com.veloMTL.veloMTL.Patterns.State.Docks;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
+import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
 public interface DockState {
 
-    String reserveDock(Dock dock);
+    StateChangeResponse reserveDock(Dock dock);
 
-    //call after bike unlocked
-    String emptyDock(Dock dock);
 
-    //call after bike is returned
-    String occupyDock(Dock dock);
+    StateChangeResponse markDockOutOfService(Dock dock);
 
-    String markDockOutOfService(Dock dock);
-
-    String restoreService(Dock dock);
+    StateChangeResponse restoreService(Dock dock);
 
 
 }

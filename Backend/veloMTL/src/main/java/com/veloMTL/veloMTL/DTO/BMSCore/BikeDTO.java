@@ -9,6 +9,8 @@ public class BikeDTO {
     private String dockId;
     private BikeStatus bikeStatus;
 
+    public BikeDTO(){};
+
     public BikeDTO(String bikId, String bikeType, String dockId, BikeStatus bikeStatus) {
         this.bikId = bikId;
         this.bikeType = bikeType;
