@@ -62,7 +62,7 @@ public String loginRider(LoginDTO loginDTO){
         throw new RuntimeException("Invalid password");
     }
 
-    return jwtService.generateToken(rider.getEmail());
+    return jwtService.generateToken(rider.getEmail(), rider.getRole());
 }
 
     public String loginOperator(LoginDTO loginDTO) {
@@ -73,6 +73,6 @@ public String loginRider(LoginDTO loginDTO){
             throw new RuntimeException("Invalid password");
         }
 
-        return jwtService.generateToken(operator.getEmail());
+        return jwtService.generateToken(operator.getEmail(),operator.getRole());
     }
 }

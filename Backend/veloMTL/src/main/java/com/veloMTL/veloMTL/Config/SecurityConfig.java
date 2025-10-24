@@ -1,5 +1,7 @@
 package com.veloMTL.veloMTL.Config;
 
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
+import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.Security.JWTFilter;
 import com.veloMTL.veloMTL.Security.JwtService;
 import com.veloMTL.veloMTL.Service.Auth.GoogleRegistrationService;
@@ -20,11 +22,15 @@ public class SecurityConfig {
     private final GoogleRegistrationService googleRegistrationService;
     private final JwtService jwtService;
     private final JWTFilter jwtFilter;
+    private RiderRepository riderRepository;
+    private OperatorRepository operatorRepository;
 
-    public SecurityConfig(GoogleRegistrationService googleRegistrationService, JwtService jwtService, JWTFilter jwtFilter) {
+    public SecurityConfig(GoogleRegistrationService googleRegistrationService, JwtService jwtService, JWTFilter jwtFilter, RiderRepository riderRepository, OperatorRepository operatorRepository) {
         this.googleRegistrationService = googleRegistrationService;
         this.jwtService = jwtService;
         this.jwtFilter = jwtFilter;
+        this.riderRepository = riderRepository;
+        this.operatorRepository = operatorRepository;
     }
 
     @Bean
@@ -73,7 +79,18 @@ public class SecurityConfig {
                             OAuth2User user = (OAuth2User) authentication.getPrincipal();
                             String email = user.getAttribute("email");
 
-                            String token = jwtService.generateToken(email);
+                            // Determine role (RIDER or OPERATOR) based on your DB logic
+                            String role;
+                            if (riderRepository.existsByEmail(email)) {
+                                role = "RIDER";
+                            } else if (operatorRepository.existsByEmail(email)) {
+                                role = "OPERATOR";
+                            } else {
+                                throw new RuntimeException("User not found in either Riders or Operators");
+                            }
+
+                            String token = jwtService.generateToken(email, role);
+
                             response.sendRedirect("/api/auth/dashboard?token=" + token);
                         })
                 );

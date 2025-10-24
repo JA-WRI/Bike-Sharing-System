@@ -1,5 +1,7 @@
 package com.veloMTL.veloMTL.Security;
 
+import com.veloMTL.veloMTL.Service.Users.OperatorService;
+import com.veloMTL.veloMTL.Service.Users.RiderService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +20,13 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService; // Optional, if you load users from DB
+    private final RiderService riderService;
+    private final OperatorService operatorService;
 
-    public JWTFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+    public JWTFilter(JwtService jwtService, RiderService riderService, OperatorService operatorService) {
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
+        this.riderService = riderService;
+        this.operatorService = operatorService;
     }
 
     @Override
@@ -40,8 +44,17 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Optionally, load UserDetails if you need roles
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            // Extract role from JWT
+            String role = jwtService.extractRole(jwt);
+            UserDetails userDetails;
+
+            if ("RIDER".equals(role)) {
+                userDetails = riderService.loadUserByUsername(username);
+            } else if ("OPERATOR".equals(role)) {
+                userDetails = operatorService.loadUserByUsername(username);
+            } else {
+                throw new RuntimeException("Unknown role in JWT: " + role);
+            }
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =

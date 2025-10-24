@@ -6,5 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface OperatorRepository extends MongoRepository<Operator, String> {
-    Optional<Object> findByEmail(String email);
+    Optional<Operator> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

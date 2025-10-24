@@ -18,11 +18,7 @@ public class JwtService {
     // Use a long, secure secret key. Must be at least 256 bits for HS256
     private final Key SIGNING_KEY = Keys.hmacShaKeyFor("your_super_secure_secret_key_here_which_is_long".getBytes());
 
-
-    public String generateToken(String email) {
-        return generateToken(email, Map.of());
-    }
-
+    // Generate a token with email and optional extra claims (e.g., role)
     public String generateToken(String email, Map<String, Object> extraClaims) {
         return Jwts.builder()
                 .setClaims(extraClaims)
@@ -33,11 +29,22 @@ public class JwtService {
                 .compact();
     }
 
+    // Convenience method to generate token for a specific role
+    public String generateToken(String email, String role) {
+        return generateToken(email, Map.of("role", role));
+    }
 
+    // Extract email from JWT
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
+    // Extract role from JWT
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> (String) claims.get("role"));
+    }
+
+    // Extract a specific claim
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -55,11 +62,12 @@ public class JwtService {
         }
     }
 
-
+    // Check if token is expired
     private boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
+    // Validate token for a given UserDetails
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractEmail(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
