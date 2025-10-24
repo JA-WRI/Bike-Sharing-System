@@ -5,6 +5,8 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
+import java.time.LocalDateTime;
+
 public class OnTripBikeState implements BikeState{
 
 
@@ -22,7 +24,7 @@ public class OnTripBikeState implements BikeState{
     }
 
     @Override
-    public StateChangeResponse reserveBike(Bike bike) {
+    public StateChangeResponse reserveBike(Bike bike, Dock dock, LocalDateTime reserveTime, String reserveUser) {
         return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is currently being used");
     }
 
