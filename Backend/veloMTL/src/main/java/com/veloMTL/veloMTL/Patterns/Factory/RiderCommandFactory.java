@@ -19,7 +19,6 @@ public class RiderCommandFactory extends CommandFactory{
     private final TripService tripService;
 
 
-
     public RiderCommandFactory(DockService dockService, StationService stationService, BikeService bikeService, TripService tripService){
         this.dockService = dockService;
         this.stationService = stationService;
@@ -35,7 +34,8 @@ public class RiderCommandFactory extends CommandFactory{
             //lock bike
             case "LB" -> new RiderLockBike(bikeService, tripService, commandDTO.getUserId(), commandDTO.getObjectId(), commandDTO.getDockId());
             //reserve bike
-            case "RB" -> new RiderReserveBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId());
+            case "RB" -> new RiderReserveBike(bikeService, commandDTO.getDockId(), commandDTO.getReserveTime(),
+                    commandDTO.getObjectId(), commandDTO.getUserId());
             default -> throw new IllegalArgumentException("Unknown rider action: " + commandDTO.getCommand());
         };
     }

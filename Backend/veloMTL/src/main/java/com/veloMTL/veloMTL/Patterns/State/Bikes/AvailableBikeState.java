@@ -7,13 +7,15 @@ import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
+import com.veloMTL.veloMTL.Patterns.State.Docks.ReservedDockState;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+
+import java.time.LocalDateTime;
 
 public class AvailableBikeState implements BikeState{
 
-
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
         String message;
 
         switch(userStatus) {
@@ -27,7 +29,7 @@ public class AvailableBikeState implements BikeState{
                 break;
             default:
                 message = "You have to be signed in to unlock a bike";
-                return new StateChangeResponse(StateChangeStatus.SUCCESS, message);
+                return new StateChangeResponse(StateChangeStatus.FAILURE, message);
         }
 
         bike.setState(new MaintenanceBikeState());
@@ -46,8 +48,14 @@ public class AvailableBikeState implements BikeState{
     }
 
     @Override
-    public StateChangeResponse reserveBike(Bike bike) {
+    public StateChangeResponse reserveBike(Bike bike, Dock dock, LocalDateTime reserveTime, String reserveUser) {
         //*****add logic to reserve the bike***
+        bike.setBikeStatus(BikeStatus.RESERVED);
+        dock.setStatus(DockStatus.RESERVED);
+        bike.setReserveDate(reserveTime);
+        bike.setReserveUser(reserveUser); //fill in the reservation parameters into the bike
+        bike.setState(new ReservedBikeState());
+        dock.setState(new ReservedDockState());
 
         return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike has been reserved");
     }

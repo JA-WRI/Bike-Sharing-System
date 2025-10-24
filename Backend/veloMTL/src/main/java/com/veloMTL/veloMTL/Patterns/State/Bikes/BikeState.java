@@ -5,13 +5,15 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
+import java.time.LocalDateTime;
+
 public interface BikeState {
 
-    StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus);
+    StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username);
 
     StateChangeResponse lockBike(Bike bike, Dock dock);
 
-    StateChangeResponse reserveBike(Bike bike);
+    StateChangeResponse reserveBike(Bike bike, Dock dock, LocalDateTime reserveTime, String reserveUser);
 
     StateChangeResponse markOutOfService(Bike bike);
 }

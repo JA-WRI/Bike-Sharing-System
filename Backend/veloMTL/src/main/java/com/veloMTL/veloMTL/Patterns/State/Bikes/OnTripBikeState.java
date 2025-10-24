@@ -9,11 +9,13 @@ import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.OccupiedDockState;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
+import java.time.LocalDateTime;
+
 public class OnTripBikeState implements BikeState{
 
 
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
         return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is currently being used");
     }
 
@@ -33,7 +35,7 @@ public class OnTripBikeState implements BikeState{
     }
 
     @Override
-    public StateChangeResponse reserveBike(Bike bike) {
+    public StateChangeResponse reserveBike(Bike bike, Dock dock, LocalDateTime reserveTime, String reserveUser) {
         return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is currently being used");
     }
 
