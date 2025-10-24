@@ -5,14 +5,16 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
-import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.OccupiedDockState;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+
+import java.time.LocalDateTime;
 
 public class MaintenanceBikeState implements BikeState {
 
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
 
         return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Bike is already undocked and out of service");
     }
@@ -32,7 +34,7 @@ public class MaintenanceBikeState implements BikeState {
     }
 
     @Override
-    public StateChangeResponse reserveBike(Bike bike) {
+    public StateChangeResponse reserveBike(Bike bike, Dock dock, LocalDateTime reserveDate, String reserveUser) {
         return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Cannot reserve a bike that is out of service");
     }
 

@@ -14,10 +14,12 @@ public class BikeMapper {
         Bike bike;
         if (bikeDTO.getBikeType().equalsIgnoreCase("regular")){
             //create the bike and assign the dock to bike
-            bike = new Bike(bikeDTO.getBikId(), bikeDTO.getBikeType(), bikeDTO.getBikeStatus(), dock);
+            bike = new Bike(bikeDTO.getBikId(), bikeDTO.getBikeType(), bikeDTO.getBikeStatus(), dock,
+                    bikeDTO.getReserveDate(), bikeDTO.getReserveUser());
 
         } else {
-            bike = new ElectricBike(bikeDTO.getBikId(), bikeDTO.getBikeType(), bikeDTO.getBikeStatus(), dock, "100");
+            bike = new ElectricBike(bikeDTO.getBikId(), bikeDTO.getBikeType(), bikeDTO.getBikeStatus(), dock,
+                    bikeDTO.getReserveDate(), bikeDTO.getReserveUser(),"100" );
         }
 
         return bike;
@@ -28,6 +30,9 @@ public class BikeMapper {
         BikeDTO dto = new BikeDTO();
         dto.setBikeStatus(bike.getBikeStatus());
         dto.setBikeType(bike.getBikeType());
+        dto.setReserveDate(bike.getReserveDate());
+        dto.setReserveUser(bike.getReserveUser());
+
 
         if(bike.getDock() == null)
             dto.setDockId(null);

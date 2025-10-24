@@ -8,6 +8,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
@@ -15,6 +16,8 @@ import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.untils.Mappers.BikeMapper;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -57,11 +60,15 @@ public class BikeService {
         return BikeMapper.entityToDto(bike);
     }
 
-    public ResponseDTO<BikeDTO> unlockBike(String bikeId, String userId){
+    public ResponseDTO<BikeDTO> unlockBike(String bikeId, String userId, UserStatus userStatus){
         Bike bike = loadDockWithState(bikeId);
         Dock dock = bike.getDock();
+
+        StateChangeResponse message = bike.getState().unlockBike(bike, dock, userStatus, LocalDateTime.now(), userId);
+        if (dock == null) {
+            return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
+        }
         Station station = dock.getStation();
-        StateChangeResponse message = bike.getState().unlockBike(bike,dock);
 
         //update station occupancy
         int newOccupancy = station.getOccupancy()-1;
@@ -82,17 +89,28 @@ public class BikeService {
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
         Station station = dock.getStation();
         StateChangeResponse message = bike.getState().lockBike(bike, dock);
+        bike.setDock(dock);
 
         //update station occupancy
         int newOccupancy = station.getOccupancy()+1;
         stationService.updateStationOccupancy(station, newOccupancy);
+        dock.setBike(bike);
 
-
-        bikeRepository.save(bike);
+        Bike savedBike = bikeRepository.save(bike);
         dockRepository.save(dock);
         stationRepository.save(station);
 
-        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
+    }
+
+    public ResponseDTO<BikeDTO> reserveBike(String bikeId, String username, String dockId, LocalDateTime reserveDate) {
+        Bike bike = loadDockWithState(bikeId);
+        Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
+
+        StateChangeResponse message = bike.getState().reserveBike(bike, dock, reserveDate, username);
+        Bike savedBike = bikeRepository.save(bike);
+
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
     }
 
     private Bike loadDockWithState(String bikeId) {
