@@ -96,12 +96,11 @@ public class BikeService {
         stationService.updateStationOccupancy(station, newOccupancy);
         dock.setBike(bike);
 
-
-        bikeRepository.save(bike);
+        Bike savedBike = bikeRepository.save(bike);
         dockRepository.save(dock);
         stationRepository.save(station);
 
-        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
     }
 
     public ResponseDTO<BikeDTO> reserveBike(String bikeId, String username, String dockId, LocalDateTime reserveDate) {
@@ -109,8 +108,9 @@ public class BikeService {
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
 
         StateChangeResponse message = bike.getState().reserveBike(bike, dock, reserveDate, username);
+        Bike savedBike = bikeRepository.save(bike);
 
-        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
     }
 
     private Bike loadDockWithState(String bikeId) {

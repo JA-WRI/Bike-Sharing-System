@@ -22,6 +22,8 @@ public class OnTripBikeState implements BikeState{
 
         bike.setBikeStatus(BikeStatus.AVAILABLE);
         bike.setState(new AvailableBikeState());
+        bike.setReserveUser(null);
+        bike.setReserveDate(null);
         return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike has been successfully put back");
     }
 
