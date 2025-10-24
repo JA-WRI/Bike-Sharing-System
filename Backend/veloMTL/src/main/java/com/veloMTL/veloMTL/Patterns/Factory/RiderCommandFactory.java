@@ -11,13 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class RiderCommandFactory extends CommandFactory{
     private final DockService dockService;
-    private final StationService stationService;
     private final BikeService bikeService;
 
 
-    public RiderCommandFactory(DockService dockService, StationService stationService, BikeService bikeService){
+    public RiderCommandFactory(DockService dockService, BikeService bikeService){
         this.dockService = dockService;
-        this.stationService = stationService;
         this.bikeService = bikeService;
     }
 
@@ -33,6 +31,8 @@ public class RiderCommandFactory extends CommandFactory{
             //reserve bike
             case "RB" -> new RiderReserveBike(bikeService, commandDTO.getDockId(), commandDTO.getReserveTime(),
                     commandDTO.getObjectId(), commandDTO.getUserId());
+            //reserving a dock
+            case "RD" -> new ReserveDock(dockService, commandDTO.getUserId(), commandDTO.getDockId(), commandDTO.getReserveTime());
             default -> throw new IllegalArgumentException("Unknown rider action: " + commandDTO.getCommand());
         };
     }
