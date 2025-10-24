@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.Service;
+package com.veloMTL.veloMTL.Service.BMSCore;
 
 import org.springframework.stereotype.Service;
 
