@@ -87,11 +87,12 @@ public class BikeService {
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
         Station station = dock.getStation();
         StateChangeResponse message = bike.getState().lockBike(bike, dock);
+        bike.setDock(dock);
 
         //update station occupancy
         int newOccupancy = station.getOccupancy()+1;
         stationService.updateStationOccupancy(station, newOccupancy);
-
+        dock.setBike(bike);
 
         bikeRepository.save(bike);
         dockRepository.save(dock);
