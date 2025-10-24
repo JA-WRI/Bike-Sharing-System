@@ -5,23 +5,51 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
 public class AvailableBikeState implements BikeState{
 
 
+//    @Override
+//    public StateChangeResponse unlockBike(Bike bike, Dock dock) {
+//        String message;
+//        //operator unlocking the bike
+//        bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
+//        bike.setState(new MaintenanceBikeState());
+//
+//        dock.setStatus(DockStatus.EMPTY);
+//        dock.setState(new EmptyDockState());
+//
+//        message = "Bike is out of service and undocked";
+//        StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, message);
+//
+//        return response;
+//    }
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus) {
         String message;
-        //operator unlocking the bike
-        bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
+
+        switch(userStatus) {
+            case UserStatus.OPERATOR:
+                bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
+                message = "Bike is out of service and undocked";
+                break;
+            case UserStatus.RIDER:
+                bike.setBikeStatus(BikeStatus.ON_TRIP);
+                message = "Bike has been unlocked";
+                break;
+            default:
+                message = "You have to be signed in to unlock a bike";
+                return new StateChangeResponse(StateChangeStatus.SUCCESS, message);
+        }
+
         bike.setState(new MaintenanceBikeState());
 
         dock.setStatus(DockStatus.EMPTY);
         dock.setState(new EmptyDockState());
 
-        message = "Bike is out of service and undocked";
         StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, message);
 
         return response;

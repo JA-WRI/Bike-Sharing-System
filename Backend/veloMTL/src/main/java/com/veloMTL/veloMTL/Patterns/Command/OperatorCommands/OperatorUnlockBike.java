@@ -2,6 +2,7 @@ package com.veloMTL.veloMTL.Patterns.Command.OperatorCommands;
 
 import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.Command.Command;
 import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
 
@@ -18,6 +19,6 @@ public class OperatorUnlockBike implements Command<ResponseDTO<BikeDTO>> {
 
     @Override
     public ResponseDTO<BikeDTO> execute() {
-        return bikeService.unlockBike(bikeId, operatorId);
+        return bikeService.unlockBike(bikeId, operatorId, UserStatus.OPERATOR);
     }
 }

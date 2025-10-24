@@ -2,18 +2,34 @@ package com.veloMTL.veloMTL.Patterns.State.Bikes;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
+import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
 public class ReservedBikeState implements BikeState{
 
 
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus) {
+        String message;
 
+        switch(userStatus) {
+            case UserStatus.OPERATOR:
+                bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
+                message = "Bike is out of service and undocked";
+                break;
+            case UserStatus.RIDER:
+                bike.setBikeStatus(BikeStatus.ON_TRIP);
+                message = "Bike was unlocked with reservation";
+                break;
+            default:
+                message = "You have to be signed in to unlock a bike";
+                return new StateChangeResponse(StateChangeStatus.SUCCESS, message);
+        }
         //**add logic here**
 
-        StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike was unlocked with reservation");
+        StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, message);
         StateChangeResponse reponse2 = new StateChangeResponse(StateChangeStatus.FAILURE, "Not your reservation");
         return response;
     }
