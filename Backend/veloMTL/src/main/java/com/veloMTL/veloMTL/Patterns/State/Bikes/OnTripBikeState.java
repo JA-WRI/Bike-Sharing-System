@@ -30,6 +30,7 @@ public class OnTripBikeState implements BikeState{
             bike.setReserveUser(null);
             bike.setReserveDate(null);
             bike.setDock(dock);
+            bike.setBikeStatus(BikeStatus.AVAILABLE);
 
             dock.setState(new OccupiedDockState());
             dock.setStatus(DockStatus.OCCUPIED);
@@ -43,7 +44,7 @@ public class OnTripBikeState implements BikeState{
 
             LocalDateTime reserveDate = dock.getReserveDate();
 
-            // ⚠️ Make sure reserveDate is not null (avoid NullPointerException)
+            // Make sure reserveDate is not null (avoid NullPointerException)
             if (reserveDate != null && LocalDateTime.now().isAfter(reserveDate.plusMinutes(15))) {
                 // Reservation expired
                 dock.setStatus(DockStatus.EMPTY);
