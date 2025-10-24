@@ -33,7 +33,7 @@ public class RiderCommandFactory extends CommandFactory{
             //unlock bike
             case "UB" -> new RiderUnlockBike(bikeService, tripService, commandDTO.getUserId(), commandDTO.getObjectId());
             //lock bike
-            case "LB" -> new RiderLockBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId(), commandDTO.getDockId());
+            case "LB" -> new RiderLockBike(bikeService, tripService, commandDTO.getUserId(), commandDTO.getObjectId(), commandDTO.getDockId());
             //reserve bike
             case "RB" -> new RiderReserveBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId());
             default -> throw new IllegalArgumentException("Unknown rider action: " + commandDTO.getCommand());

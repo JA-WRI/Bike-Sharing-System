@@ -21,7 +21,10 @@ import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.untils.Mappers.BikeMapper;
 import com.veloMTL.veloMTL.untils.Mappers.TripMapper;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -43,17 +46,33 @@ public class TripService {
     }
 
     //can change this later if needed
-    public TripDTO createTrip(TripDTO tripDTO){
+    public TripDTO createTrip(TripDTO tripDTO) {
         //Find the bike
         Bike bike = bikeRepository.findById(tripDTO.getBikeId()).orElseThrow(() -> new RuntimeException("Bike not found"));;
         //Find the rider
         Rider rider = riderRepository.findById(tripDTO.getRiderId()).orElseThrow(() -> new RuntimeException("Rider not found"));;
 
+        // Create Trip object
         Trip trip = TripMapper.dtoToEntity(tripDTO, bike, rider);
+        String startTime = LocalDateTime.now().toString();
+        trip.setStartTime(startTime);
 
         //save the trip
-        tripRepository.save(trip);
+        Trip savedTrip = tripRepository.save(trip);
 
-        return TripMapper.entityToDto(trip);
+        return TripMapper.entityToDto(savedTrip);
+    }
+
+    public TripDTO endTrip(Trip trip) {
+        String endTime = LocalDateTime.now().toString();
+        Trip endedTrip = new Trip(trip.getTripId(), trip.getStartTime(), endTime, trip.getBike(), trip.getRider());
+
+        Trip savedTrip = tripRepository.save(endedTrip);
+
+        return TripMapper.entityToDto(savedTrip);
+    }
+
+    public Trip findOngoingTrip(String bikeId, String riderId) {
+        return tripRepository.findOngoingTrip(bikeId, riderId);
     }
 }

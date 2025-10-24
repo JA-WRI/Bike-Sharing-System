@@ -12,21 +12,6 @@ import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 public class AvailableBikeState implements BikeState{
 
 
-//    @Override
-//    public StateChangeResponse unlockBike(Bike bike, Dock dock) {
-//        String message;
-//        //operator unlocking the bike
-//        bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
-//        bike.setState(new MaintenanceBikeState());
-//
-//        dock.setStatus(DockStatus.EMPTY);
-//        dock.setState(new EmptyDockState());
-//
-//        message = "Bike is out of service and undocked";
-//        StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, message);
-//
-//        return response;
-//    }
     @Override
     public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus) {
         String message;

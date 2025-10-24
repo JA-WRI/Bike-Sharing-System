@@ -8,8 +8,6 @@ import com.veloMTL.veloMTL.Patterns.Command.Command;
 import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
 import com.veloMTL.veloMTL.Service.BMSCore.TripService;
 
-import java.time.LocalDateTime;
-
 public class RiderUnlockBike implements Command<ResponseDTO<BikeDTO>> {
     private final BikeService bikeService;
     private final TripService tripService;
@@ -26,7 +24,7 @@ public class RiderUnlockBike implements Command<ResponseDTO<BikeDTO>> {
     @Override
     public ResponseDTO<BikeDTO> execute() {
         ResponseDTO<BikeDTO> responseDTO = bikeService.unlockBike(bikeId, riderId, UserStatus.RIDER);
-        tripService.createTrip(new TripDTO(null, LocalDateTime.now().toString(), null, bikeId, riderId));
+        tripService.createTrip(new TripDTO(null, null, null, bikeId, riderId));
 
         return responseDTO;
     }
