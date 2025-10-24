@@ -1,16 +1,20 @@
 package com.veloMTL.veloMTL.DTO.Helper;
 
+import java.time.LocalDateTime;
+
 public class CommandDTO {
     private String command;
     private String userId;
     private String objectId;
     private String dockId;
+    private LocalDateTime reserveTime;
 
-    public CommandDTO(String command, String userId, String objectId, String dockId) {
+    public CommandDTO(String command, String userId, String objectId, String dockId, LocalDateTime reserveTime) {
         this.command = command;
         this.userId = userId;
         this.objectId = objectId;
         this.dockId = dockId;
+        this.reserveTime = reserveTime;
     }
 
     public String getCommand() {
@@ -44,4 +48,6 @@ public class CommandDTO {
     public void setDockId(String dockId) {
         this.dockId = dockId;
     }
+
+    public LocalDateTime getReserveTime() { return this.reserveTime; }
 }

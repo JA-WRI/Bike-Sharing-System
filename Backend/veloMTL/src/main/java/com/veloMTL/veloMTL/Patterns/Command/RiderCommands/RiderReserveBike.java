@@ -5,21 +5,26 @@ import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Patterns.Command.Command;
 import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
 
-public class RiderReserveBike implements Command<ResponseDTO<BikeDTO>> {
-    private final BikeService bikeService;
-    private final String riderId;
-    private final String bikeId;
+import java.time.LocalDateTime;
 
-    public RiderReserveBike(BikeService bikeService, String riderId, String bikeId) {
+public class RiderReserveBike implements Command<ResponseDTO<BikeDTO>>{
+    private BikeService bikeService;
+    private LocalDateTime reserveDate;
+    private String bikeId;
+    private String username;
+    private String dockId;
+
+    public RiderReserveBike(BikeService bikeService, String dockId, LocalDateTime date, String bikeId,
+                            String username) {
         this.bikeService = bikeService;
-        this.riderId = riderId;
+        this.reserveDate = date;
         this.bikeId = bikeId;
+        this.username = username;
+        this.dockId = dockId;
     }
 
-    @Override
     public ResponseDTO<BikeDTO> execute() {
-        // Not implemented yet
-        // return bikeService.reserveBike(bikeId, riderId);
-        return null;
+        return bikeService.reserveBike(bikeId, username, dockId, reserveDate);
     }
+
 }
