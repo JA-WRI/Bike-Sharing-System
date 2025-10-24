@@ -32,12 +32,6 @@ public class AuthController {
         }
     }
 
-    public ResponseEntity<?> googleLoginRider (@RequestParam String token){
-
-        String email = jwtService.extractEmail(token);
-        return ResponseEntity.ok("yooooo you are logged in my dude :p");
-    }
-
     @GetMapping("/dashboard")
     public String loginSuccess() {
         return " Google login successful! Welcome to your dashboard.";

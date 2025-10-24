@@ -3,12 +3,16 @@ package com.veloMTL.veloMTL.Config;
 import com.veloMTL.veloMTL.Security.JWTFilter;
 import com.veloMTL.veloMTL.Security.JwtService;
 import com.veloMTL.veloMTL.Service.Auth.GoogleRegistrationService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+
 
 @Configuration
 public class SecurityConfig {
@@ -24,19 +28,43 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
+        System.out.println(">>> \n\n\n\n\n\n\nAPI SECURITY FILTER CHAIN LOADED\n\n\n\n\n\n\n");
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
+                .securityMatcher("/api/**")
+                .csrf(csrf -> csrf.disable())
+                .formLogin(form -> form.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/register",       // public registration
-                                "/api/auth/rider/login",    // public regular login
+                                "/api/auth/register",
+                                "/api/auth/rider/login",
                                 "/api/auth/operator/login",
-                                "/api/auth/",               // general auth endpoints
-                                "/oauth2/",                 // google oauth entry
-                                "/login/**"                 // google oauth redirect
+                                "/api/auth/**"
                         ).permitAll()
-                        .anyRequest().authenticated() // everything else needs auth
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write("Unauthorized or invalid token");
+                        })
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain webSecurity(HttpSecurity http) throws Exception {
+        http
+                //Only match non-API requests
+                .securityMatcher(request -> !request.getRequestURI().startsWith("/api/"))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
@@ -44,17 +72,14 @@ public class SecurityConfig {
                         .successHandler((request, response, authentication) -> {
                             OAuth2User user = (OAuth2User) authentication.getPrincipal();
                             String email = user.getAttribute("email");
-                            String name = user.getAttribute("name");
 
-                            // generate JWT for Google login
                             String token = jwtService.generateToken(email);
-
-                            // return token in JSON for API or redirect to dashboard
                             response.sendRedirect("/api/auth/dashboard?token=" + token);
                         })
-                )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                );
 
         return http.build();
     }
+
 }
+

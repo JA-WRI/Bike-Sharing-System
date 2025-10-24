@@ -20,6 +20,6 @@ public class RiderService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Rider rider = riderRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Rider not found with email: " + email));
-        return (UserDetails) rider; // Make sure Rider implements UserDetails
+        return new CustomRiderDetails(rider); // Wrap Rider into UserDetails
     }
 }
