@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class GoogleRegistrationService extends DefaultOAuth2UserService {
 
-     private final RegistrationService registrationService;
+     private final AuthService authService;
 
-     public GoogleRegistrationService(RegistrationService registrationService){
-         this.registrationService = registrationService;
+     public GoogleRegistrationService(AuthService authService){
+         this.authService = authService;
      }
 
     @Override
@@ -23,7 +23,7 @@ public class GoogleRegistrationService extends DefaultOAuth2UserService {
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
-        Rider rider = registrationService.registerGoogleUser(name, email);
+        Rider rider = authService.registerGoogleUser(name, email);
         return oAuth2User;
     }
 

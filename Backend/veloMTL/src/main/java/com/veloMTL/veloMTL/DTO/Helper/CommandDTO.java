@@ -9,12 +9,12 @@ public class CommandDTO {
     private String dockId;
     private LocalDateTime reserveTime;
 
-    public CommandDTO(String command, String userId, String objectId, String dockId, LocalDateTime reserveTime) {
+    public CommandDTO(String command, String userId, String objectId, String dockId) {
         this.command = command;
         this.userId = userId;
         this.objectId = objectId;
         this.dockId = dockId;
-        this.reserveTime = reserveTime;
+        this.reserveTime = LocalDateTime.now();
     }
 
     public String getCommand() {

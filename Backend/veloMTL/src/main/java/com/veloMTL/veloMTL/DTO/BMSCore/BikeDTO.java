@@ -58,4 +58,12 @@ public class BikeDTO {
     public LocalDateTime getReserveDate() { return reserveDate; }
 
     public String getReserveUser() { return reserveUser; }
+
+    public void setReserveUser(String reserveUser) {
+        this.reserveUser = reserveUser;
+    }
+
+    public void setReserveDate(LocalDateTime reserveDate) {
+        this.reserveDate = reserveDate;
+    }
 }

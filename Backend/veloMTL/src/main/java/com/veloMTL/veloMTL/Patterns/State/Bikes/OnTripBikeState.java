@@ -6,6 +6,8 @@ import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+import com.veloMTL.veloMTL.Patterns.State.Docks.DockState;
+import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
 import com.veloMTL.veloMTL.Patterns.State.Docks.OccupiedDockState;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
 
@@ -22,16 +24,53 @@ public class OnTripBikeState implements BikeState{
     @Override
     public StateChangeResponse lockBike(Bike bike, Dock dock) {
 
-        //***add logic here***
-        bike.setBikeStatus(BikeStatus.AVAILABLE);
-        bike.setState(new AvailableBikeState());
-        bike.setDock(dock);
+        if (dock.getStatus() == DockStatus.EMPTY) {
+            // Dock is empty — put bike back
+            bike.setState(new AvailableBikeState());
+            bike.setReserveUser(null);
+            bike.setReserveDate(null);
+            bike.setDock(dock);
 
-        dock.setBike(bike);
-        dock.setStatus(DockStatus.OCCUPIED);
-        dock.setState(new OccupiedDockState());
+            dock.setState(new OccupiedDockState());
+            dock.setStatus(DockStatus.OCCUPIED);
+            dock.setBike(bike);
+            dock.setReserveDate(null);
+            dock.setReserveUser(null);
 
-        return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike has been successfully put back");
+            return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike has been successfully put back");
+
+        } else if (dock.getStatus() == DockStatus.RESERVED) {
+
+            LocalDateTime reserveDate = dock.getReserveDate();
+
+            // ⚠️ Make sure reserveDate is not null (avoid NullPointerException)
+            if (reserveDate != null && LocalDateTime.now().isAfter(reserveDate.plusMinutes(15))) {
+                // Reservation expired
+                dock.setStatus(DockStatus.EMPTY);
+                dock.setState(new EmptyDockState());
+                dock.setReserveDate(null);
+                dock.setReserveUser(null);
+
+                return new StateChangeResponse(StateChangeStatus.FAILURE, "Reservation has expired");
+            } else {
+                // Reservation still valid — allow putting the bike back
+                bike.setBikeStatus(BikeStatus.AVAILABLE);
+                bike.setState(new AvailableBikeState());
+                bike.setReserveUser(null);
+                bike.setReserveDate(null);
+
+                dock.setState(new EmptyDockState());
+                dock.setStatus(DockStatus.EMPTY);
+                dock.setBike(bike);
+                dock.setReserveDate(null);
+                dock.setReserveUser(null);
+
+                return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike has been successfully put back");
+            }
+
+        } else {
+            return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Dock is not available");
+        }
     }
 
     @Override

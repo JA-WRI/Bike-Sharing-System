@@ -57,11 +57,14 @@ public class ReservedBikeState implements BikeState{
 
     private StateChangeResponse unlockPrivateBike(Bike bike, Dock dock, LocalDateTime currentTime, String reserveUser) {
         StateChangeResponse response;
-        if (bike.getReserveDate().isBefore(currentTime)) { //If reserveUser does not unlock before the reservation time
+        if (currentTime.isAfter(bike.getReserveDate().plusMinutes(15))) { //If reserveUser does not unlock before the reservation time
             bike.setBikeStatus(BikeStatus.AVAILABLE);
             dock.setStatus(DockStatus.OCCUPIED);
             bike.setState(new AvailableBikeState());
             dock.setState(new OccupiedDockState());
+            bike.setReserveUser(null);
+            bike.setReserveDate(null);
+
             response = new StateChangeResponse(StateChangeStatus.FAILURE, "Reservation has expired :(");
         } else if (!bike.getReserveUser().equals(reserveUser)) { // If user attempting to unlock is not correct
             response = new StateChangeResponse(StateChangeStatus.FAILURE, "Not your reservation");

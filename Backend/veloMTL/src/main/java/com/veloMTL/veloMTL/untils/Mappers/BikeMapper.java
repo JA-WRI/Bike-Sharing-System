@@ -30,6 +30,9 @@ public class BikeMapper {
         BikeDTO dto = new BikeDTO();
         dto.setBikeStatus(bike.getBikeStatus());
         dto.setBikeType(bike.getBikeType());
+        dto.setReserveDate(bike.getReserveDate());
+        dto.setReserveUser(bike.getReserveUser());
+
 
         if(bike.getDock() == null)
             dto.setDockId(null);

@@ -3,12 +3,15 @@ package com.veloMTL.veloMTL.Patterns.State.Docks;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
+import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+
+import java.time.LocalDateTime;
 
 public class ReservedDockState implements DockState{
 
     @Override
-    public StateChangeResponse reserveDock(Dock dock) {
+    public StateChangeResponse reserveDock(Dock dock, String riderId, LocalDateTime reservationTime) {
         return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Dock already reserved");
     }
 
