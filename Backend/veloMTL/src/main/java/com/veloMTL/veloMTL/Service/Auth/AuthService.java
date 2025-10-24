@@ -1,0 +1,78 @@
+package com.veloMTL.veloMTL.Service.Auth;
+
+import com.veloMTL.veloMTL.DTO.Users.LoginDTO;
+import com.veloMTL.veloMTL.DTO.Users.RegistrationDTO;
+import com.veloMTL.veloMTL.Model.Users.Operator;
+import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
+import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
+import com.veloMTL.veloMTL.Security.JwtService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+
+@Service
+public class AuthService {
+    private final RiderRepository riderRepository;
+    private final OperatorRepository operatorRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+    public AuthService(RiderRepository riderRepository, OperatorRepository operatorRepository, PasswordEncoder passwordEncoder, JwtService jwtService){
+        this.riderRepository = riderRepository;
+        this.operatorRepository = operatorRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+    }
+
+    public Rider registerRider (RegistrationDTO registrationDTO){
+    if(riderRepository.existsByEmail(registrationDTO.getEmail())){
+        throw  new RuntimeException("Email already used");
+    }
+     String encodedPassword = passwordEncoder.encode(registrationDTO.getPassword());
+    Rider rider = new Rider(
+            registrationDTO.getName(),
+            registrationDTO.getEmail(),
+            encodedPassword
+    );
+        return riderRepository.save(rider);
+    }
+
+    public Rider registerGoogleUser(String name, String email) {
+        Optional<Rider> existing = riderRepository.findByEmail(email);
+
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        Rider newRider = new Rider(
+        name,
+        email,
+        null);
+        return riderRepository.save(newRider);
+    }
+
+public String loginRider(LoginDTO loginDTO){
+        Rider rider = riderRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new RuntimeException("wrong email"));
+
+    if(!passwordEncoder.matches(loginDTO.getPassword(), rider.getPassword())) {
+        throw new RuntimeException("Invalid password");
+    }
+
+    return jwtService.generateToken(rider.getEmail(), rider.getRole());
+}
+
+    public String loginOperator(LoginDTO loginDTO) {
+        Operator operator = (Operator) operatorRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new RuntimeException("wrong email"));
+
+        if (!loginDTO.getPassword().equals(operator.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return jwtService.generateToken(operator.getEmail(),operator.getRole());
+    }
+}
