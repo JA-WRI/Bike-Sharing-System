@@ -29,6 +29,8 @@ public class Bike {
     private BikeState state;
 
 
+    public Bike() {}
+
     public Bike(String bikeId, String bikeType, BikeStatus bikeStatus, Dock dock) {
         this.bikeType = bikeType;
         this.bikeStatus = bikeStatus;
@@ -36,7 +38,8 @@ public class Bike {
         this.bikeId = bikeId;
     }
 
-    public Bike(String bikeId, String bikeType, BikeStatus bikeStatus, Dock dock, LocalDateTime reserveDate, String reserveUser) {
+    public Bike(String bikeId, String bikeType, BikeStatus bikeStatus, Dock dock, LocalDateTime reserveDate,
+                String reserveUser) {
         this.bikeType = bikeType;
         this.bikeStatus = bikeStatus;
         this.dock = dock;

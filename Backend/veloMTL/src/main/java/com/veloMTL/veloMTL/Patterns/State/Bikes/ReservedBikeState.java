@@ -16,29 +16,46 @@ public class ReservedBikeState implements BikeState{
 
 
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus) {
-        String message;
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
+        StateChangeResponse response;
 
         switch(userStatus) {
             case UserStatus.OPERATOR:
                 bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
-                message = "Bike is out of service and undocked";
+                dock.setStatus(DockStatus.EMPTY);
+                dock.setState(new EmptyDockState());
+                bike.setState(new MaintenanceBikeState());
+                response = new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike is out of service and undocked");
                 break;
             case UserStatus.RIDER:
-                bike.setBikeStatus(BikeStatus.ON_TRIP);
-                message = "Bike was unlocked with reservation";
+                response = unlockPrivateBike(bike, dock, currentTime, username);
                 break;
             default:
-                message = "You have to be signed in to unlock a bike";
-                return new StateChangeResponse(StateChangeStatus.SUCCESS, message);
+                return new StateChangeResponse(StateChangeStatus.SUCCESS, "You have to be signed in to unlock a bike");
         }
-        //**add logic here**
 
-        StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, message);
         return response;
     }
 
-    public StateChangeResponse unlockBike(Bike bike, Dock dock, LocalDateTime currentTime, String reserveUser) {
+
+
+    @Override
+    public StateChangeResponse lockBike(Bike bike, Dock dock) {
+        return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Bike is already locked");
+    }
+
+    @Override
+    public StateChangeResponse reserveBike(Bike bike, Dock dock, LocalDateTime reserveTime, String reserveUser) {
+        return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is already reserved");
+    }
+
+    @Override
+    public StateChangeResponse markOutOfService(Bike bike) {
+        //Add logic here
+        return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike is put out of service and reservation is canceled");
+    }
+
+    private StateChangeResponse unlockPrivateBike(Bike bike, Dock dock, LocalDateTime currentTime, String reserveUser) {
         StateChangeResponse response;
         if (bike.getReserveDate().isBefore(currentTime)) { //If reserveUser does not unlock before the reservation time
             bike.setBikeStatus(BikeStatus.AVAILABLE);
@@ -56,21 +73,5 @@ public class ReservedBikeState implements BikeState{
             response = new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike was unlocked with reservation");
         }
         return response;
-    }
-
-    @Override
-    public StateChangeResponse lockBike(Bike bike, Dock dock) {
-        return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Bike is already locked");
-    }
-
-    @Override
-    public StateChangeResponse reserveBike(Bike bike, Dock dock, LocalDateTime reserveTime, String reserveUser) {
-        return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is already reserved");
-    }
-
-    @Override
-    public StateChangeResponse markOutOfService(Bike bike) {
-        //Add logic here
-        return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike is put out of service and reservation is canceled");
     }
 }

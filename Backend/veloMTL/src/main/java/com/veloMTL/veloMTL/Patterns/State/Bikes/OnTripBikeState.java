@@ -12,7 +12,7 @@ public class OnTripBikeState implements BikeState{
 
 
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
         return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is currently being used");
     }
 

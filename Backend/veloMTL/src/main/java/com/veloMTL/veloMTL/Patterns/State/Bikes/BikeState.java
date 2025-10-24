@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 public interface BikeState {
 
-    StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus);
+    StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username);
 
     StateChangeResponse lockBike(Bike bike, Dock dock);
 

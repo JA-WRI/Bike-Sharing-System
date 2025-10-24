@@ -48,4 +48,6 @@ public class CommandDTO {
     public void setDockId(String dockId) {
         this.dockId = dockId;
     }
+
+    public LocalDateTime getReserveTime() { return this.reserveTime; }
 }

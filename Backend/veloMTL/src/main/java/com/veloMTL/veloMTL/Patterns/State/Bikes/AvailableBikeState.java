@@ -30,7 +30,7 @@ public class AvailableBikeState implements BikeState{
 //        return response;
 //    }
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
         String message;
 
         switch(userStatus) {
@@ -44,7 +44,7 @@ public class AvailableBikeState implements BikeState{
                 break;
             default:
                 message = "You have to be signed in to unlock a bike";
-                return new StateChangeResponse(StateChangeStatus.SUCCESS, message);
+                return new StateChangeResponse(StateChangeStatus.FAILURE, message);
         }
 
         bike.setState(new MaintenanceBikeState());

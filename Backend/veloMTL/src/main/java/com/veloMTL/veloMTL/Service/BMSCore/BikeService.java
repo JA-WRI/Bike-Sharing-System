@@ -64,7 +64,7 @@ public class BikeService {
         Bike bike = loadDockWithState(bikeId);
         Dock dock = bike.getDock();
 
-        StateChangeResponse message = bike.getState().unlockBike(bike, dock, userStatus);
+        StateChangeResponse message = bike.getState().unlockBike(bike, dock, userStatus, LocalDateTime.now(), userId);
         if (dock == null) {
             return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
         }
