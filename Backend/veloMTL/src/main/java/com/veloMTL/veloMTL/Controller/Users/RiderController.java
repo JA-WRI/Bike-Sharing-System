@@ -3,6 +3,7 @@ package com.veloMTL.veloMTL.Controller.Users;
 import com.veloMTL.veloMTL.DTO.Helper.CommandDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
+import com.veloMTL.veloMTL.Patterns.Command.Command;
 import com.veloMTL.veloMTL.Patterns.Factory.RiderCommandFactory;
 import com.veloMTL.veloMTL.Service.Users.RiderService;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +23,9 @@ public class RiderController {
 
     @PostMapping("/command")
     public ResponseEntity<ResponseDTO<?>> executeCommand(@RequestBody CommandDTO commandDTO){
-        //same logic as the operator command.
 
-        return ResponseEntity.ok(new ResponseDTO<>(StateChangeStatus.SUCCESS, "message", commandDTO));
-
+        Command<?> action = commandFactory.createCommand(commandDTO);
+        ResponseDTO<?> response = (ResponseDTO<?>) action.execute();
+        return ResponseEntity.ok(response);
     }
 }
