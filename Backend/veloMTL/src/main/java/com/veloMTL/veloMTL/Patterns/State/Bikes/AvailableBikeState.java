@@ -13,21 +13,6 @@ import java.time.LocalDateTime;
 
 public class AvailableBikeState implements BikeState{
 
-//    @Override
-//    public StateChangeResponse unlockBike(Bike bike, Dock dock) {
-//        String message;
-//        //operator unlocking the bike
-//        bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
-//        bike.setState(new MaintenanceBikeState());
-//
-//        dock.setStatus(DockStatus.EMPTY);
-//        dock.setState(new EmptyDockState());
-//
-//        message = "Bike is out of service and undocked";
-//        StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, message);
-//
-//        return response;
-//    }
     @Override
     public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
         String message;
