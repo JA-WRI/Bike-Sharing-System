@@ -3,6 +3,10 @@
 ## Team Members 
 Jaden Wright-Maurais | 40276168 <br>
 Carla Chamandi | 40300354 <br>
+Uroosa Lakhani | 40227274 <br>
+Ethan Soh | 40347569 <br>
+Ng Hong Jing | 40349371 <br>
+
 
 ## Running the Project
 1. Clone repo
