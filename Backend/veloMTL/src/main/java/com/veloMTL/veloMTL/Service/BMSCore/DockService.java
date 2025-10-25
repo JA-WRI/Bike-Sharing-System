@@ -8,8 +8,8 @@ import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Patterns.State.Docks.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
-import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Mappers.DockMapper;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

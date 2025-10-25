@@ -1,10 +1,8 @@
 package com.veloMTL.veloMTL.Patterns.State.Docks;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
-import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
-import com.veloMTL.veloMTL.Model.Users.Rider;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 import java.time.LocalDateTime;
 

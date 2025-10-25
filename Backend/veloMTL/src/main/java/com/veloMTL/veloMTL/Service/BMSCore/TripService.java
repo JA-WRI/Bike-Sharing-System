@@ -1,27 +1,15 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
-import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
 import com.veloMTL.veloMTL.DTO.BMSCore.TripDTO;
-import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
-import com.veloMTL.veloMTL.Model.BMSCore.Dock;
-import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
-import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
-import com.veloMTL.veloMTL.Model.Enums.DockStatus;
-import com.veloMTL.veloMTL.Model.Enums.StationStatus;
-import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Model.Users.Rider;
-import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
-import com.veloMTL.veloMTL.untils.Mappers.BikeMapper;
-import com.veloMTL.veloMTL.untils.Mappers.TripMapper;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
-import org.springframework.cglib.core.Local;
+import com.veloMTL.veloMTL.utils.Mappers.TripMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

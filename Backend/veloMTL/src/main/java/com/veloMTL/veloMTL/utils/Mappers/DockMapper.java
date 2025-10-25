@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.untils.Mappers;
+package com.veloMTL.veloMTL.utils.Mappers;
 
 import com.veloMTL.veloMTL.DTO.BMSCore.DockDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;

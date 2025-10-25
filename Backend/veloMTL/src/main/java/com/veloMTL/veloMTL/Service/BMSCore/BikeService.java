@@ -13,8 +13,8 @@ import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
-import com.veloMTL.veloMTL.untils.Mappers.BikeMapper;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Mappers.BikeMapper;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

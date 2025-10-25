@@ -7,7 +7,7 @@ import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 import java.time.LocalDateTime;
 

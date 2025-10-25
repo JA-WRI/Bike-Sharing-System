@@ -67,11 +67,21 @@ public class SecurityConfig {
     public SecurityFilterChain webSecurity(HttpSecurity http) throws Exception {
         http
                 .securityMatcher(request -> !request.getRequestURI().startsWith("/api/"))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // Return JSON instead of redirect
+                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write("{\"error\": \"Unauthorized or invalid token\"}");
+                        })
+                )
                 .oauth2Login(oauth2 -> oauth2
+                        // This URL is hit *only* when the user clicks "Login with Google"
                         .loginPage("/oauth2/authorization/google")
                         .userInfoEndpoint(userInfo -> userInfo.userService(googleRegistrationService))
                         .successHandler((request, response, authentication) -> {
@@ -88,11 +98,11 @@ public class SecurityConfig {
                                 throw new RuntimeException("User not found in either Riders or Operators");
                             }
 
-                            // Generate JWT for browser-based client
+                            // Generate JWT
                             String token = jwtService.generateToken(email, role);
 
-                            // Redirect to frontend with token (optional)
-                            response.sendRedirect("/dashboard?token=" + token);
+                            // Redirect with JWT or return JSON
+                            response.sendRedirect("/api/auth/dashboard?token=" + token);
                         })
                 );
 

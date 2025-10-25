@@ -3,7 +3,7 @@ package com.veloMTL.veloMTL.Patterns.State.Bikes;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 import java.time.LocalDateTime;
 

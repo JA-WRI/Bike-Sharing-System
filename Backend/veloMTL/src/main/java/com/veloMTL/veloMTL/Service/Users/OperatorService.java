@@ -4,7 +4,7 @@ import com.veloMTL.veloMTL.DTO.Users.CreateOperatorDTO;
 import com.veloMTL.veloMTL.DTO.Users.OperatorDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
-import com.veloMTL.veloMTL.untils.Mappers.OperatorMapper;
+import com.veloMTL.veloMTL.utils.Mappers.OperatorMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

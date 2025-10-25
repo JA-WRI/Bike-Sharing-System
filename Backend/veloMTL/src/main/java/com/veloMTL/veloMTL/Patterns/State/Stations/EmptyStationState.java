@@ -7,7 +7,7 @@ import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Patterns.State.Docks.MaintenanceDockState;
 import com.veloMTL.veloMTL.Service.BMSCore.NotificationService;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 import java.util.List;
 
