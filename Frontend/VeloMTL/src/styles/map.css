@@ -20,8 +20,8 @@
   gap: 1rem; /* space between map and side panel */
   justify-content: center;
   align-items: flex-start;
-  width: 100%;
-  min-height: 70vh; 
+  width: 95%;
+  min-height: 75vh; 
 }
 
 .map-wrapper {

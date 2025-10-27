@@ -1,19 +1,36 @@
 import React from "react";
 
-const SidePanel = ({ station, onClose }) => {
-  if (!station) return null; // Only show panel when a station is selected
+const SidePanel = ({ station, onClose, loading }) => {
+  if (!station) return null; // Don't render panel if no station selected
 
   return (
     <div className="side-panel">
       <div className="side-panel-header">
-        <h2>{station.name}</h2>
+        <h2>{station.stationName || "Loading..."}</h2>
         <button className="close-btn" onClick={onClose}>
           ✕
         </button>
       </div>
       <div className="side-panel-content">
-        <p>Loading data for <strong>{station.name}</strong>...</p>
-        {/* Later: Replace this with dynamic bike/dock info from your API */}
+        {loading ? (
+          <p>Loading station data...</p>
+        ) : (
+          <>
+            {station.streetAddress && <p>{station.streetAddress}</p>}
+            {station.capacity && <p><strong>Capacity:</strong> {station.capacity}</p>}
+            {station.stationStatus && <p><strong>Status:</strong> {station.stationStatus}</p>}
+            {station.docks?.length > 0 && (
+              <>
+                <p><strong>Docks:</strong></p>
+                <ul>
+                  {station.docks.map((dock) => (
+                    <li key={dock}>{dock}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
