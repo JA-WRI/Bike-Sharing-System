@@ -1,0 +1,61 @@
+/* Dashboard container */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.dashboard-title {
+  margin-bottom: 2rem;
+  color: #333;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.map-container {
+  display: flex;
+  gap: 1rem; /* space between map and side panel */
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 70vh; 
+}
+
+.map-wrapper {
+  flex: 1;  
+  max-width: 1300px;  /*This controls the width of the map on the page*/
+  height: 75vh;  /*This controls the height of the map on the page*/
+  border: 2px solid #ddd;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* Responsive for mobile screens */
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 1.4rem;
+  }
+
+  .map-container {
+    flex-direction: column; /* stack map then panel */
+    align-items: center;
+    padding: 0.5rem;
+  }
+
+  .map-wrapper {
+    width: 100%;
+    height: 30vh; /* smaller height on mobile */
+    max-width: none;
+    margin: 0 auto;
+    border-radius: 5px;
+  }
+
+  .side-panel {
+    width: 100% !important; /* make sure panel is full width */
+    margin-top: 1rem;
+  }
+}
