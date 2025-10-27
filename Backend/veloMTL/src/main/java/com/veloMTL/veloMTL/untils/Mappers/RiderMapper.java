@@ -22,7 +22,8 @@ public class RiderMapper {
                 entity.getId(),
                 entity.getName(),
                 entity.getEmail(),
-                entity.getRole()
+                entity.getRole(),
+                entity.getPaymentInfo()
         );
 
         dto.setReservationId(entity.getReservationId());
