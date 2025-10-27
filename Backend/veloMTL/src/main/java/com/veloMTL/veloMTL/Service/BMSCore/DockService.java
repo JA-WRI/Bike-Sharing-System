@@ -8,9 +8,11 @@ import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Patterns.State.Docks.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
-import com.veloMTL.veloMTL.untils.Mappers.DockMapper;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Mappers.DockMapper;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -34,11 +36,11 @@ public class DockService {
         return new DockDTO(savedDock.getDockId(), savedDock.getStatus(), savedDock.getStation().getId(), null);
    }
 
-   public ResponseDTO<DockDTO> reserveDock(String dockId){
+   public ResponseDTO<DockDTO> reserveDock(String dockId, String riderId, LocalDateTime reservationTime){
         Dock dock = loadDockWithState(dockId);
-        StateChangeResponse message = dock.getState().reserveDock(dock);
-        dockRepo.save(dock);
-        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
+        StateChangeResponse message = dock.getState().reserveDock(dock, riderId, reservationTime);
+        Dock savedDock = dockRepo.save(dock);
+        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(savedDock));
    }
 
    public ResponseDTO<DockDTO> markDockOutOfService(String dockId){

@@ -2,7 +2,7 @@ package com.veloMTL.veloMTL.Patterns.State.Stations;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 public class OccupiedStationState implements StationState{
 

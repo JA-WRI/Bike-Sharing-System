@@ -1,5 +1,3 @@
-/* index.css - single source of styles for your app */
-
 * {
   margin: 0;
   padding: 0;
@@ -34,14 +32,12 @@ nav a:hover {
   color: #bbb;
 }
 
-/* Centered main content */
 .main-content {
   max-width: 800px;
   margin: 2rem auto;
   padding: 1rem;
 }
 
-/* Forms */
 form {
   display: flex;
   flex-direction: column;

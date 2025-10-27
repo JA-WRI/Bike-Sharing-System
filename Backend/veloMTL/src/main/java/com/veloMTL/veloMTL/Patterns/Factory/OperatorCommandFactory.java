@@ -35,7 +35,7 @@ public class OperatorCommandFactory extends CommandFactory{
             case "UB" -> new OperatorUnlockBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId());
             //lock bike
             case "LB" -> new OperatorLockBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId(), commandDTO.getDockId());
-            default -> throw new IllegalArgumentException("Unknown action: " + commandDTO.getCommand());
+            default -> throw new IllegalArgumentException("Unknown operator action: " + commandDTO.getCommand());
         };
     }
 }

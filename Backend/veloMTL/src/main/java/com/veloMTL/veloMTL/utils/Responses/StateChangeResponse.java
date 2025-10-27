@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.untils.Responses;
+package com.veloMTL.veloMTL.utils.Responses;
 
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 

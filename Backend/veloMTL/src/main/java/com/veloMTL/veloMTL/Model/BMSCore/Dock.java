@@ -7,12 +7,16 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "Docks")
 public class Dock {
 
     @Id
     private String dockId;
     private DockStatus status;
+    private LocalDateTime reserveDate;
+    private String reserveUser;
 
     @DBRef(lazy = true)
     private Station station;
@@ -71,4 +75,19 @@ public class Dock {
         this.bike = bike;
     }
 
+    public LocalDateTime getReserveDate() {
+        return reserveDate;
+    }
+
+    public void setReserveDate(LocalDateTime reserveDate) {
+        this.reserveDate = reserveDate;
+    }
+
+    public String getReserveUser() {
+        return reserveUser;
+    }
+
+    public void setReserveUser(String reserveUser) {
+        this.reserveUser = reserveUser;
+    }
 }

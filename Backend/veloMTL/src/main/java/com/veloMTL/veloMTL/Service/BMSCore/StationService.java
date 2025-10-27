@@ -8,8 +8,8 @@ import com.veloMTL.veloMTL.Patterns.State.Stations.*;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
-import com.veloMTL.veloMTL.untils.Mappers.StationMapper;
-import com.veloMTL.veloMTL.untils.Responses.StateChangeResponse;
+import com.veloMTL.veloMTL.utils.Mappers.StationMapper;
+import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -91,5 +91,11 @@ public class StationService {
             case OCCUPIED -> new OccupiedStationState();
             case OUT_OF_SERVICE -> new MaintenanceStationState(notificationService);
         };
+    }
+
+    public StationDTO getStationById(String stationId) {
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Station not found with ID: " + stationId));
+        return StationMapper.entityToDto(station);
     }
 }

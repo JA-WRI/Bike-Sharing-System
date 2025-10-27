@@ -2,21 +2,26 @@ package com.veloMTL.veloMTL.DTO.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 
+import java.time.LocalDateTime;
+
 public class BikeDTO {
 
     private String bikId;
     private String bikeType;
     private String dockId;
     private BikeStatus bikeStatus;
+    private LocalDateTime reserveDate;
+    private String reserveUser;
 
     public BikeDTO(){};
 
-    public BikeDTO(String bikId, String bikeType, String dockId, BikeStatus bikeStatus) {
+    public BikeDTO(String bikId, String bikeType, String dockId, BikeStatus bikeStatus, LocalDateTime reserveDate) {
         this.bikId = bikId;
         this.bikeType = bikeType;
         this.dockId = dockId;
         this.bikeStatus = bikeStatus;
     }
+
 
     public String getBikId() {
         return bikId;
@@ -48,5 +53,17 @@ public class BikeDTO {
 
     public void setBikeStatus(BikeStatus bikeStatus) {
         this.bikeStatus = bikeStatus;
+    }
+
+    public LocalDateTime getReserveDate() { return reserveDate; }
+
+    public String getReserveUser() { return reserveUser; }
+
+    public void setReserveUser(String reserveUser) {
+        this.reserveUser = reserveUser;
+    }
+
+    public void setReserveDate(LocalDateTime reserveDate) {
+        this.reserveDate = reserveDate;
     }
 }

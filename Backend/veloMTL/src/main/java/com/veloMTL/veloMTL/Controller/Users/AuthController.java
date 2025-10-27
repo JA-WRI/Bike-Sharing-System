@@ -15,11 +15,9 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
-    private final JwtService jwtService;
 
-    public AuthController(AuthService authService, JwtService jwtService){
+    public AuthController(AuthService authService){
         this.authService = authService;
-        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -36,6 +34,7 @@ public class AuthController {
     public String loginSuccess() {
         return " Google login successful! Welcome to your dashboard.";
     }
+
     @PostMapping("/rider/login")
     public ResponseEntity<?> riderLogin(@RequestBody LoginDTO loginDTO){
         String token = authService.loginRider(loginDTO);

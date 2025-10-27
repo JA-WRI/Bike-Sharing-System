@@ -36,7 +36,6 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
-        System.out.println(">>> \n\n\n\n\n\n\nAPI SECURITY FILTER CHAIN LOADED\n\n\n\n\n\n\n");
         http
                 .securityMatcher("/api/**")
                 .csrf(csrf -> csrf.disable())
@@ -53,8 +52,9 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType("application/json");
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.getWriter().write("Unauthorized or invalid token");
+                            response.getWriter().write("{\"error\": \"Unauthorized or invalid token\"}");
                         })
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -66,20 +66,34 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain webSecurity(HttpSecurity http) throws Exception {
         http
-                //Only match non-API requests
                 .securityMatcher(request -> !request.getRequestURI().startsWith("/api/"))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/login/**",
+                                "/oauth2/**",
+                                "/stations/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // Return JSON instead of redirect
+                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write("{\"error\": \"Unauthorized or invalid token\"}");
+                        })
+                )
                 .oauth2Login(oauth2 -> oauth2
+                        // This URL is hit *only* when the user clicks "Login with Google"
                         .loginPage("/oauth2/authorization/google")
                         .userInfoEndpoint(userInfo -> userInfo.userService(googleRegistrationService))
                         .successHandler((request, response, authentication) -> {
                             OAuth2User user = (OAuth2User) authentication.getPrincipal();
                             String email = user.getAttribute("email");
 
-                            // Determine role (RIDER or OPERATOR) based on your DB logic
+                            // Determine role (RIDER or OPERATOR)
                             String role;
                             if (riderRepository.existsByEmail(email)) {
                                 role = "RIDER";
@@ -89,8 +103,10 @@ public class SecurityConfig {
                                 throw new RuntimeException("User not found in either Riders or Operators");
                             }
 
+                            // Generate JWT
                             String token = jwtService.generateToken(email, role);
 
+                            // Redirect with JWT or return JSON
                             response.sendRedirect("/api/auth/dashboard?token=" + token);
                         })
                 );

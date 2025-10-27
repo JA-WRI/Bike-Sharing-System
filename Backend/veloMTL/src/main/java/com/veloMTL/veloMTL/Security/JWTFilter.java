@@ -32,40 +32,56 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
         String jwt = null;
         String username = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7); // Remove "Bearer "
-            username = jwtService.extractEmail(jwt); // extract email/username from JWT
-        }
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Extract role from JWT
-            String role = jwtService.extractRole(jwt);
-            UserDetails userDetails;
-
-            if ("RIDER".equals(role)) {
-                userDetails = riderService.loadUserByUsername(username);
-            } else if ("OPERATOR".equals(role)) {
-                userDetails = operatorService.loadUserByUsername(username);
-            } else {
-                throw new RuntimeException("Unknown role in JWT: " + role);
+        try {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                jwt = authHeader.substring(7);
+                username = jwtService.extractEmail(jwt);
             }
 
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities()
-                        );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                String role = jwtService.extractRole(jwt);
+                UserDetails userDetails;
 
-        filterChain.doFilter(request, response);
+                if ("RIDER".equals(role)) {
+                    userDetails = riderService.loadUserByUsername(username);
+                } else if ("OPERATOR".equals(role)) {
+                    userDetails = operatorService.loadUserByUsername(username);
+                } else {
+                    throw new RuntimeException("Unknown role in JWT: " + role);
+                }
+
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails, null, userDetails.getAuthorities()
+                            );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            }
+
+            // ✅ Continue chain (even if controller throws)
+            filterChain.doFilter(request, response);
+
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            sendUnauthorized(response, "Token expired");
+        } catch (io.jsonwebtoken.SignatureException e) {
+            sendUnauthorized(response, "Invalid token signature");
+        } catch (io.jsonwebtoken.JwtException e) {
+            sendUnauthorized(response, "Invalid or malformed token");
+        }
+    }
+
+    private void sendUnauthorized(HttpServletResponse response, String message) throws IOException {
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("{\"error\": \"" + message + "\"}");
     }
 }

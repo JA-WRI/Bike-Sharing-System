@@ -19,7 +19,7 @@ public class GoogleRegistrationService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        // extract info from google
+        // extract info from Google
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
