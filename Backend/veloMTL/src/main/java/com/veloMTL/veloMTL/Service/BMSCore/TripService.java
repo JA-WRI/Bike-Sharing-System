@@ -42,7 +42,7 @@ public class TripService {
 
         // Create Trip object
         Trip trip = TripMapper.dtoToEntity(tripDTO, bike, rider);
-        String startTime = LocalDateTime.now().toString();
+        LocalDateTime startTime = LocalDateTime.now();
         trip.setStartTime(startTime);
 
         //save the trip
@@ -52,7 +52,7 @@ public class TripService {
     }
 
     public TripDTO endTrip(Trip trip) {
-        String endTime = LocalDateTime.now().toString();
+        LocalDateTime endTime = LocalDateTime.now();
         Trip endedTrip = new Trip(trip.getTripId(), trip.getStartTime(), endTime, trip.getBike(), trip.getRider());
 
         Trip savedTrip = tripRepository.save(endedTrip);

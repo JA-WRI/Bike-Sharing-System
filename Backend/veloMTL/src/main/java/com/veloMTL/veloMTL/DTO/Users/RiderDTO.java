@@ -5,15 +5,15 @@ import java.util.List;
 public class RiderDTO extends UserDTO {
     private String reservationId;
 
-    private String paymentInfo;
+    private String paymentMethod;
 
     public RiderDTO() {
         super();
     }
 
-    public RiderDTO(String id, String name, String email, String role, String paymentInfo) {
+    public RiderDTO(String id, String name, String email, String role) {
         super(id, name, email, role);
-        this.paymentInfo = paymentInfo;
+
     }
 
     public String getReservationId() {
@@ -24,11 +24,11 @@ public class RiderDTO extends UserDTO {
         this.reservationId = reservationId;
     }
 
-    public String getPaymentInfo() {
-        return paymentInfo;
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setPaymentInfo(String paymentInfo) {
-        this.paymentInfo = paymentInfo;
+    public void setPaymentMethod(String paymentInfo) {
+        this.paymentMethod = paymentInfo;
     }
 }

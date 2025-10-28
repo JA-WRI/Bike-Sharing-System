@@ -1,12 +1,15 @@
 package com.veloMTL.veloMTL.Patterns.Strategy;
 
+import java.time.LocalDate;
+
+
 public class MasterCard implements PaymentMethod{
 
     @Override
-    public void processPayment() {
+    public void processPayment(double amount) {
 
-        //calculate time
-        // calculate price to pay
-        // return a receipt
+        System.out.println("Payment Confirmed\n" +
+                "Date: " + LocalDate.now() +
+                "\n");
     }
 }

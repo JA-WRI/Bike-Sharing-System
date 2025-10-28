@@ -10,13 +10,15 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "Trips")
 @TypeAlias("trip")
 public class Trip {
     @Id
     private String tripId;
-    private String startTime;
-    private String endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     @DBRef(lazy = true)
     private Bike bike;
@@ -27,7 +29,7 @@ public class Trip {
 //    private BikeState state;
 
 
-    public Trip(String tripId, String startTime, String endTime, Bike bike, Rider rider) {
+    public Trip(String tripId, LocalDateTime startTime, LocalDateTime endTime, Bike bike, Rider rider) {
         this.tripId = tripId;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -39,19 +41,19 @@ public class Trip {
         return tripId;
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 
