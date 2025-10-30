@@ -8,12 +8,12 @@ import java.time.LocalDate;
 public class MasterCard implements PaymentMethod{
 
     @Override
-    public void processPayment(double amount, PaymentMethodDTO paymentMethodDTO) {
+    public void processPayment(double amount) {
 
-        System.out.println("Payment Confirmed\n" +
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n" +
+                "Payment Confirmed\n" +
                 "Date: " + LocalDate.now() + "\n" +
-                "Payment method: " + paymentMethodDTO.getPaymentMethod() +"\n" +
-                "Cardholder name: " + paymentMethodDTO.getNameOnCard() + "\n" +
+                "Payment method: Mastercard" +"\n" +
                 "Total amount: " + amount);
     }
 }

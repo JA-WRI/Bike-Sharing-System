@@ -7,10 +7,10 @@ public class PaymentMethodDTO {
     private String nameOnCard;
     private String cardNumber;
     private String cvcNumber;
-    private Date expirationDate;
+    private String expirationDate;
     //private double amount;
 
-    public PaymentMethodDTO(String paymentMethod, String nameOnCard, String cardNumber, String cvcNumber, Date expirationDate) {
+    public PaymentMethodDTO(String paymentMethod, String nameOnCard, String cardNumber, String cvcNumber, String expirationDate) {
         this.paymentMethod = paymentMethod;
         this.nameOnCard = nameOnCard;
         this.cardNumber = cardNumber;
@@ -50,11 +50,11 @@ public class PaymentMethodDTO {
         this.cvcNumber = cvcNumber;
     }
 
-    public Date getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
     }
 }

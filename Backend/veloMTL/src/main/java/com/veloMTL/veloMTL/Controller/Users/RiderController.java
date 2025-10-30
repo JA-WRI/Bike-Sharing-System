@@ -18,12 +18,11 @@ public class RiderController {
 
     private final RiderService riderService; // change to facade obj
     private final RiderCommandFactory commandFactory;
-    private final PaymentMethodDTO paymentMethodDTO;
 
-    public RiderController(RiderService riderService, RiderCommandFactory commandFactory, PaymentMethodDTO paymentMethodDTO) {
+
+    public RiderController(RiderService riderService, RiderCommandFactory commandFactory) {
         this.riderService = riderService;
         this.commandFactory = commandFactory;
-        this.paymentMethodDTO = paymentMethodDTO;
     }
 
     @PostMapping("/command")
@@ -35,8 +34,6 @@ public class RiderController {
     }
     @PostMapping("/addPaymentMethod")
     public String addPaymentMethod(@RequestBody PaymentMethodDTO paymentMethodDTO) {
-
-
         return riderService.addPaymentMethod(paymentMethodDTO);
     }
 

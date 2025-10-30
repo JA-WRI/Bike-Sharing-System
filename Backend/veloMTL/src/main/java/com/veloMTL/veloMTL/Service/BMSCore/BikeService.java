@@ -84,7 +84,7 @@ public class BikeService {
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
     }
 
-    public ResponseDTO<BikeDTO> lockBike(String bikeId, String operatorId, String dockId){
+    public ResponseDTO<BikeDTO> lockBike(String bikeId, String userId, String dockId){
         Bike bike = loadDockWithState(bikeId);
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
         Station station = dock.getStation();
