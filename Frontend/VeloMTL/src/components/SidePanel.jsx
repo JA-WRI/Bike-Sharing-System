@@ -11,20 +11,52 @@ const SidePanel = ({ station, onClose, loading }) => {
           ✕
         </button>
       </div>
+
       <div className="side-panel-content">
         {loading ? (
           <p>Loading station data...</p>
         ) : (
           <>
             {station.streetAddress && <p>{station.streetAddress}</p>}
-            {station.capacity && <p><strong>Capacity:</strong> {station.capacity}</p>}
-            {station.stationStatus && <p><strong>Status:</strong> {station.stationStatus}</p>}
+            {station.capacity && (
+              <p>
+                <strong>Capacity:</strong> {station.capacity}
+              </p>
+            )}
+            {station.stationStatus && (
+              <p>
+                <strong>Status:</strong> {station.stationStatus}
+              </p>
+            )}
+            {station.occupancy && (
+              <p>
+                <strong>Occupancy:</strong> {station.occupancy}
+              </p>
+            )}
+
             {station.docks?.length > 0 && (
               <>
-                <p><strong>Docks:</strong></p>
-                <ul>
+                <p>
+                  <strong>Docks:</strong>
+                </p>
+                <ul className="dock-list">
                   {station.docks.map((dock) => (
-                    <li key={dock}>{dock}</li>
+                    <li key={dock.dockId} className="dock-item">
+                      <p>
+                        <strong>Dock:</strong> {dock.dockId}{" "}
+                        <span style={{ color: dock.status === "EMPTY" ? "green" : "red" }}>
+                          ({dock.status})
+                        </span>
+                      </p>
+
+                      {dock.bikeId ? (
+                        <div className="bike-item">
+                          🚲 <strong>{dock.bikeId}</strong>
+                        </div>
+                      ) : (
+                        <p className="no-bike">No bike in this dock</p>
+                      )}
+                    </li>
                   ))}
                 </ul>
               </>

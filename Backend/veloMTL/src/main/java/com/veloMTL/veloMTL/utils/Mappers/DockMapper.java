@@ -3,8 +3,10 @@ package com.veloMTL.veloMTL.utils.Mappers;
 import com.veloMTL.veloMTL.DTO.BMSCore.DockDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
+import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 
 public class DockMapper {
+
     public static Dock dtoToEntity(DockDTO dto, Station station) {
         Dock dock = new Dock();
         dock.setDockId(dto.getDockId());
@@ -20,8 +22,10 @@ public class DockMapper {
         dto.setDockId(dock.getDockId());
         dto.setStatus(dock.getStatus());
         dto.setStationId(dock.getStation() != null ? dock.getStation().getId() : null);
-        dto.setReserveUser(dock.getReserveUser());
-        dto.setReserveDate(dock.getReserveDate());
+        dto.setReserveUser(dock.getReserveUser() != null ? dock.getReserveUser(): null);
+        dto.setReserveDate(dock.getReserveDate() != null ? dock.getReserveDate(): null);
+        dto.setBikeId(dock.getBike() != null ? dock.getBike(): null);
+
         return dto;
     }
 

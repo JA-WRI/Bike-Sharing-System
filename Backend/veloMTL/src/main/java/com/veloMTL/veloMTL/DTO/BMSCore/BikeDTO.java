@@ -15,7 +15,7 @@ public class BikeDTO {
 
     public BikeDTO(){};
 
-    public BikeDTO(String bikId, String bikeType, String dockId, BikeStatus bikeStatus, LocalDateTime reserveDate) {
+    public BikeDTO(String bikId, String bikeType, String dockId, BikeStatus bikeStatus) {
         this.bikId = bikId;
         this.bikeType = bikeType;
         this.dockId = dockId;

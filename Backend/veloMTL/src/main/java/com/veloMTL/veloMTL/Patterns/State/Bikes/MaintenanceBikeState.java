@@ -26,7 +26,7 @@ public class MaintenanceBikeState implements BikeState {
         bike.setState(new AvailableBikeState());
         bike.setDock(dock);
 
-        dock.setBike(bike);
+        dock.setBike(bike.getBikeId());
         dock.setStatus(DockStatus.OCCUPIED);
         dock.setState(new OccupiedDockState());
 
