@@ -1,0 +1,111 @@
+/* Full-screen overlay */
+.command-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* dark transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* on top of everything */
+}
+
+/* Modal container */
+.command-menu-modal {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  padding: 20px 30px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  overflow-y: auto;
+  max-height: 90%;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Header */
+.command-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.command-title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.command-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.command-section {
+  margin-bottom: 20px;
+}
+
+.command-section h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.command-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.command-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.1s, box-shadow 0.2s, filter 0.2s;
+}
+
+/* Dim, muted colors */
+.command-btn.primary {
+  background-color: #556ee6; /* muted blue */
+  color: #fff;
+}
+
+.command-btn.success {
+  background-color: #4caf7a; /* muted green */
+  color: #fff;
+}
+
+.command-btn.secondary {
+  background-color: #7b8794; /* dim gray-blue */
+  color: #fff;
+}
+
+.command-btn.warning {
+  background-color: #d4a017; /* muted gold/yellow */
+  color: #fff;
+}
+
+/* Subtle hover effect */
+.command-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+  filter: brightness(1.05);
+}
+
+/* Active click effect */
+.command-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+  filter: brightness(1);
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

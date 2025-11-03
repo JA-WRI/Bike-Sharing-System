@@ -4,6 +4,7 @@ import SidePanel from "../components/SidePanel";
 import '../styles/map.css';
 import '../styles/SidePanel.css';
 import { getStationById } from "../api/stationApi";
+import CommandMenu from "../components/CommandMenu";
 
 const stations = [
   { id: "ST001", position: "45.5017,-73.5673", stationName: "Downtown Central", streetAddress: "123 Main St, Montreal, QC" },
@@ -13,6 +14,7 @@ const stations = [
 
 const Dashboard = () => {
   const [selectedStation, setSelectedStation] = useState(null);
+  const [selectedDock, setSelectedDock] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Fetch all stations 
@@ -39,10 +41,21 @@ const Dashboard = () => {
         />
         <SidePanel
           station={selectedStation}
-          onClose={() => setSelectedStation(null)}
+          onClose={() => {
+            setSelectedStation(null);
+            setSelectedDock(null);
+          }}
           loading={loading}
+          onDockSelect={setSelectedDock}
         />
       </div>
+      {selectedDock && (
+        <CommandMenu
+          station={selectedStation}
+          dock={selectedDock}
+          onClose={() => setSelectedDock(null)}
+        />
+      )}
     </div>
   );
 };

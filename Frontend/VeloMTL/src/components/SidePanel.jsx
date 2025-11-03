@@ -1,6 +1,7 @@
 import React from "react";
 
-const SidePanel = ({ station, onClose, loading }) => {
+
+const SidePanel = ({ station, onClose, loading, onDockSelect }) => {
   if (!station) return null; // Don't render panel if no station selected
 
   return (
@@ -41,7 +42,12 @@ const SidePanel = ({ station, onClose, loading }) => {
                 </p>
                 <ul className="dock-list">
                   {station.docks.map((dock) => (
-                    <li key={dock.dockId} className="dock-item">
+                    <li 
+                    key={dock.dockId} 
+                    className="dock-item"
+                    onClick={() => onDockSelect(dock)}
+                    style={{ cursor: "pointer" }}
+                    >
                       <p>
                         <strong>Dock:</strong> {dock.dockId}{" "}
                         <span style={{ color: dock.status === "EMPTY" ? "green" : "red" }}>
