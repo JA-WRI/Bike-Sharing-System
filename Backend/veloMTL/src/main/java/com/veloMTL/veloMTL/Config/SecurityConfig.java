@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Config;
 
+import com.veloMTL.veloMTL.Model.Enums.Permissions;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.Security.JWTFilter;
@@ -79,7 +80,8 @@ public class SecurityConfig {
                                 "/",
                                 "/login/**",
                                 "/oauth2/**",
-                                "/stations/**"
+                                "/stations/**",
+                                "/admin/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -101,16 +103,19 @@ public class SecurityConfig {
 
                             // Determine role (RIDER or OPERATOR)
                             String role;
+                            List<Permissions> permissions;
                             if (riderRepository.existsByEmail(email)) {
                                 role = "RIDER";
+                                permissions = List.of(Permissions.BIKE_UNLOCK, Permissions.BIKE_RETURN, Permissions.BIKE_RESERVE, Permissions.DOCK_RESERVE);
                             } else if (operatorRepository.existsByEmail(email)) {
                                 role = "OPERATOR";
+                                permissions =  List.of(Permissions.DOCK_OOS, Permissions.RESTORE_DOCK, Permissions.STATION_OOS, Permissions.RESTORE_STATION, Permissions.BIKE_MOVE);
                             } else {
                                 throw new RuntimeException("User not found in either Riders or Operators");
                             }
 
                             // Generate JWT
-                            String token = jwtService.generateToken(email, role);
+                            String token = jwtService.generateToken(email, role, permissions);
 
                             // Redirect with JWT or return JSON
                             response.sendRedirect("/api/auth/dashboard?token=" + token);

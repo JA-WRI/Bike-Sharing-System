@@ -62,7 +62,7 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
     if(!passwordEncoder.matches(loginDTO.getPassword(), rider.getPassword())) {
         throw new RuntimeException("Invalid password");
     }
-    String token = jwtService.generateToken(rider.getEmail(), rider.getRole());
+    String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
     return new LoginResponseDTO(
             token,
@@ -79,7 +79,7 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
         if (!loginDTO.getPassword().equals(operator.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
-        String token = jwtService.generateToken(operator.getEmail(),operator.getRole());
+        String token = jwtService.generateToken(operator.getEmail(),operator.getRole(), operator.getPermissions());
 
         return new LoginResponseDTO(
                 token,
