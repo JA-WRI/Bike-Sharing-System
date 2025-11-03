@@ -45,16 +45,13 @@ export default function Login() {
         required
       />
 
-      {/* User icon to toggle role selector */}
       <button
         type="button"
         onClick={() => setShowRoleSelector((prev) => !prev)}
         style={{ marginLeft: "10px" }}
       >
-        👤
       </button>
 
-      {/* Role dropdown shows only when user clicks icon */}
       {showRoleSelector && (
         <select value={role} onChange={(e) => setRole(e.target.value)}>
           <option value="RIDER">Rider</option>

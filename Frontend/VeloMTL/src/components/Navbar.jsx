@@ -18,7 +18,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <Link to="/" className="navbar-link">Home</Link>
+        <Link to="/" className="navbar-link">Dashboard</Link>
       </div>
 
       <div className="navbar-right">

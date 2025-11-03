@@ -8,7 +8,6 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 const JAWG_TOKEN = import.meta.env.VITE_JAWG_TOKEN;
 
-// Fix for default marker icons
 const DefaultIcon = L.icon({ iconUrl, shadowUrl: iconShadow });
 L.Marker.prototype.options.icon = DefaultIcon;
 

@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080", // adjust if your backend runs elsewhere
+  baseURL: "http://localhost:8080", 
 });
 
 // Automatically attach JWT to all /api/** calls
@@ -20,7 +20,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Global error handling (optional but recommended)
 api.interceptors.response.use(
   (response) => response,
   (error) => {

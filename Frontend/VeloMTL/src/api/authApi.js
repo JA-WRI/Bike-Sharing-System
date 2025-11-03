@@ -10,7 +10,7 @@ export const loginUser = async (email, password, role) => {
 
     const response = await axios.post(
       endpoint,
-      { email, password }, // must match backend request shape
+      { email, password }, 
       { headers: { "Content-Type": "application/json" } }
     );
 
