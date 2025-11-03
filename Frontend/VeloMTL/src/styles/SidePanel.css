@@ -1,6 +1,6 @@
 .side-panel {
   position: relative;
-  height: 75vh; /* matches the map height */
+  height: 70vh; /* matches the map height */
   width: 400px;
   background-color: #fff;
   border-left: 2px solid #ddd;

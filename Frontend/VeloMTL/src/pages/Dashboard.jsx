@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MapView from "../components/MapView";
 import SidePanel from "../components/SidePanel";
 import '../styles/map.css';
 import '../styles/SidePanel.css';
+import { getStationById } from "../api/stationApi";
 
 const stations = [
   { id: "ST001", position: "45.5017,-73.5673", stationName: "Downtown Central", streetAddress: "123 Main St, Montreal, QC" },
@@ -14,31 +15,23 @@ const Dashboard = () => {
   const [selectedStation, setSelectedStation] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch full station info
-  const fetchStationDetails = async (stationId) => {
+  // Fetch all stations 
+  const handleMarkerClick = async (stationId) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch(`http://localhost:8080/stations/${stationId}`);
-      if (!response.ok) throw new Error("Failed to fetch station data");
-      const data = await response.json();
-      setSelectedStation(data); // Update side panel with fetched info
+      const data = await getStationById(stationId);
+      setSelectedStation(data);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch station details:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Called when marker is clicked
-  const handleMarkerClick = (stationId) => {
-    // Show loading state immediately
-    setSelectedStation({ id: stationId });
-    fetchStationDetails(stationId);
-  };
 
   return (
     <div className="dashboard-container">
-      <h1 className="dashboard-title">Welcome to the Dashboard</h1>
+      <h1 className="dashboard-title"></h1>
       <div className="map-container">
         <MapView
           stations={stations}
