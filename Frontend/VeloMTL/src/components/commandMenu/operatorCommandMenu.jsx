@@ -13,6 +13,19 @@ const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseSta
   const { user } = useContext(AuthContext);
 
   const handleCommand = async (action, ...args) => {
+    let extraParams = {};
+
+  if (action === "LB") {
+    const bikeId = prompt("Enter the Bike ID to lock:");
+    if (!bikeId) {
+      alert("Bike ID is required to lock the bike.");
+      return;
+    }
+    extraParams.bikeId = bikeId;
+  }
+
+  console.log(`Command "${action}" sent for dock ${dock.dockId}`);
+
     try {
       let response;
 
@@ -24,16 +37,16 @@ const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseSta
           response = await restoreStation(user.id, station.id);
           break;
         case "MDOS":
-          response = await markDockOutOfService(user.id, station.id, dock.dockId);
+          response = await markDockOutOfService(user.id, dock.dockId);
           break;
         case "RD":
-          response = await restoreDock(user.id, station.id, dock.dockId);
+          response = await restoreDock(user.id, dock.dockId);
           break;
         case "UB":
-          response = await unlockBike(user.id, dock.bikeId, dock.dockId);
+          response = await unlockBike(user.id, dock.bikeId);
           break;
         case "LB":
-          response = await lockBike(user.id, dock.bikeId, dock.dockId);
+          response = await lockBike(user.id, extraParams.bikeId, dock.dockId);
           break;
         default:
           console.warn("Unknown operator command:", action);
@@ -78,10 +91,14 @@ const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseSta
       <div className="command-section">
         <h3>Bike: {dock.bikeId}</h3>
         <div className="command-buttons">
-          <button onClick={() => handleCommand("UB")} className="command-btn primary">
+          <button onClick={() => handleCommand("UB")} 
+          className="command-btn primary"
+          disabled={!dock.bikeId}>
             Unlock Bike
           </button>
-          <button onClick={() => handleCommand("LB")} className="command-btn secondary">
+          <button onClick={() => handleCommand("LB")} 
+          className="command-btn secondary"
+          disabled={dock.bikeId}>
             Lock Bike
           </button>
         </div>

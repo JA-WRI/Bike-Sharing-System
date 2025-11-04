@@ -119,3 +119,14 @@
   color: #1e7a1e;                 
   border: 2px solid #2ecc71;    
 }
+.command-response.error {
+  background-color: #fdecea;
+  color: #b22222;                 
+  border: 2px solid #e74c3c;     
+}
+
+.command-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(40%);
+}
