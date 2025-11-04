@@ -32,7 +32,7 @@ public class RiderLockBike implements Command<ResponseDTO<BikeDTO>> {
         Trip trip = tripService.findOngoingTrip(bikeId, riderId);
         if (trip != null) {
             tripService.endTrip(trip);
-            paymentService.pay(riderId, trip);
+            //paymentService.pay(riderId, trip);
         }
         return responseDTO;
     }

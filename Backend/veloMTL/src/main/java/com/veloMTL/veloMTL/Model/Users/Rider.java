@@ -12,6 +12,8 @@ public class Rider extends User{
 
     private PaymentMethod paymentMethod; //this should be turned into a PaymentMethod object
     private String reservationId; //only if a user reserves a bike
+    private String stripeCustomerId;
+
 
     public Rider() {
         super();
@@ -38,4 +40,14 @@ public class Rider extends User{
     public void setReservationId(String reservationId) {
         this.reservationId = reservationId;
     }
+
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
+
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
+    }
+
+
 }

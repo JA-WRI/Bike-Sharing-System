@@ -55,7 +55,6 @@ const Navbar = () => {
                 <FaBell
                   className="notification-bell-icon"
                   onClick={handleBellClick}
-                  
                 />
                 {unreadCount > 0 && <span className="red-dot"></span>}
                 {isBellOpen && (
@@ -73,18 +72,27 @@ const Navbar = () => {
                 )}
               </div>
             )}
-          <div className="navbar-user">
-            <FaUserCircle
-              className="user-icon"
-              onClick={() => setShowDropdown(!showDropdown)}
-            />
-            {showDropdown && (
-              <div className="user-dropdown">
-                <p><strong>{user.name}</strong></p>
-                <p>{user.email}</p>
-                <button onClick={handleLogout}>Logout</button>
-              </div>
-            )}
+
+            <div className="navbar-user">
+              <FaUserCircle
+                className="user-icon"
+                onClick={() => setShowDropdown(!showDropdown)}
+              />
+              {showDropdown && (
+                <div className="user-dropdown">
+                  <p><strong>{user.name}</strong></p>
+                  <p>{user.email}</p>
+
+                  {/* Add Payment button only for riders */}
+                  {userRole === "RIDER" && (
+                    <button onClick={() => navigate("/add-payment")}>
+                      Add Payment
+                    </button>
+                  )}
+
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              )}
             </div>
           </div>
         )}

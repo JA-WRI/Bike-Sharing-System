@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/riders")
 public class RiderController {
@@ -33,8 +35,10 @@ public class RiderController {
         return ResponseEntity.ok(response);
     }
     @PostMapping("/addPaymentMethod")
-    public String addPaymentMethod(@RequestBody PaymentMethodDTO paymentMethodDTO) {
-        return riderService.addPaymentMethod(paymentMethodDTO);
+    public ResponseEntity<Map<String, Object>> addPaymentMethod(@RequestBody Map<String, String> request) {
+        String riderEmail = request.get("email");
+        Map<String, Object> response = riderService.addPaymentMethod(riderEmail);
+        return ResponseEntity.ok(response);
     }
 
 
