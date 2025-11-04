@@ -81,20 +81,19 @@ public class SecurityConfig {
                                 "/login/**",
                                 "/oauth2/**",
                                 "/stations/**",
-                                "/admin/**"
+                                "/admin/**",
+                                "/ws/**" // <-- ADD THIS LINE to allow SockJS info requests
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
-                            // Return JSON instead of redirect
                             response.setContentType("application/json");
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.getWriter().write("{\"error\": \"Unauthorized or invalid token\"}");
                         })
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        // This URL is hit *only* when the user clicks "Login with Google"
                         .loginPage("/oauth2/authorization/google")
                         .userInfoEndpoint(userInfo -> userInfo.userService(googleRegistrationService))
                         .successHandler((request, response, authentication) -> {
@@ -114,10 +113,8 @@ public class SecurityConfig {
                                 throw new RuntimeException("User not found in either Riders or Operators");
                             }
 
-                            // Generate JWT
                             String token = jwtService.generateToken(email, role, permissions);
 
-                            // Redirect with JWT or return JSON
                             response.sendRedirect("/api/auth/dashboard?token=" + token);
                         })
                 );

@@ -70,7 +70,9 @@ const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseSta
           <button onClick={() => handleCommand("MSOS")} className="command-btn warning">
             Mark Station Out of Service
           </button>
-          <button onClick={() => handleCommand("RS")} className="command-btn success">
+          <button onClick={() => handleCommand("RS")} 
+           className="command-btn success"
+           >
             Restore Station
           </button>
         </div>
@@ -79,10 +81,15 @@ const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseSta
       <div className="command-section">
         <h3>Dock: {dock.dockId}</h3>
         <div className="command-buttons">
-          <button onClick={() => handleCommand("MDOS")} className="command-btn warning">
+          <button onClick={() => handleCommand("MDOS")} 
+          className="command-btn warning"
+          disabled={dock.status == "OUT_OF_SERVICE"}>
             Mark Dock Out of Service
           </button>
-          <button onClick={() => handleCommand("RD")} className="command-btn success">
+          <button onClick={() => handleCommand("RD")} 
+          className="command-btn success"
+          disabled={dock.status != "OUT_OF_SERVICE"}
+          >
             Restore Dock
           </button>
         </div>
@@ -98,7 +105,8 @@ const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseSta
           </button>
           <button onClick={() => handleCommand("LB")} 
           className="command-btn secondary"
-          disabled={dock.bikeId}>
+          disabled={dock.bikeId || dock.status === "OUT_OF_SERVICE"}
+          >
             Lock Bike
           </button>
         </div>

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import MapView from "../components/MapView";
 import SidePanel from "../components/SidePanel";
-import '../styles/map.css';
+import '../styles/Dashboard.css';
 import '../styles/SidePanel.css';
 import { getStationById } from "../api/stationApi";
 import CommandMenu from "../components/commandMenu/CommandMenu";
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const [selectedStation, setSelectedStation] = useState(null);
   const [selectedDock, setSelectedDock] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   // Fetch all stations 
   const handleMarkerClick = async (stationId) => {

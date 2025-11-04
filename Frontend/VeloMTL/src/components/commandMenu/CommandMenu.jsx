@@ -1,4 +1,3 @@
-// src/components/CommandMenu/CommandMenu.jsx
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import OperatorCommandMenu from "./operatorCommandMenu";
