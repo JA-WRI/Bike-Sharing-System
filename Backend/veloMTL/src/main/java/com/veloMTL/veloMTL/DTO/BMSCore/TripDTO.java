@@ -3,11 +3,12 @@ package com.veloMTL.veloMTL.DTO.BMSCore;
 import java.time.LocalDateTime;
 
 public class TripDTO {
-    private String tripId;
+
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String bikeId;
     private String riderId;
+    private String tripId;
 
     public TripDTO(){};
 
@@ -23,36 +24,36 @@ public class TripDTO {
         return tripId;
     }
 
-    public void setTripId(String tripId) {
-        this.tripId = tripId;
+    public String getBikeId() {
+        return bikeId;
+    }
+
+    public String getRiderId() {
+        return riderId;
     }
 
     public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 
-    public String getBikeId() {
-        return bikeId;
-    }
-
     public void setBikeId(String bikeId) {
         this.bikeId = bikeId;
-    }
-
-    public String getRiderId() {
-        return riderId;
     }
 
     public void setRiderId(String riderId) {

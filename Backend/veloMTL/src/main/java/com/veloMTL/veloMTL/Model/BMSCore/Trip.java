@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Document(collection = "Trips")
-@TypeAlias("trip")
 public class Trip {
     @Id
     private String tripId;
@@ -25,20 +24,19 @@ public class Trip {
     @DBRef(lazy = true)
     private Rider rider;
 
-//    @Transient
-//    private BikeState state;
+    public Trip(){}
 
-
-    public Trip(String tripId, LocalDateTime startTime, LocalDateTime endTime, Bike bike, Rider rider) {
-        this.tripId = tripId;
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public Trip(Bike bike, Rider rider) {
         this.bike = bike;
         this.rider = rider;
     }
 
     public String getTripId() {
         return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
     }
 
     public LocalDateTime getStartTime() {
@@ -58,10 +56,18 @@ public class Trip {
     }
 
     public Bike getBike() {
-        return this.bike;
+        return bike;
+    }
+
+    public void setBike(Bike bike) {
+        this.bike = bike;
     }
 
     public Rider getRider() {
-        return this.rider;
+        return rider;
+    }
+
+    public void setRider(Rider rider) {
+        this.rider = rider;
     }
 }

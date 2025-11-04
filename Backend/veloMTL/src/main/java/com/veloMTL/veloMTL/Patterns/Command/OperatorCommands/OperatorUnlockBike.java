@@ -10,15 +10,17 @@ public class OperatorUnlockBike implements Command<ResponseDTO<BikeDTO>> {
     private final BikeService bikeService;
     private final String operatorId;
     private final String bikeId;
+    private final UserStatus role;
 
-    public OperatorUnlockBike(BikeService bikeService, String operatorId, String bikeId) {
+    public OperatorUnlockBike(BikeService bikeService, String operatorId, String bikeId, UserStatus role) {
         this.bikeService = bikeService;
         this.operatorId = operatorId;
         this.bikeId = bikeId;
+        this.role = role;
     }
 
     @Override
     public ResponseDTO<BikeDTO> execute() {
-        return bikeService.unlockBike(bikeId, operatorId, UserStatus.OPERATOR);
+        return bikeService.unlockBike(bikeId, operatorId, role);
     }
 }
