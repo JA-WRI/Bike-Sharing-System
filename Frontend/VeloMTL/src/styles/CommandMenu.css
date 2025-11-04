@@ -109,3 +109,19 @@
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
+
+.command-response {
+  margin: 10px 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: bold;          
+  text-align: center;
+  font-size: 1rem;
+  transition: opacity 0.3s ease;
+}
+
+.command-response.success {
+  background-color: #e6f9ec;
+  color: #1e7a1e;                 
+  border: 2px solid #2ecc71;    
+}

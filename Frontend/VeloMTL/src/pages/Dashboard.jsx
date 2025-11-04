@@ -4,7 +4,7 @@ import SidePanel from "../components/SidePanel";
 import '../styles/map.css';
 import '../styles/SidePanel.css';
 import { getStationById } from "../api/stationApi";
-import CommandMenu from "../components/CommandMenu";
+import CommandMenu from "../components/commandMenu/CommandMenu";
 
 const stations = [
   { id: "ST001", position: "45.5017,-73.5673", stationName: "Downtown Central", streetAddress: "123 Main St, Montreal, QC" },
