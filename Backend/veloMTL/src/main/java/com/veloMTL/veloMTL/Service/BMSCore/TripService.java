@@ -18,44 +18,35 @@ import java.time.LocalDateTime;
 @Service
 public class TripService {
     private final BikeRepository bikeRepository;
-    private final DockRepository dockRepository;
-    private final StationRepository stationRepository;
-    private final StationService stationService;
     private final RiderRepository riderRepository;
     private final TripRepository tripRepository;
 
-    public TripService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, RiderRepository riderRepository, TripRepository tripRepository) {
+    public TripService(BikeRepository bikeRepository, RiderRepository riderRepository, TripRepository tripRepository) {
         this.bikeRepository = bikeRepository;
-        this.dockRepository = dockRepository;
-        this.stationRepository = stationRepository;
-        this.stationService = stationService;
         this.riderRepository = riderRepository;
         this.tripRepository = tripRepository;
     }
 
     //can change this later if needed
-    public TripDTO createTrip(TripDTO tripDTO) {
+    public Trip createTrip(String bikeId, String riderId) {
         //Find the bike
-        Bike bike = bikeRepository.findById(tripDTO.getBikeId()).orElseThrow(() -> new RuntimeException("Bike not found"));;
+        Bike bike = bikeRepository.findById(bikeId).orElseThrow(() -> new RuntimeException("Bike not found"));;
         //Find the rider
-        Rider rider = riderRepository.findById(tripDTO.getRiderId()).orElseThrow(() -> new RuntimeException("Rider not found"));;
+        Rider rider = riderRepository.findById(riderId).orElseThrow(() -> new RuntimeException("Rider not found"));;
 
         // Create Trip object
-        Trip trip = TripMapper.dtoToEntity(tripDTO, bike, rider);
-        String startTime = LocalDateTime.now().toString();
-        trip.setStartTime(startTime);
-
+        Trip trip = new Trip(bike, rider);
+        trip.setStartTime(LocalDateTime.now());
         //save the trip
         Trip savedTrip = tripRepository.save(trip);
+        riderRepository.save(rider);
 
-        return TripMapper.entityToDto(savedTrip);
+        return trip;
     }
 
     public TripDTO endTrip(Trip trip) {
-        String endTime = LocalDateTime.now().toString();
-        Trip endedTrip = new Trip(trip.getTripId(), trip.getStartTime(), endTime, trip.getBike(), trip.getRider());
-
-        Trip savedTrip = tripRepository.save(endedTrip);
+        trip.setEndTime(LocalDateTime.now());
+        Trip savedTrip = tripRepository.save(trip);
 
         return TripMapper.entityToDto(savedTrip);
     }

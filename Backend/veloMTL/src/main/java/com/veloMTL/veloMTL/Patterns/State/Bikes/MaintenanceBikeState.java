@@ -20,8 +20,10 @@ public class MaintenanceBikeState implements BikeState {
     }
 
     @Override
-    public StateChangeResponse lockBike(Bike bike, Dock dock) {
-        //only operators can do this
+    public StateChangeResponse lockBike(Bike bike, Dock dock, UserStatus role) {
+        if(role == UserStatus.RIDER){
+            return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is out of service, please give it to an operator");
+        }
         bike.setBikeStatus(BikeStatus.AVAILABLE);
         bike.setState(new AvailableBikeState());
         bike.setDock(dock);
@@ -38,8 +40,4 @@ public class MaintenanceBikeState implements BikeState {
         return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Cannot reserve a bike that is out of service");
     }
 
-    @Override
-    public StateChangeResponse markOutOfService(Bike bike) {
-        return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Bike is already out of service");
-    }
 }

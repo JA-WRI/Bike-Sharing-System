@@ -21,7 +21,7 @@ public class OnTripBikeState implements BikeState{
     }
 
     @Override
-    public StateChangeResponse lockBike(Bike bike, Dock dock) {
+    public StateChangeResponse lockBike(Bike bike, Dock dock, UserStatus role) {
 
         if (dock.getStatus() == DockStatus.EMPTY) {
             // Dock is empty — put bike back
@@ -78,8 +78,4 @@ public class OnTripBikeState implements BikeState{
         return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is currently being used");
     }
 
-    @Override
-    public StateChangeResponse markOutOfService(Bike bike) {
-        return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is currently being used");
-    }
 }

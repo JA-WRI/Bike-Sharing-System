@@ -2,7 +2,6 @@ package com.veloMTL.veloMTL.Model.Users;
 
 import com.veloMTL.veloMTL.Model.Enums.Permissions;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.List;
 
 
@@ -37,4 +36,5 @@ public class Rider extends User{
     public void setReservationId(String reservationId) {
         this.reservationId = reservationId;
     }
+
 }
