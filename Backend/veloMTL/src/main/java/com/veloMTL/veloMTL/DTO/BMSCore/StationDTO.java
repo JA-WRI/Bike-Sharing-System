@@ -1,4 +1,5 @@
 package com.veloMTL.veloMTL.DTO.BMSCore;
+import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 
 import java.util.List;
@@ -11,11 +12,12 @@ public class StationDTO {
     private String streetAddress;
     private StationStatus stationStatus;
     private int capacity;
-    private List<String> docks;
+    private int occupancy;
+    private List<DockDTO> docks;
 
     public StationDTO(){};
 
-    public StationDTO(List<String> docks, int capacity, StationStatus stationStatus, String streetAddress, String position, String stationName, String id) {
+    public StationDTO(List<DockDTO> docks, int capacity, StationStatus stationStatus, String streetAddress, String position, String stationName, String id, int occupancy) {
         this.docks = docks;
         this.capacity = capacity;
         this.stationStatus = stationStatus;
@@ -23,6 +25,7 @@ public class StationDTO {
         this.position = position;
         this.stationName = stationName;
         this.id = id;
+        this.occupancy = occupancy;
     }
 
     public String getId() {
@@ -73,11 +76,19 @@ public class StationDTO {
         this.capacity = capacity;
     }
 
-    public List<String> getDocks() {
+    public List<DockDTO> getDocks() {
         return docks;
     }
 
-    public void setDocks(List<String> docks) {
+    public void setDocks(List<DockDTO> docks) {
         this.docks = docks;
+    }
+
+    public int getOccupancy() {
+        return occupancy;
+    }
+
+    public void setOccupancy(int occupancy) {
+        this.occupancy = occupancy;
     }
 }

@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Model.Users;
 
 import com.veloMTL.veloMTL.Patterns.Strategy.PaymentMethod;
+import com.veloMTL.veloMTL.Model.Enums.Permissions;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public class Rider extends User{
     }
 
     public Rider(String name, String email, String password) {
-        super(name, email, password, "RIDER", List.of("RESERVE_DOCK", "UNLOCK_BIKE", "VIEW_STATION"));
+        super(name, email, password, "RIDER",
+                List.of(Permissions.BIKE_UNLOCK, Permissions.BIKE_RETURN, Permissions.BIKE_RESERVE, Permissions.DOCK_RESERVE));
     }
 
     public PaymentMethod getPaymentMethod() {

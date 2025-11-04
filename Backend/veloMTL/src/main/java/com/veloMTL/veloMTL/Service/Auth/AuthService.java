@@ -1,7 +1,8 @@
 package com.veloMTL.veloMTL.Service.Auth;
 
-import com.veloMTL.veloMTL.DTO.Users.LoginDTO;
+import com.veloMTL.veloMTL.DTO.auth.LoginDTO;
 import com.veloMTL.veloMTL.DTO.Users.RegistrationDTO;
+import com.veloMTL.veloMTL.DTO.auth.LoginResponseDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
@@ -54,25 +55,37 @@ public class AuthService {
         return riderRepository.save(newRider);
     }
 
-public String loginRider(LoginDTO loginDTO){
+public LoginResponseDTO loginRider(LoginDTO loginDTO){
         Rider rider = riderRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("wrong email"));
 
     if(!passwordEncoder.matches(loginDTO.getPassword(), rider.getPassword())) {
         throw new RuntimeException("Invalid password");
     }
+    String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
-    return jwtService.generateToken(rider.getEmail(), rider.getRole());
+    return new LoginResponseDTO(
+            token,
+            rider.getName(),
+            rider.getEmail(),
+            rider.getRole()
+    );
 }
 
-    public String loginOperator(LoginDTO loginDTO) {
+    public LoginResponseDTO loginOperator(LoginDTO loginDTO) {
         Operator operator = (Operator) operatorRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("wrong email"));
 
         if (!loginDTO.getPassword().equals(operator.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
+        String token = jwtService.generateToken(operator.getEmail(),operator.getRole(), operator.getPermissions());
 
-        return jwtService.generateToken(operator.getEmail(),operator.getRole());
+        return new LoginResponseDTO(
+                token,
+                operator.getName(),
+                operator.getEmail(),
+                operator.getRole()
+        );
     }
 }

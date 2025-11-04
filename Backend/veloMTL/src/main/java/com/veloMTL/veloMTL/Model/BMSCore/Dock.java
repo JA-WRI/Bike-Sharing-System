@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.time.LocalDateTime;
 
@@ -21,8 +22,7 @@ public class Dock {
     @DBRef(lazy = true)
     private Station station;
 
-    @DBRef(lazy = true)
-    private Bike bike;
+    private String bike;
 
     @Transient
     private DockState state;
@@ -67,11 +67,11 @@ public class Dock {
         this.state = state;
     }
 
-    public Bike getBike() {
+    public String getBike() {
         return bike;
     }
 
-    public void setBike(Bike bike) {
+    public void setBike(String bike) {
         this.bike = bike;
     }
 

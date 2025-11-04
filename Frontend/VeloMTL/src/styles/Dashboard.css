@@ -1,11 +1,12 @@
-/* Dashboard container */
 .dashboard-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
-  background-color: #f9fafb;
-  min-height: 100vh;
+  background-color: #ffff;
+  min-height: 75vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 .dashboard-title {
@@ -22,6 +23,7 @@
   align-items: flex-start;
   width: 95%;
   min-height: 75vh; 
+  z-index: 1;
 }
 
 .map-wrapper {
@@ -58,4 +60,5 @@
     width: 100% !important; /* make sure panel is full width */
     margin-top: 1rem;
   }
+
 }
