@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import axios from "axios";
+import { createSetupIntent } from "../api/paymentMethodApi";
 
 export default function AddCardForm({ riderEmail }) {
   const stripe = useStripe();
@@ -10,20 +10,20 @@ export default function AddCardForm({ riderEmail }) {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    // Call backend to create Stripe SetupIntent
     if (!riderEmail) return;
 
-    axios
-      .post("http://localhost:8080/api/riders/addPaymentMethod", { email: riderEmail })
-      .then((res) => {
-        // Expecting RiderDTO with clientSecret
-        setClientSecret(res.data.clientSecret);
-        setMessage(""); // clear any previous error
-      })
-      .catch((err) => {
+    const initPayment = async () => {
+      try {
+        const data = await createSetupIntent(riderEmail);
+        setClientSecret(data.clientSecret);
+        setMessage("");
+      } catch (err) {
         console.error(err);
         setMessage("Failed to initialize payment method");
-      });
+      }
+    };
+
+    initPayment();
   }, [riderEmail]);
 
   const handleSubmit = async (e) => {
@@ -42,7 +42,7 @@ export default function AddCardForm({ riderEmail }) {
     if (error) {
       setMessage(error.message);
     } else {
-      setMessage(`Card added! Payment method ID: ${setupIntent.payment_method}`);
+      setMessage(`Card added successfully! Payment Method ID: ${setupIntent.payment_method}`);
       console.log("SetupIntent:", setupIntent);
     }
   };
