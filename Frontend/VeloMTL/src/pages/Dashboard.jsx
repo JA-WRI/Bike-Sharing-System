@@ -20,17 +20,21 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState([]);
 
   // Fetch all stations 
-  const handleMarkerClick = async (stationId) => {
-    setLoading(true);
-    try {
-      const data = await getStationById(stationId);
-      setSelectedStation(data);
-    } catch (err) {
-      console.error("Failed to fetch station details:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+const handleMarkerClick = async (stationId) => {
+  // Instantly open the panel with minimal info
+  const clickedStation = stations.find((s) => s.id === stationId);
+  setSelectedStation({ stationName: clickedStation.stationName }); // Open right away
+  setLoading(true);
+
+  try {
+    const data = await getStationById(stationId);
+    setSelectedStation(data); // Replace placeholder with full data
+  } catch (err) {
+    console.error("Failed to fetch station details:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   return (
