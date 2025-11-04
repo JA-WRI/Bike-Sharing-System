@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import AddCardForm from "../components/AddCardForm";
+import AddCardForm from "../components/AddPaymentMethod";
 import { AuthContext } from "../context/AuthContext";
 
 const AddPayment = () => {
