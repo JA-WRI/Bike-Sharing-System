@@ -1,9 +1,9 @@
 package com.veloMTL.veloMTL.Controller.Users;
 
-import com.veloMTL.veloMTL.DTO.Users.LoginDTO;
+import com.veloMTL.veloMTL.DTO.auth.LoginDTO;
 import com.veloMTL.veloMTL.DTO.Users.RegistrationDTO;
+import com.veloMTL.veloMTL.DTO.auth.LoginResponseDTO;
 import com.veloMTL.veloMTL.Model.Users.Rider;
-import com.veloMTL.veloMTL.Security.JwtService;
 import com.veloMTL.veloMTL.Service.Auth.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +15,9 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
-    private final JwtService jwtService;
 
-    public AuthController(AuthService authService, JwtService jwtService){
+    public AuthController(AuthService authService){
         this.authService = authService;
-        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -36,15 +34,16 @@ public class AuthController {
     public String loginSuccess() {
         return " Google login successful! Welcome to your dashboard.";
     }
+
     @PostMapping("/rider/login")
     public ResponseEntity<?> riderLogin(@RequestBody LoginDTO loginDTO){
-        String token = authService.loginRider(loginDTO);
-        return ResponseEntity.ok(Map.of("token",token));
+        LoginResponseDTO response = authService.loginRider(loginDTO);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/operator/login")
     public ResponseEntity<?> operatorLogin(@RequestBody LoginDTO loginDTO){
-        String token = authService.loginOperator(loginDTO);
-        return ResponseEntity.ok(Map.of("token",token));
+        LoginResponseDTO response = authService.loginOperator(loginDTO);
+        return ResponseEntity.ok(response);
     }
 }

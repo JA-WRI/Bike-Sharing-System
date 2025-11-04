@@ -33,7 +33,7 @@ public class OnTripBikeState implements BikeState{
 
             dock.setState(new OccupiedDockState());
             dock.setStatus(DockStatus.OCCUPIED);
-            dock.setBike(bike);
+            dock.setBike(bike.getBikeId());
             dock.setReserveDate(null);
             dock.setReserveUser(null);
 
@@ -61,7 +61,7 @@ public class OnTripBikeState implements BikeState{
 
                 dock.setState(new EmptyDockState());
                 dock.setStatus(DockStatus.EMPTY);
-                dock.setBike(bike);
+                dock.setBike(bike.getBikeType());
                 dock.setReserveDate(null);
                 dock.setReserveUser(null);
 

@@ -1,4 +1,4 @@
-package com.veloMTL.veloMTL.DTO.Users;
+package com.veloMTL.veloMTL.DTO.auth;
 
 public class LoginDTO {
     private String email;

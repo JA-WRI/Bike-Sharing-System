@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Model.Users;
 
+import com.veloMTL.veloMTL.Model.Enums.Permissions;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
@@ -12,12 +13,12 @@ public abstract class User {
     private String email;
     private String password;
     private String role;
-    private List<String> permissions;
+    private List<Permissions> permissions;
 
     public User() {
     }
 
-    public User(String name, String email, String password, String role, List<String> permissions) {
+    public User(String name, String email, String password, String role, List<Permissions> permissions) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -65,11 +66,11 @@ public abstract class User {
         this.role = role;
     }
 
-    public List<String> getPermissions() {
+    public List<Permissions> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(List<String> permissions) {
+    public void setPermissions(List<Permissions> permissions) {
         this.permissions = permissions;
     }
 }

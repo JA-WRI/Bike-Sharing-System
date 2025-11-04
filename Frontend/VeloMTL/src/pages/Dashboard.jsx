@@ -1,10 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import MapView from "../components/MapView";
+import SidePanel from "../components/SidePanel";
+import '../styles/Dashboard.css';
+import '../styles/SidePanel.css';
+import { getStationById } from "../api/stationApi";
+import CommandMenu from "../components/commandMenu/CommandMenu";
+
+const stations = [
+  { id: "ST001", position: "45.5017,-73.5673", stationName: "Downtown Central", streetAddress: "123 Main St, Montreal, QC" },
+  { id: "ST002", position: "45.5088,-73.5616", stationName: "Old Port East", streetAddress: "456 Elm St, Montreal, QC" },
+  { id: "ST003", position: "45.495,-73.578", stationName: "Atwater Market", streetAddress: "789 Pine St, Montreal, QC" },
+];
 
 const Dashboard = () => {
+  const [selectedStation, setSelectedStation] = useState(null);
+  const [selectedDock, setSelectedDock] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  // Fetch all stations 
+const handleMarkerClick = async (stationId) => {
+  // Instantly open the panel with minimal info
+  const clickedStation = stations.find((s) => s.id === stationId);
+  setSelectedStation({ stationName: clickedStation.stationName }); // Open right away
+  setLoading(true);
+
+  try {
+    const data = await getStationById(stationId);
+    setSelectedStation(data); // Replace placeholder with full data
+  } catch (err) {
+    console.error("Failed to fetch station details:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Welcome to the Dashboard</h1>
-      <p>This is a generic landing page.</p>
+    <div className="dashboard-container">
+      <h1 className="dashboard-title"></h1>
+      <div className="map-container">
+        <MapView
+          stations={stations}
+          onStationClick={handleMarkerClick}
+        />
+        <SidePanel
+          station={selectedStation}
+          onClose={() => {
+            setSelectedStation(null);
+            setSelectedDock(null);
+          }}
+          loading={loading}
+          onDockSelect={setSelectedDock}
+        />
+      </div>
+      {selectedDock && (
+        <CommandMenu
+          station={selectedStation}
+          dock={selectedDock}
+          onClose={() => setSelectedDock(null)}
+        />
+      )}
     </div>
   );
 };

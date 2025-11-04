@@ -92,4 +92,10 @@ public class StationService {
             case OUT_OF_SERVICE -> new MaintenanceStationState(notificationService);
         };
     }
+
+    public StationDTO getStationById(String stationId) {
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Station not found with ID: " + stationId));
+        return StationMapper.entityToDto(station);
+    }
 }

@@ -46,7 +46,7 @@ public class BikeService {
         //update the dock status
         dock.setStatus(DockStatus.OCCUPIED);
         //assign the bike to the dock
-        dock.setBike(bike);
+        dock.setBike(bike.getBikeId());
         //save the dock
         dockRepository.save(dock);
         //change the station status
@@ -94,7 +94,7 @@ public class BikeService {
         //update station occupancy
         int newOccupancy = station.getOccupancy()+1;
         stationService.updateStationOccupancy(station, newOccupancy);
-        dock.setBike(bike);
+        dock.setBike(bike.getBikeId());
 
         Bike savedBike = bikeRepository.save(bike);
         dockRepository.save(dock);
