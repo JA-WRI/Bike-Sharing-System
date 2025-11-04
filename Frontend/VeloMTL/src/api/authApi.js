@@ -19,4 +19,6 @@ export const loginUser = async (email, password, role) => {
     console.error("Login error:", error.response || error);
     throw error;
   }
+
+  
 };
