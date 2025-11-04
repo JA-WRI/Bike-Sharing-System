@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 public class AvailableBikeState implements BikeState{
 
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus role, LocalDateTime currentTime, String username) {
         String message;
 
-        switch(userStatus) {
+        switch(role) {
             case UserStatus.OPERATOR:
                 bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
                 message = "Bike is out of service and undocked";
@@ -42,7 +42,7 @@ public class AvailableBikeState implements BikeState{
     }
 
     @Override
-    public StateChangeResponse lockBike(Bike bike, Dock dock) {
+    public StateChangeResponse lockBike(Bike bike, Dock dock, UserStatus role) {
         return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Bike is already docked");
     }
 
@@ -57,11 +57,4 @@ public class AvailableBikeState implements BikeState{
         return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike has been reserved");
     }
 
-    @Override
-    public StateChangeResponse markOutOfService(Bike bike) {
-        bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
-        bike.setState(new MaintenanceBikeState());
-
-        return new StateChangeResponse(StateChangeStatus.SUCCESS, "Has is out of service and undocked");
-    }
 }

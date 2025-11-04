@@ -1,16 +1,18 @@
 package com.veloMTL.veloMTL.DTO.BMSCore;
 
+import java.time.LocalDateTime;
+
 public class TripDTO {
 
-    private String tripId;
-    private String startTime;
-    private String endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String bikeId;
     private String riderId;
+    private String tripId;
 
     public TripDTO(){};
 
-    public TripDTO(String tripId, String startTime, String endTime, String bikeId, String riderId) {
+    public TripDTO(String tripId, LocalDateTime startTime, LocalDateTime endTime, String bikeId, String riderId) {
         this.tripId = tripId;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -30,38 +32,31 @@ public class TripDTO {
         return riderId;
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public String getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
-//    public void setBikId(String bikId) {
-//        this.bikId = bikId;
-//    }
-//
-//    public String getBikeType() {
-//        return bikeType;
-//    }
-//
-//    public void setBikeType(String bikeType) {
-//        this.bikeType = bikeType;
-//    }
-//
-//    public String getDockId() {
-//        return dockId;
-//    }
-//
-//    public void setDockId(String dockId) {
-//        this.dockId = dockId;
-//    }
-//
-//    public BikeStatus getBikeStatus() {
-//        return bikeStatus;
-//    }
-//
-//    public void setBikeStatus(BikeStatus bikeStatus) {
-//        this.bikeStatus = bikeStatus;
-//    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setBikeId(String bikeId) {
+        this.bikeId = bikeId;
+    }
+
+    public void setRiderId(String riderId) {
+        this.riderId = riderId;
+    }
 }
