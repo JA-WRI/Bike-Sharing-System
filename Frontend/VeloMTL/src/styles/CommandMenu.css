@@ -1,4 +1,3 @@
-/* Full-screen overlay */
 .command-menu-overlay {
   position: fixed;
   top: 0;
@@ -12,7 +11,6 @@
   z-index: 1000; /* on top of everything */
 }
 
-/* Modal container */
 .command-menu-modal {
   background-color: #fff;
   border-radius: 12px;
@@ -25,7 +23,6 @@
   animation: fadeIn 0.2s ease-out;
 }
 
-/* Header */
 .command-menu-header {
   display: flex;
   justify-content: space-between;
@@ -69,35 +66,32 @@
   transition: transform 0.1s, box-shadow 0.2s, filter 0.2s;
 }
 
-/* Dim, muted colors */
 .command-btn.primary {
-  background-color: #556ee6; /* muted blue */
+  background-color: #556ee6; 
   color: #fff;
 }
 
 .command-btn.success {
-  background-color: #4caf7a; /* muted green */
+  background-color: #4caf7a; 
   color: #fff;
 }
 
 .command-btn.secondary {
-  background-color: #7b8794; /* dim gray-blue */
+  background-color: #7b8794; 
   color: #fff;
 }
 
 .command-btn.warning {
-  background-color: #d4a017; /* muted gold/yellow */
+  background-color: #d4a017; 
   color: #fff;
 }
 
-/* Subtle hover effect */
 .command-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0,0,0,0.12);
   filter: brightness(1.05);
 }
 
-/* Active click effect */
 .command-btn:active {
   transform: translateY(0);
   box-shadow: 0 3px 6px rgba(0,0,0,0.12);
