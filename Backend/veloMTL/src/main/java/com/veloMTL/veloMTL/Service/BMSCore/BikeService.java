@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
 import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
@@ -13,6 +14,7 @@ import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.utils.Mappers.BikeMapper;
+import com.veloMTL.veloMTL.utils.Mappers.StationMapper;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
@@ -153,5 +155,11 @@ public class BikeService {
             case ON_TRIP -> new OnTripBikeState();
             case OUT_OF_SERVICE -> new MaintenanceBikeState();
         };
+    }
+
+    public BikeDTO getBikeById(String bikeId) {
+        Bike bike = bikeRepository.findById(bikeId)
+                .orElseThrow(() -> new RuntimeException("Bike not found with ID: " + bikeId));
+        return BikeMapper.entityToDto(bike);
     }
 }
