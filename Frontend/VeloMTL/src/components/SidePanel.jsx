@@ -1,13 +1,38 @@
 import React from "react";
 
-
 const SidePanel = ({ station, onClose, loading, onDockSelect }) => {
   if (!station) return null; // Don't render panel if no station selected
+
+  const getFullnessColor = () => {
+    const capacity = station.capacity ?? 0;
+    const occupancy = station.occupancy ?? 0;
+
+    if (capacity <= 0) return "#7f8c8d"; // gray fallback
+    const fullness = (occupancy / capacity) * 100;
+
+    if (fullness === 0 || fullness === 100) return "#e74c3c"; // red
+    if (fullness < 25 || fullness > 85) return "#f1c40f"; // yellow
+    return "#2ecc71"; // green
+  };
+
+  const fullnessColor = getFullnessColor();
+
+  // Helper: find the bike in this station that is at the given dock
+  const findBikeForDock = (dockId) => {
+    if (!station.bikes) return null;
+    return station.bikes.find((b) => b.dockId === dockId);
+  };
 
   return (
     <div className="side-panel">
       <div className="side-panel-header">
-        <h2>{station.stationName || "Loading..."}</h2>
+        <h2 className="station-header">
+          <span
+            className="station-status-dot"
+            style={{ backgroundColor: fullnessColor }}
+          ></span>
+          {station.stationName || "Loading..."}
+        </h2>
         <button className="close-btn" onClick={onClose}>
           ✕
         </button>
@@ -41,29 +66,40 @@ const SidePanel = ({ station, onClose, loading, onDockSelect }) => {
                   <strong>Docks:</strong>
                 </p>
                 <ul className="dock-list">
-                  {station.docks.map((dock) => (
-                    <li 
-                    key={dock.dockId} 
-                    className="dock-item"
-                    onClick={() => onDockSelect(dock)}
-                    style={{ cursor: "pointer" }}
-                    >
-                      <p>
-                        <strong>Dock:</strong> {dock.dockId}{" "}
-                        <span style={{ color: dock.status === "EMPTY" ? "green" : "red" }}>
-                          ({dock.status})
-                        </span>
-                      </p>
+                  {station.docks.map((dock) => {
+                    const bike = findBikeForDock(dock.dockId);
 
-                      {dock.bikeId ? (
-                        <div className="bike-item">
-                          🚲 <strong>{dock.bikeId}</strong>
-                        </div>
-                      ) : (
-                        <p className="no-bike">No bike in this dock</p>
-                      )}
-                    </li>
-                  ))}
+                    return (
+                      <li
+                        key={dock.dockId}
+                        className="dock-item"
+                        onClick={() => onDockSelect(dock)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <p>
+                          <strong>Dock:</strong> {dock.dockId}{" "}
+                          <span
+                            style={{
+                              color: dock.status === "EMPTY" ? "green" : "red",
+                            }}
+                          >
+                            ({dock.status})
+                          </span>
+                        </p>
+
+                        {bike ? (
+                          <div className="bike-item">
+                            🚲 <strong>{bike.bikId}</strong>{" "}
+                            <span style={{ color: "#555" }}>
+                              ({bike.type === "ELECTRIC" ? "E" : "S"})
+                            </span>
+                          </div>
+                        ) : (
+                          <p className="no-bike">No bike in this dock</p>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </>
             )}

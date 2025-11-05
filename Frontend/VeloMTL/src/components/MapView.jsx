@@ -11,6 +11,32 @@ const JAWG_TOKEN = import.meta.env.VITE_JAWG_TOKEN;
 const DefaultIcon = L.icon({ iconUrl, shadowUrl: iconShadow });
 L.Marker.prototype.options.icon = DefaultIcon;
 
+// Create colored icons
+const createColoredIcon = (color) =>
+  L.divIcon({
+    className: "custom-marker",
+    html: `<div style="
+      background-color:${color};
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      border:2px solid white;
+      box-shadow:0 0 5px rgba(0,0,0,0.3);
+    "></div>`,
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+  });
+
+  const getMarkerColor = (station) => {
+  if (!station.capacity || station.capacity === 0) return "#7f8c8d"; // gray fallback
+
+  const fullness = (station.occupancy / station.capacity) * 100;
+
+  if (fullness === 0 || fullness === 100) return "#e74c3c"; // red
+  if (fullness < 25 || fullness > 85) return "#f1c40f";     // yellow
+  return "#2ecc71";                                          // green
+};
+
 const MapView = ({ stations = [], onStationClick }) => {
   return (
     <MapContainer

@@ -25,6 +25,7 @@ const Navbar = () => {
   });
 
   const handleLogout = () => {
+    setShowDropdown(false);
     logout(navigate);
   };
 
@@ -59,8 +60,14 @@ const Navbar = () => {
                 />
                 {unreadCount > 0 && <span className="red-dot"></span>}
                 {isBellOpen && (
-                  <div className="notification-dropdown">
-                    {notifications.map((msg, i) => (
+                <div className="notification-dropdown">
+                  <div className="notification-dropdown-title">
+                    <strong>Notifications</strong>
+                  </div>
+                  {notifications.length === 0 ? (
+                    <div className="notification-item empty">No notifications</div>
+                  ) : (
+                    notifications.map((msg, i) => (
                       <div key={i} className="notification-item">
                         {msg}
                         <FaTimes
@@ -68,9 +75,10 @@ const Navbar = () => {
                           onClick={() => handleDeleteNotification(i)}
                         />
                       </div>
-                    ))}
-                  </div>
-                )}
+                    ))
+                  )}
+                </div>
+              )}
               </div>
             )}
           <div className="navbar-user">
@@ -79,12 +87,26 @@ const Navbar = () => {
               onClick={() => setShowDropdown(!showDropdown)}
             />
             {showDropdown && (
-              <div className="user-dropdown">
-                <p><strong>{user.name}</strong></p>
-                <p>{user.email}</p>
-                <button onClick={handleLogout}>Logout</button>
+            <div className="user-dropdown">
+              <div className="user-info">
+                <div className="user-header">
+                  <p className="user-name"><strong>{user.name}</strong></p>
+                  <span
+                    className={`user-role-badge ${
+                      user.role === "OPERATOR" ? "operator" : "rider"
+                    }`}
+                  >
+                    {user.role}
+                  </span>
+                </div>
+                <p className="user-email">{user.email}</p>
               </div>
-            )}
+
+              <button className="logout-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          )}
             </div>
           </div>
         )}
