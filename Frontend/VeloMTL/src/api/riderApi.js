@@ -1,4 +1,5 @@
 import api from "./api";
+import { getBikeById } from "./bikeApi";
 
 export const sendCommand = async (command, { userId, objectId, dockId = null, reserveTime=null }) => {
   const commandDTO = {
@@ -24,8 +25,16 @@ export const reserveBike = (userId, bikeId, dockId, reserveTime) =>
 export const reserveDock = (userId, bikeId, dockId, reserveTime) =>
   sendCommand("RD", { userId, objectId: bikeId, dockId, reserveTime });
 
-export const unlockBike = (userId, bikeId, dockId) =>
-  sendCommand("UB", { userId, objectId: bikeId, dockId });
+export const unlockBike = (userId, bikeId, dockId) => {
+  return getBikeById(bikeId).then(bike => {
+    if (bike.bikeStatus === "RESERVED" && userId !== bike.reserveUser) {
+      console.log("here");
+      console.log(userId);
+      return { message: "This bike is reserved by another user.", status: "ERROR"};
+    }
+    return sendCommand("UB", { userId, objectId: bikeId, dockId });
+  });
+}
 
 export const lockBike = (userId, bikeId, dockId) =>
   sendCommand("LB", { userId, objectId: bikeId, dockId });
