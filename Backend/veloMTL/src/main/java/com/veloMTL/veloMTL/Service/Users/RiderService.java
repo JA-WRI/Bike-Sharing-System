@@ -6,6 +6,9 @@ import com.stripe.model.SetupIntent;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.SetupIntentCreateParams;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.PCR.Strategy.Basic;
+import com.veloMTL.veloMTL.PCR.Strategy.Plan;
+import com.veloMTL.veloMTL.PCR.Strategy.Premium;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class RiderService implements UserDetailsService {
@@ -44,7 +48,7 @@ public class RiderService implements UserDetailsService {
      * If the rider doesn't have a Stripe customer ID yet, a new customer is created in Stripe
      * and saved to the database.
      */
-    public Map<String, Object> addPaymentMethod(String riderEmail) {
+    public Map<String, Object>  addPaymentMethod(String riderEmail) {
         Stripe.apiKey = stripeSecretKey;
 
         // Fetch the rider from the database using their email
@@ -103,6 +107,19 @@ public class RiderService implements UserDetailsService {
             e.printStackTrace();
             throw new RuntimeException("Failed to add payment method: " + e.getMessage());
         }
+    }
+    public Rider addPlan(String riderEmail, String chosenPlan){
+        Rider rider = riderRepository.findByEmail(riderEmail)
+                .orElseThrow(() -> new RuntimeException("Rider not found with email: " + riderEmail));
+       Plan plan = null;
+        if(chosenPlan.equalsIgnoreCase("Basic")){
+             plan = new Basic();
+        } else if(chosenPlan.equalsIgnoreCase("Premium")){
+            plan = new Premium();
+        }
+
+        rider.setPlan(plan);
+        return riderRepository.save(rider);
     }
 
 }

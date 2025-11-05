@@ -7,6 +7,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Enums.*;
+import com.veloMTL.veloMTL.PCR.BillingService;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
@@ -26,13 +27,15 @@ public class BikeService {
     private final StationRepository stationRepository;
     private final StationService stationService;
     private final TripService tripService;
+    private final BillingService billingService;
 
-    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, TripService tripService, RiderRepository riderRepository) {
+    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, TripService tripService, RiderRepository riderRepository, BillingService billingService) {
         this.bikeRepository = bikeRepository;
         this.dockRepository = dockRepository;
         this.stationRepository = stationRepository;
         this.stationService = stationService;
         this.tripService = tripService;
+        this.billingService = billingService;
     }
 
     //can change this later if needed
@@ -121,6 +124,8 @@ public class BikeService {
                 Trip trip = tripService.findOngoingTrip(bikeId, userId);
                 if (trip != null) {
                     tripService.endTrip(trip);
+                    billingService.pay(trip);
+
                 }
             }
             return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));

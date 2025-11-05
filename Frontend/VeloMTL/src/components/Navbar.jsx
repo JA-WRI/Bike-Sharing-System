@@ -30,7 +30,7 @@ const Navbar = () => {
 
   const handleBellClick = () => {
     setIsBellOpen(!isBellOpen);
-    setUnreadCount(0); // clear red dot when opening
+    setUnreadCount(0);
   };
 
   const handleDeleteNotification = (index) => {
@@ -41,6 +41,13 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-left">
         <Link to="/" className="navbar-link">Dashboard</Link>
+
+        {/* Show Payment Plans only if user is not an operator */}
+        {userRole !== "OPERATOR" && (
+          <Link to="/payment-plans" className="navbar-link">
+            Payment Plans
+          </Link>
+        )}
       </div>
 
       <div className="navbar-right">
@@ -48,7 +55,6 @@ const Navbar = () => {
           <Link to="/login" className="navbar-link">Login</Link>
         ) : (
           <div className="navbar-user-container">
-
             {/* Only show bell for operators */}
             {userRole === "OPERATOR" && (
               <div className="notification-bell-container">
@@ -80,7 +86,15 @@ const Navbar = () => {
               />
               {showDropdown && (
                 <div className="user-dropdown">
-                  <p><strong>{user.name}</strong></p>
+                  <p>
+                    {user.role === "RIDER"
+                      ? "Rider"
+                      : user.role === "OPERATOR"
+                      ? "Operator"
+                      : ""}{" "}
+                    {user.name}
+                  </p>
+
                   <p>{user.email}</p>
 
                   {/* Add Payment button only for riders */}

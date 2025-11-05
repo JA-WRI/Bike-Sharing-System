@@ -10,7 +10,7 @@ export default function AddCardForm({ riderEmail }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔒 Ref to prevent multiple simultaneous backend calls
+  // Ref to prevent multiple simultaneous backend calls
   const isInitializing = useRef(false);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function AddCardForm({ riderEmail }) {
         setMessage(result.error.message);
       } else {
         setMessage(
-          `Card added successfully! Payment Method ID: ${result.setupIntent.payment_method}`
+          `Card added successfully! Payment Method ID`
         );
         console.log("SetupIntent:", result.setupIntent);
       }

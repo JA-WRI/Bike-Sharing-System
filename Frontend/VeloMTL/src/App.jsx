@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
+import PaymentPlans from "./pages/PaymentPlans";
 
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/add-payment" element={<AddPayment />} />
+         <Route path="/payment-plans" element={<PaymentPlans />} />
       </Routes>
     </Router>
   );

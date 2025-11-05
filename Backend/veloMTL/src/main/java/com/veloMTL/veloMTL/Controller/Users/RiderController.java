@@ -1,9 +1,7 @@
 package com.veloMTL.veloMTL.Controller.Users;
 
-import com.veloMTL.veloMTL.DTO.BMSCore.PaymentMethodDTO;
 import com.veloMTL.veloMTL.DTO.Helper.CommandDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
-import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.Command.Command;
 import com.veloMTL.veloMTL.Patterns.Factory.RiderCommandFactory;
@@ -39,5 +37,17 @@ public class RiderController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/addPlan")
+    public ResponseEntity<String> addPlan(@RequestBody Map<String, String> request) {
+        try {
+            String riderEmail = request.get("email");
+            String plan = request.get("plan");
+
+            riderService.addPlan(riderEmail, plan);
+            return ResponseEntity.ok("Plan added successfully!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Error adding plan: " + e.getMessage());
+        }
+    }
 
 }

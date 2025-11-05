@@ -34,7 +34,7 @@ public void pay (String riderId, Trip trip){
             .orElseThrow(() -> new RuntimeException("Rider not found with ID: " + riderId));
     long duration = tripDuration(trip);
     double price = priceCalculation(duration);
-    rider.getPaymentMethod().processPayment(price);
+
 
 }
 
