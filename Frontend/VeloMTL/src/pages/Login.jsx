@@ -18,7 +18,7 @@ export default function Login() {
 
     try {
       const data = await loginUser(email, password, role);
-      login(data.token, { email: data.email, name: data.name, role: data.role });
+      login(data.token, { id: data.id, email: data.email, name: data.name, role: data.role });
       console.log("Login successful:", data);
 
       navigate("/");
