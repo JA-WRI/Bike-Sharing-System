@@ -5,6 +5,7 @@ import SidePanel from "../components/SidePanel";
 import '../styles/Dashboard.css';
 import '../styles/SidePanel.css';
 import { getStationById } from "../api/stationApi";
+import { getBikeById } from "../api/bikeApi";
 import CommandMenu from "../components/commandMenu/CommandMenu";
 
 const stations = [
@@ -28,6 +29,11 @@ const handleMarkerClick = async (stationId) => {
 
   try {
     const data = await getStationById(stationId);
+    for (const dockDTO of data.docks) {
+      if (dockDTO.bikeId) {
+        dockDTO.bike = await getBikeById(dockDTO.bikeId);
+      }
+    }
     setSelectedStation(data); // Replace placeholder with full data
   } catch (err) {
     console.error("Failed to fetch station details:", err);

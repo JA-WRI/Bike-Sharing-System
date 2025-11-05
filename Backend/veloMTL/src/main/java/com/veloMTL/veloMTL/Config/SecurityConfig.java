@@ -81,6 +81,7 @@ public class SecurityConfig {
                                 "/login/**",
                                 "/oauth2/**",
                                 "/stations/**",
+                                "/bikes/**",
                                 "/admin/**",
                                 "/ws/**" // <-- ADD THIS LINE to allow SockJS info requests
                         ).permitAll()
