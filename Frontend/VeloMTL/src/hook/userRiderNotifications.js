@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
-// Too lazy to implement this. I'll set a timer for now
+// Not using this rn, I'll set a timer for now
 const useRiderNotifications = (onMessage) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
