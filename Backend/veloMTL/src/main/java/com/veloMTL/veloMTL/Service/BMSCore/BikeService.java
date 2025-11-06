@@ -18,6 +18,8 @@ import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -159,5 +161,20 @@ public class BikeService {
             case ON_TRIP -> new OnTripBikeState();
             case OUT_OF_SERVICE -> new MaintenanceBikeState();
         };
+    }
+
+    public List<BikeDTO> getBikesByStation(String stationId) {
+        List<Bike> allBikes = bikeRepository.findAll(); // fetch all bikes
+        List<BikeDTO> stationBikes = allBikes.stream()
+                .filter(b -> b.getDock() != null && b.getDock().getDockId().startsWith(stationId + "-"))
+                .map(b -> new BikeDTO(
+                        b.getBikeId(),
+                        b.getBikeType(),
+                        b.getDock().getDockId(),
+                        b.getBikeStatus()
+                ))
+                .collect(Collectors.toList());
+
+        return stationBikes;
     }
 }

@@ -23,8 +23,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerRider (@RequestBody RegistrationDTO registrationDTO){
         try {
-            Rider rider = authService.registerRider(registrationDTO);
-            return ResponseEntity.ok("Rider registered successfully with email: " + rider.getEmail());
+            LoginResponseDTO response = authService.registerRider(registrationDTO);
+            return ResponseEntity.ok(response);
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
