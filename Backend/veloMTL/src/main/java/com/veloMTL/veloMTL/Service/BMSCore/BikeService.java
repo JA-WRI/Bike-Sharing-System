@@ -124,7 +124,8 @@ public class BikeService {
                 Trip trip = tripService.findOngoingTrip(bikeId, userId);
                 if (trip != null) {
                     tripService.endTrip(trip, station);
-                    billingService.pay(trip);
+                    String tripID = trip.getTripId();
+                    billingService.pay(tripID);
 
                 }
             }

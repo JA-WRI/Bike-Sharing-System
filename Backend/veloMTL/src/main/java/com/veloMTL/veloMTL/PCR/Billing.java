@@ -11,22 +11,45 @@ import java.time.LocalDateTime;
 public class Billing {
     @Id
     private String billID;
-    private String riderID;
     private String description;
-    private double cost;
     private LocalDateTime dateTransaction;
-    private Trip trip;
-    //private String paymentMethod;
-    public Billing(String riderID, String description, double cost, LocalDateTime dateTransaction, Trip trip) {
-        this.riderID = riderID;
-        this.description = description;
-        this.cost = cost;
-        this.dateTransaction = dateTransaction;
-        this.trip = trip;
-        //this.paymentMethod = paymentMethod;
-    }
+    private String riderID;
+    private String bikeID;
+    private String originStation;
+    private  String arrivalStation;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private double ratePerMinute;
+    private double cost;
 
-    public Billing(String riderID, String description, double cost, LocalDateTime dateTransaction) {
+    //private String tripId;
+
+
+    public Billing() {}
+
+    public Billing(String description, LocalDateTime dateTransaction, String riderID, String bikeID, String originStation, String arrivalStation, LocalDateTime startDate, LocalDateTime endDate, double ratePerMinute, double cost) {
+
+        this.description = description;
+        this.dateTransaction = dateTransaction;
+        this.riderID = riderID;
+        this.bikeID = bikeID;
+        this.originStation = originStation;
+        this.arrivalStation = arrivalStation;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.ratePerMinute = ratePerMinute;
+        this.cost = cost;
+    }
+    //    public Billing(String riderID, String description, double cost, LocalDateTime dateTransaction, String tripId) {
+//        this.riderID = riderID;
+//        this.description = description;
+//        this.cost = cost;
+//        this.dateTransaction = dateTransaction;
+//        this.tripId = tripId;
+//        //this.paymentMethod = paymentMethod;
+//    }
+
+    public Billing( String description,LocalDateTime dateTransaction, String riderID,double cost) {
         this.riderID = riderID;
         this.description = description;
         this.cost = cost;
@@ -90,11 +113,58 @@ public class Billing {
         this.billID = billID;
     }
 
-    public Trip getTrip() {
-        return trip;
+    public String getOriginStation() {
+        return originStation;
     }
 
-    public void setTrip(Trip trip) {
-        this.trip = trip;
+    public void setOriginStation(String originStation) {
+        this.originStation = originStation;
     }
+
+    public String getBikeID() {
+        return bikeID;
+    }
+
+    public void setBikeID(String bikeID) {
+        this.bikeID = bikeID;
+    }
+
+    public String getArrivalStation() {
+        return arrivalStation;
+    }
+
+    public void setArrivalStation(String arrivalStation) {
+        this.arrivalStation = arrivalStation;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public double getRatePerMinute() {
+        return ratePerMinute;
+    }
+
+    public void setRatePerMinute(double ratePerMinute) {
+        this.ratePerMinute = ratePerMinute;
+    }
+    //    public String getTrip() {
+//        return tripId;
+//    }
+//
+//    public void setTrip(String trip) {
+//        this.tripId = tripId;
+//    }
 }

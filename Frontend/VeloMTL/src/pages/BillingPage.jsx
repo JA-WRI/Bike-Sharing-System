@@ -12,22 +12,35 @@ export default function BillingPage() {
 
   useEffect(() => {
     const fetchBills = async () => {
-      if (!user?.id) return;
       try {
-        const data = await getRiderBilling(user.id);
+        setLoading(true);
 
-        // Separate Trip bills and Monthly Base Fee bills
-        const tripBills = data.filter(
+        // 🧩 Try both potential ID fields
+        const riderID = user?.riderID || user?.id;
+
+        if (!riderID) {
+          console.warn("⏳ No rider ID yet, skipping billing fetch.");
+          setLoading(false);
+          return;
+        }
+
+        console.log("📡 Fetching billing for riderID:", riderID);
+
+        const data = await getRiderBilling(user.email);
+        console.log("Billing API response:", data);
+
+        const billsArray = Array.isArray(data)
+          ? data
+          : data?.data || data?.bills || [];
+
+        const tripBills = billsArray.filter(
           (bill) => bill.description?.toLowerCase() === "trip"
         );
-        const monthlyBills = data.filter(
+        const monthlyBills = billsArray.filter(
           (bill) => bill.description?.toLowerCase() === "monthly base fee"
         );
 
-        // Merge them: Monthly first, trips later (optional)
-        const allBills = [...monthlyBills, ...tripBills];
-
-        setBills(allBills);
+        setBills([...monthlyBills, ...tripBills]);
       } catch (error) {
         console.error("Error fetching billing:", error);
         setBills([]);
@@ -37,7 +50,7 @@ export default function BillingPage() {
     };
 
     fetchBills();
-  }, [user]);
+  }, [user?.id, user?.riderID]);
 
   const toggleExpand = (billID) => {
     setExpandedBill((prev) => (prev === billID ? null : billID));
@@ -50,6 +63,7 @@ export default function BillingPage() {
   return (
     <div className="billing-container">
       <h1 className="billing-title">Billing History</h1>
+
       {bills.length === 0 ? (
         <p style={{ textAlign: "center", color: "#64748b" }}>
           No billing records yet.

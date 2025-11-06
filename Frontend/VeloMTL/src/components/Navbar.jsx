@@ -42,17 +42,18 @@ const Navbar = () => {
       <div className="navbar-left">
         <Link to="/" className="navbar-link">Dashboard</Link>
 
-        {/* Show Payment Plans and Billing History only if user is not an operator */}
+        {/* Show Payment Plans for all non-operators */}
         {userRole !== "OPERATOR" && (
-          <>
-            <Link to="/payment-plans" className="navbar-link">
-              Payment Plans
-            </Link>
+          <Link to="/payment-plans" className="navbar-link">
+            Payment Plans
+          </Link>
+        )}
 
-            <Link to="/billing" className="navbar-link">
-              Billing History
-            </Link>
-          </>
+        {/* Show Billing only for riders */}
+        {userRole === "RIDER" && (
+          <Link to="/billing" className="navbar-link">
+            Billing
+          </Link>
         )}
       </div>
 
