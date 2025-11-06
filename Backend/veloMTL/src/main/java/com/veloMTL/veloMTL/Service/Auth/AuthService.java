@@ -43,6 +43,7 @@ public class AuthService {
 
     return new LoginResponseDTO(
             token,
+            rider.getId(),
             rider.getName(),
             rider.getEmail(),
             rider.getRole()
@@ -61,7 +62,7 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
-        return new LoginResponseDTO(token, rider.getName(), rider.getEmail(), rider.getRole());
+        return new LoginResponseDTO(token, rider.getId(), rider.getName(), rider.getEmail(), rider.getRole());
 
     }
 
