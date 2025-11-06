@@ -1,7 +1,9 @@
+
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/authApi";
 import { AuthContext } from "../context/AuthContext";
+import "../styles/login.css";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -10,9 +12,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("RIDER");
   const [error, setError] = useState(null);
-  const [showRoleSelector, setShowRoleSelector] = useState(false); // toggle for dropdown
+  const [showRoleSelector, setShowRoleSelector] = useState(false);
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
@@ -28,40 +30,76 @@ export default function Login() {
     }
   };
 
+  const handleGoogle = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   return (
-    <form onSubmit={handleSubmit} style={{ position: "relative" }}>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+    <div className="auth-shell">
+      <div className="auth-card fancy">
+        {/* LEFT PANEL */}
+        <div className="auth-side">
+          <h2>VeloMTL</h2>
+          <p>Smart bike sharing for Montreal. Monitor trips, riders and docks.</p>
+        </div>
 
-      <button
-        type="button"
-        onClick={() => setShowRoleSelector((prev) => !prev)}
-        style={{ marginLeft: "10px" }}
-      >
-      </button>
+        {/* RIGHT PANEL */}
+        <div className="auth-main">
+          <div className="auth-header">
+            <h1>Welcome back </h1>
+            <p>Sign in to continue to the dashboard.</p>
+          </div>
 
-      {showRoleSelector && (
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="RIDER">Rider</option>
-          <option value="OPERATOR">Operator</option>
-        </select>
-      )}
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <label className="auth-label">Email</label>
+            <input
+              className="auth-input"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-      <button type="submit">Login</button>
+            <label className="auth-label">Password</label>
+            <input
+              className="auth-input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </form>
+            <label className="auth-label">Role</label>
+            <select
+              className="auth-input"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="RIDER">Rider</option>
+              <option value="OPERATOR">Operator</option>
+            </select>
+
+            {error && <p className="auth-error">{error}</p>}
+
+            <button type="submit" className="primary-btn">
+              Sign in
+            </button>
+          </form>
+
+          <div className="auth-divider">
+            <span>or continue with</span>
+          </div>
+
+          <button type="button" className="google-btn" onClick={handleGoogle}>
+            <span className="google-icon">G</span>
+            Google
+          </button>
+
+          <p className="auth-footer">
+            Don&apos;t have an account? <Link to="/register">Create account</Link>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -82,7 +82,7 @@ public class SecurityConfig {
                                 "/oauth2/**",
                                 "/stations/**",
                                 "/admin/**",
-                                "/ws/**" // <-- ADD THIS LINE to allow SockJS info requests
+                                "/ws/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -99,23 +99,45 @@ public class SecurityConfig {
                         .successHandler((request, response, authentication) -> {
                             OAuth2User user = (OAuth2User) authentication.getPrincipal();
                             String email = user.getAttribute("email");
+                            String name = user.getAttribute("name");
 
-                            // Determine role (RIDER or OPERATOR)
                             String role;
                             List<Permissions> permissions;
                             if (riderRepository.existsByEmail(email)) {
                                 role = "RIDER";
-                                permissions = List.of(Permissions.BIKE_UNLOCK, Permissions.BIKE_RETURN, Permissions.BIKE_RESERVE, Permissions.DOCK_RESERVE);
+                                permissions = List.of(
+                                        Permissions.BIKE_UNLOCK,
+                                        Permissions.BIKE_RETURN,
+                                        Permissions.BIKE_RESERVE,
+                                        Permissions.DOCK_RESERVE
+                                );
                             } else if (operatorRepository.existsByEmail(email)) {
                                 role = "OPERATOR";
-                                permissions =  List.of(Permissions.DOCK_OOS, Permissions.RESTORE_DOCK, Permissions.STATION_OOS, Permissions.RESTORE_STATION, Permissions.BIKE_MOVE);
+                                permissions = List.of(
+                                        Permissions.DOCK_OOS,
+                                        Permissions.RESTORE_DOCK,
+                                        Permissions.STATION_OOS,
+                                        Permissions.RESTORE_STATION,
+                                        Permissions.BIKE_MOVE
+                                );
                             } else {
                                 throw new RuntimeException("User not found in either Riders or Operators");
                             }
 
+                            // Create token
                             String token = jwtService.generateToken(email, role, permissions);
 
-                            response.sendRedirect("/api/auth/dashboard?token=" + token);
+                            // Build frontend redirect URL (URL-encode all params)
+                            String frontendBase = "http://localhost:5173/oauth2/redirect";
+                            String redirectUrl = String.format("%s?token=%s&name=%s&email=%s&role=%s",
+                                    frontendBase,
+                                    java.net.URLEncoder.encode(token, java.nio.charset.StandardCharsets.UTF_8),
+                                    java.net.URLEncoder.encode(name != null ? name : "", java.nio.charset.StandardCharsets.UTF_8),
+                                    java.net.URLEncoder.encode(email != null ? email : "", java.nio.charset.StandardCharsets.UTF_8),
+                                    java.net.URLEncoder.encode(role != null ? role : "", java.nio.charset.StandardCharsets.UTF_8)
+                            );
+
+                            response.sendRedirect(redirectUrl);
                         })
                 );
 
