@@ -19,6 +19,7 @@ import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -131,6 +132,9 @@ public class BikeService {
     }
 
     public ResponseDTO<BikeDTO> reserveBike(String bikeId, String username, String dockId, LocalDateTime reserveDate, UserStatus role) {
+        List<Bike> reservedBikes = bikeRepository.findByReserveUser(username);
+        if (!reservedBikes.isEmpty()) throw new RuntimeException("Existing reservation for bike with ID: " + reservedBikes.getFirst().getBikeId());
+
         Bike bike = loadDockWithState(bikeId);
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
 

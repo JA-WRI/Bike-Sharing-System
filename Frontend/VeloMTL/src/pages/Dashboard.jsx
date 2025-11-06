@@ -9,9 +9,9 @@ import { getBikeById } from "../api/bikeApi";
 import CommandMenu from "../components/commandMenu/CommandMenu";
 
 const stations = [
-  { id: "ST001", position: "45.5017,-73.5673", stationName: "Downtown Central", streetAddress: "123 Main St, Montreal, QC" },
-  { id: "ST002", position: "45.5088,-73.5616", stationName: "Old Port East", streetAddress: "456 Elm St, Montreal, QC" },
-  { id: "ST003", position: "45.495,-73.578", stationName: "Atwater Market", streetAddress: "789 Pine St, Montreal, QC" },
+  { id: "ST001", position: "45.5017,-73.5673", stationName: "Downtown Central", streetAddress: "123 Main St, Montreal, QC", capacity: 5, occupancy: 3 },
+  { id: "ST002", position: "45.5088,-73.5616", stationName: "Old Port East", streetAddress: "456 Elm St, Montreal, QC", capacity: 5, occupancy: 3 },
+  { id: "ST003", position: "45.495,-73.578", stationName: "Atwater Market", streetAddress: "789 Pine St, Montreal, QC", capacity: 5, occupancy: 1 },
 ];
 
 const Dashboard = () => {

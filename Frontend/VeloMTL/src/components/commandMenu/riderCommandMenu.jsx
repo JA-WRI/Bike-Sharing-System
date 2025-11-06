@@ -45,7 +45,7 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
       setResponseStatus(response.status);
     } catch (err) {
       console.error("Command failed:", err);
-      setResponseMessage("An error occurred while performing the command.");
+      setResponseMessage(err?.response?.data?.error || "An error occurred while performing the command.");
       setResponseStatus("ERROR");
     }
   };
