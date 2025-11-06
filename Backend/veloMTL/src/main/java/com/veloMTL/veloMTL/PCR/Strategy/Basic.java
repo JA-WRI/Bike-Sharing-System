@@ -30,7 +30,7 @@ public class Basic implements  Plan{
     public double calculateTripCost(long tripDuration, boolean isEbike) {
         double tripCost = tripDuration * ratebyMinute;
         if(isEbike){
-            tripCost+=baseFee;
+            tripCost+=eBikeCharge;
         }
             return tripCost;
     }

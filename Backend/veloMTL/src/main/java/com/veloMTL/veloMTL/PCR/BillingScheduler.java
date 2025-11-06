@@ -1,10 +1,10 @@
-package com.veloMTL.veloMTL.PCR.Strategy;
+package com.veloMTL.veloMTL.PCR;
 
 import com.veloMTL.veloMTL.Model.Users.Rider;
-import com.veloMTL.veloMTL.PCR.BillingService;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 @Component
@@ -23,7 +23,12 @@ public class BillingScheduler {
     public void billAllRidersMonthly() {
         List<Rider> riders = riderRepository.findAll();
         for (Rider rider : riders) {
-            billingService.generateMonthlyBilling(rider);
+            try {
+                billingService.generateMonthlyBilling(rider);
+                System.out.println("Billed rider " + rider.getId() + " for monthly base fee.");
+            } catch (Exception e) {
+                System.err.println("Failed to bill rider " + rider.getId() + ": " + e.getMessage());
+            }
         }
     }
 }

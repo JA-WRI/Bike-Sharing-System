@@ -89,7 +89,7 @@ public class BikeService {
 
             //if user is a rider then we create them a trip
             if (role == UserStatus.RIDER) {
-                tripService.createTrip(bikeId, userId);
+                tripService.createTrip(bikeId, userId, station);
                 return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
             }
         }
@@ -123,7 +123,7 @@ public class BikeService {
                 //call end trip
                 Trip trip = tripService.findOngoingTrip(bikeId, userId);
                 if (trip != null) {
-                    tripService.endTrip(trip);
+                    tripService.endTrip(trip, station);
                     billingService.pay(trip);
 
                 }

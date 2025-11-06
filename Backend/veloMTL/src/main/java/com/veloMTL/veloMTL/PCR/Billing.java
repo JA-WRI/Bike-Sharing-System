@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.PCR;
 
+import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,11 +10,20 @@ import java.time.LocalDateTime;
 @Document(collection = "Billing")
 public class Billing {
     @Id
+    private String billID;
     private String riderID;
     private String description;
     private double cost;
     private LocalDateTime dateTransaction;
+    private Trip trip;
     //private String paymentMethod;
+    public Billing(String riderID, String description, double cost, LocalDateTime dateTransaction, Trip trip) {
+        this.riderID = riderID;
+        this.description = description;
+        this.cost = cost;
+        this.dateTransaction = dateTransaction;
+        //this.paymentMethod = paymentMethod;
+    }
 
     public Billing(String riderID, String description, double cost, LocalDateTime dateTransaction) {
         this.riderID = riderID;
@@ -61,5 +71,29 @@ public class Billing {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDateTime getDateTransaction() {
+        return dateTransaction;
+    }
+
+    public void setDateTransaction(LocalDateTime dateTransaction) {
+        this.dateTransaction = dateTransaction;
+    }
+
+    public String getBillID() {
+        return billID;
+    }
+
+    public void setBillID(String billID) {
+        this.billID = billID;
+    }
+
+    public Trip getTrip() {
+        return trip;
+    }
+
+    public void setTrip(Trip trip) {
+        this.trip = trip;
     }
 }

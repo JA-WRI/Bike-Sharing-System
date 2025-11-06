@@ -3,12 +3,15 @@ package com.veloMTL.veloMTL.Controller.Users;
 import com.veloMTL.veloMTL.DTO.Helper.CommandDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+import com.veloMTL.veloMTL.PCR.Billing;
+import com.veloMTL.veloMTL.PCR.BillingService;
 import com.veloMTL.veloMTL.Patterns.Command.Command;
 import com.veloMTL.veloMTL.Patterns.Factory.RiderCommandFactory;
 import com.veloMTL.veloMTL.Service.Users.RiderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,10 +20,11 @@ public class RiderController {
 
     private final RiderService riderService; // change to facade obj
     private final RiderCommandFactory commandFactory;
-
-    public RiderController(RiderService riderService, RiderCommandFactory commandFactory) {
+    private final BillingService billingService;
+    public RiderController(RiderService riderService, RiderCommandFactory commandFactory, BillingService billingService) {
         this.riderService = riderService;
         this.commandFactory = commandFactory;
+        this.billingService = billingService;
     }
 
     @PostMapping("/command")
@@ -37,7 +41,7 @@ public class RiderController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/addPlan")
+    @PostMapping("/add-plan")
     public ResponseEntity<String> addPlan(@RequestBody Map<String, String> request) {
         try {
             String riderEmail = request.get("email");
@@ -49,5 +53,9 @@ public class RiderController {
             return ResponseEntity.badRequest().body("Error adding plan: " + e.getMessage());
         }
     }
-
+    @GetMapping("/{riderID}/billing")
+    public ResponseEntity<List<Billing>> getAllBillingForRider(@PathVariable String riderID) {
+        List<Billing> bills = billingService.getAllRiderBilling(riderID);
+        return ResponseEntity.ok(bills);
+    }
 }
