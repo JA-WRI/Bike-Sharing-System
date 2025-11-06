@@ -1,63 +1,99 @@
-import React, { useState } from 'react';
-import './register.css';
+
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { registerUser } from "../api/authApi";
+import "./register.css";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
+    name: "",
+    email: "",
+    password: "",
   });
+  const [error, setError] = useState(null);
+  const [ok, setOk] = useState(null);
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // For now, just log the form data (replace with backend call later)
-    console.log('Registering user:', formData);
-
-    // Reset the form
-    setFormData({ name: '', email: '', password: '' });
+    setError(null);
+    setOk(null);
+    try {
+      await registerUser(formData.name, formData.email, formData.password);
+      setOk("Account created! Redirecting to login…");
+      setTimeout(() => navigate("/login"), 1000);
+    } catch (err) {
+      setError(err?.response?.data || "Registration failed.");
+    }
   };
 
   return (
-    <div className="register-container">
-      <h2>Create an Account</h2>
-      <form className="register-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
+    <div className="auth-shell">
+      <div className="auth-card fancy">
+        {/* LEFT PANEL */}
+        <div className="auth-side reg">
+          <h2>Join VeloMTL</h2>
+          <p>Create an account to manage your rides and stations.</p>
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+        {/* RIGHT PANEL */}
+        <div className="auth-main">
+          <div className="auth-header">
+            <h1>Create an account</h1>
+            <p>Enter your details to get started.</p>
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <label className="auth-label">Full name</label>
+            <input
+              className="auth-input"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
 
-        <button type="submit">Register</button>
-      </form>
+            <label className="auth-label">Email</label>
+            <input
+              className="auth-input"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+
+            <label className="auth-label">Password</label>
+            <input
+              className="auth-input"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+
+            {error && <p className="auth-error">{error}</p>}
+            {ok && <p className="auth-success">{ok}</p>}
+
+            <button type="submit" className="primary-btn">
+              Sign up
+            </button>
+          </form>
+
+          <p className="auth-footer">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
