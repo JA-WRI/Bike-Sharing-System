@@ -3,6 +3,19 @@ import React, { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { reserveDock, reserveBike, unlockBike, lockBike } from "../../api/riderApi";
 
+const getLocalISODateTime = (date) => {
+    const pad = (num) => num.toString().padStart(2, '0');
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // Month is 0-indexed
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+};
+
 const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus }) => {
   const { user } = useContext(AuthContext);
 
@@ -25,10 +38,10 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
 
       switch (action) {
         case "RB":
-          response = await reserveBike(user.id, dock.bikeId, dock.dockId, new Date().toISOString());
+          response = await reserveBike(user.id, dock.bikeId, dock.dockId, getLocalISODateTime(new Date()));
           break;
         case "RD":
-          response = await reserveDock(user.id, dock.bikeId, dock.dockId, new Date().toISOString());
+          response = await reserveDock(user.id, dock.bikeId, dock.dockId, getLocalISODateTime(new Date()));
           break;
         case "UB":
           response = await unlockBike(user.id, dock.bikeId, dock.dockId);

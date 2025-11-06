@@ -19,9 +19,13 @@ const useRiderNotifications = (onMessage) => {
 
       onConnect: () => {
         console.log("✅ Connected to WebSocket");
-        stompClient.subscribe("/topic/rider", (message) => {
-          console.log("📩 New message:", message.body);
+        // stompClient.subscribe("/topic/rider", (message) => {
+        //   console.log("📩 New message:", message.body);
           
+        //   onMessage(message.body);
+        // });
+        stompClient.subscribe("/user/queue/notifications", (message) => {
+          console.log("📩 New notification:", message.body);
           onMessage(message.body);
         });
       },
