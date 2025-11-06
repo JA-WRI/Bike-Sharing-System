@@ -22,6 +22,7 @@ public class Billing {
         this.description = description;
         this.cost = cost;
         this.dateTransaction = dateTransaction;
+        this.trip = trip;
         //this.paymentMethod = paymentMethod;
     }
 

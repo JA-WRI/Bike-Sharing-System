@@ -1,11 +1,10 @@
 import api from "./api"; 
 
-
-export const addPlan = async (riderEmail, chosenPlan) => {
+export const addPlan = async (email, plan) => {
   try {
-    const response = await api.post(`api/riders/add-plan`, {
-      riderEmail,
-      chosenPlan,
+    const response = await api.post(`/api/riders/add-plan`, {
+      email,
+      plan,
     });
     return response.data;
   } catch (error) {

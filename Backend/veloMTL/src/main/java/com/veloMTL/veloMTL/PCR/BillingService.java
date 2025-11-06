@@ -27,6 +27,7 @@ public class BillingService {
 
         Rider rider = trip.getRider();
         Plan plan = rider.getPlan();
+        System.out.println(rider +" "+plan);
         if(plan == null) return null;
 
         boolean isEBike = trip.getBike().getBikeType().equalsIgnoreCase("e-Bike");
@@ -55,7 +56,7 @@ public class BillingService {
     }
 
     public List<Billing> getAllRiderBilling(String riderID){
-        return billingRepository.findAllByRiderID(riderID);
+        return billingRepository.findAllByriderID(riderID);
     }
 
 

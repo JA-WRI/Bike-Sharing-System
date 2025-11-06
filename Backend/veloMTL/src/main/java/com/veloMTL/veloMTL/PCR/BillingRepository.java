@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface BillingRepository extends MongoRepository<Billing, String> {
-    List<Billing> findAllByRiderID(String riderID);
+    List<Billing> findAllByriderID(String riderID);
 
 }
