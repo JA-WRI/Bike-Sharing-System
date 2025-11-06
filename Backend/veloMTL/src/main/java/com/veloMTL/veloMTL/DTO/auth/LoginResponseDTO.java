@@ -2,15 +2,17 @@ package com.veloMTL.veloMTL.DTO.auth;
 
 public class LoginResponseDTO {
     private String token;
+    private String id;
     private String name;
     private String email;
     private String role;
 
-    public LoginResponseDTO(String token, String name, String email, String role) {
+    public LoginResponseDTO(String token,String id, String name, String email, String role) {
         this.token = token;
         this.name = name;
         this.email = email;
         this.role = role;
+        this.id = id;
     }
     public String getToken() {
         return token;
@@ -43,4 +45,8 @@ public class LoginResponseDTO {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public String getId() {return id;}
+
+    public void setId(String id) {this.id = id;}
 }

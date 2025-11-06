@@ -41,12 +41,13 @@ public class AuthService {
         riderRepository.save(rider);
         String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
-        return new LoginResponseDTO(
-                token,
-                rider.getName(),
-                rider.getEmail(),
-                rider.getRole()
-        );
+    return new LoginResponseDTO(
+            token,
+            rider.getId(),
+            rider.getName(),
+            rider.getEmail(),
+            rider.getRole()
+    );
     }
 
     public LoginResponseDTO registerGoogleUser(String name, String email) {
@@ -61,26 +62,27 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
-        return new LoginResponseDTO(token, rider.getName(), rider.getEmail(), rider.getRole());
+        return new LoginResponseDTO(token, rider.getId(), rider.getName(), rider.getEmail(), rider.getRole());
 
     }
 
-    public LoginResponseDTO loginRider(LoginDTO loginDTO){
+public LoginResponseDTO loginRider(LoginDTO loginDTO){
         Rider rider = riderRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("wrong email"));
 
-        if(!passwordEncoder.matches(loginDTO.getPassword(), rider.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-        String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
-
-        return new LoginResponseDTO(
-                token,
-                rider.getName(),
-                rider.getEmail(),
-                rider.getRole()
-        );
+    if(!passwordEncoder.matches(loginDTO.getPassword(), rider.getPassword())) {
+        throw new RuntimeException("Invalid password");
     }
+    String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
+
+    return new LoginResponseDTO(
+            token,
+            rider.getId(),
+            rider.getName(),
+            rider.getEmail(),
+            rider.getRole()
+    );
+}
 
     public LoginResponseDTO loginOperator(LoginDTO loginDTO) {
         Operator operator = (Operator) operatorRepository.findByEmail(loginDTO.getEmail())
@@ -93,10 +95,10 @@ public class AuthService {
 
         return new LoginResponseDTO(
                 token,
+                operator.getId(),
                 operator.getName(),
                 operator.getEmail(),
                 operator.getRole()
         );
     }
-
 }
