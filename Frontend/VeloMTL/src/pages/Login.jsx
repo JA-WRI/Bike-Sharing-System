@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/authApi";
 import { AuthContext } from "../context/AuthContext";
-import "./login.css";
+import "../styles/login.css";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -12,18 +12,21 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("RIDER");
   const [error, setError] = useState(null);
+  const [showRoleSelector, setShowRoleSelector] = useState(false);
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
     try {
       const data = await loginUser(email, password, role);
-      login(data);
+      login(data.token, { email: data.email, name: data.name, role: data.role });
+      console.log("Login successful:", data);
+
       navigate("/");
     } catch (err) {
-      setError(
-        err?.response?.data || "Login failed. Check your email/password/role."
-      );
+      setError("Login failed. Check your credentials.");
+      console.error("Login failed:", err);
     }
   };
 

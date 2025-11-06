@@ -1,12 +1,10 @@
-
-
 :root {
   --primary: #2563eb;
 }
 
 .auth-shell {
   min-height: 100vh;
-  background: linear-gradient(120deg, #0f172a, #1f2937 55%, #0f172a);
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;

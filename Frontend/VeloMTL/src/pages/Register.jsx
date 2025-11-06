@@ -1,36 +1,31 @@
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../api/authApi";
-import "./register.css";
+import { AuthContext } from "../context/AuthContext";
+import "../styles/register.css";
 
 const Register = () => {
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [ok, setOk] = useState(null);
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    setOk(null);
+
     try {
-      await registerUser(formData.name, formData.email, formData.password);
-      setOk("Account created! Redirecting to login…");
-      setTimeout(() => navigate("/login"), 1000);
+      const data = await registerUser(name, email, password);
+      login(data.token, {name: data.name, email: data.email, role: data.role,});
+      navigate("/"); // go straight to dashboard
     } catch (err) {
-      setError(err?.response?.data || "Registration failed.");
+      console.error("Registration failed:", err);
+      setError("Registration failed. Please try again.");
     }
   };
 
@@ -56,8 +51,7 @@ const Register = () => {
               className="auth-input"
               type="text"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
+              onChange={(e) => setName(e.target.value)}
               required
             />
 
@@ -66,8 +60,8 @@ const Register = () => {
               className="auth-input"
               type="email"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
 
@@ -76,13 +70,12 @@ const Register = () => {
               className="auth-input"
               type="password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
 
             {error && <p className="auth-error">{error}</p>}
-            {ok && <p className="auth-success">{ok}</p>}
 
             <button type="submit" className="primary-btn">
               Sign up
