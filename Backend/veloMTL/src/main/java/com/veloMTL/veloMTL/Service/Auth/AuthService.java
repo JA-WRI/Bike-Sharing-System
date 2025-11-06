@@ -76,6 +76,7 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
 
     return new LoginResponseDTO(
             token,
+            rider.getId(),
             rider.getName(),
             rider.getEmail(),
             rider.getRole()
@@ -93,6 +94,7 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
 
         return new LoginResponseDTO(
                 token,
+                operator.getId(),
                 operator.getName(),
                 operator.getEmail(),
                 operator.getRole()

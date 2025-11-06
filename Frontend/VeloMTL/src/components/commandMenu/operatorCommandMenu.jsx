@@ -15,16 +15,16 @@ const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseSta
   const handleCommand = async (action, ...args) => {
     let extraParams = {};
 
-  if (action === "LB") {
-    const bikeId = prompt("Enter the Bike ID to lock:");
-    if (!bikeId) {
-      alert("Bike ID is required to lock the bike.");
-      return;
+    if (action === "LB") {
+      const bikeId = prompt("Enter the Bike ID to lock:");
+      if (!bikeId) {
+        alert("Bike ID is required to lock the bike.");
+        return;
+      }
+      extraParams.bikeId = bikeId;
     }
-    extraParams.bikeId = bikeId;
-  }
 
-  console.log(`Command "${action}" sent for dock ${dock.dockId}`);
+    console.log(`Command "${action}" sent for dock ${dock.dockId}`);
 
     try {
       let response;

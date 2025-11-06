@@ -1,5 +1,7 @@
 package com.veloMTL.veloMTL.Controller.BMSCore;
 
+import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
 import org.springframework.http.ResponseEntity;
@@ -17,4 +19,9 @@ public class BikeController {
         this.bikeService = bikeService;
     }
 
+    @GetMapping("/{bikeId}")
+    public ResponseEntity<BikeDTO> getBikeById(@PathVariable String bikeId) {
+        BikeDTO bike = bikeService.getBikeById(bikeId);
+        return ResponseEntity.ok(bike);
+    }
 }
