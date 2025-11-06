@@ -52,7 +52,7 @@ const Navbar = () => {
             <Link to="/billing" className="navbar-link">
               Billing History
             </Link>
-            <Link to="/History" className="navbar-link">History</Link>}
+            <Link to="/History" className="navbar-link">History</Link>
           </>
         )}
       </div>

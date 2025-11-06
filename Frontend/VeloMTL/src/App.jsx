@@ -19,6 +19,10 @@ const App = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/add-payment" element={<AddPayment />} />
+        <Route path="/payment-plans" element={<PaymentPlans />} />
+        <Route path="/billing" element={<BillingPage />} />
+        <Route path="/History" element={<History />} />
       </Routes>
     </Router>
   );
