@@ -1,0 +1,23 @@
+.PageSpace {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+table {
+    border: 2px solid red;
+    border-radius: 10px;
+    width: 800px;
+    height: 200px;
+    margin-top: 10px;
+    padding-bottom: 8px;
+}
+
+th {
+    border-bottom: 1px solid black;
+}
+
+td {
+    text-align: center;
+}
