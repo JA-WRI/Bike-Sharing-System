@@ -1,82 +1,40 @@
-import React, { useEffect, useState, useContext } from "react";
-import { getRiderBilling } from "../api/billingApi";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { getRiderBillings } from "../api/billingApi";
 import BillingCard from "../components/BillingCard";
 import "../styles/BillingPage.css";
 
 export default function BillingPage() {
   const { user } = useContext(AuthContext);
-  const [bills, setBills] = useState([]);
-  const [expandedBill, setExpandedBill] = useState(null);
+  const [billings, setBillings] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchBills = async () => {
+    const fetchBillings = async () => {
       try {
-        setLoading(true);
-
-        // 🧩 Try both potential ID fields
-        const riderID = user?.riderID || user?.id;
-
-        if (!riderID) {
-          console.warn("⏳ No rider ID yet, skipping billing fetch.");
-          setLoading(false);
-          return;
-        }
-
-        console.log("📡 Fetching billing for riderID:", riderID);
-
-        const data = await getRiderBilling(user.email);
-        console.log("Billing API response:", data);
-
-        const billsArray = Array.isArray(data)
-          ? data
-          : data?.data || data?.bills || [];
-
-        const tripBills = billsArray.filter(
-          (bill) => bill.description?.toLowerCase() === "trip"
-        );
-        const monthlyBills = billsArray.filter(
-          (bill) => bill.description?.toLowerCase() === "monthly base fee"
-        );
-
-        setBills([...monthlyBills, ...tripBills]);
+        const data = await getRiderBillings(user.email);
+        setBillings(data);
       } catch (error) {
-        console.error("Error fetching billing:", error);
-        setBills([]);
+        console.error("Failed to fetch billings:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBills();
-  }, [user?.id, user?.riderID]);
+    if (user?.email) fetchBillings();
+  }, [user]);
 
-  const toggleExpand = (billID) => {
-    setExpandedBill((prev) => (prev === billID ? null : billID));
-  };
-
-  if (loading) {
-    return <p style={{ textAlign: "center" }}>Loading billing records...</p>;
-  }
+  if (loading) return <p className="loading">Loading billing history...</p>;
 
   return (
-    <div className="billing-container">
-      <h1 className="billing-title">Billing History</h1>
-
-      {bills.length === 0 ? (
-        <p style={{ textAlign: "center", color: "#64748b" }}>
-          No billing records yet.
-        </p>
+    <div className="billing-page">
+      <h1 className="billing-title">Billings</h1>
+      {billings.length === 0 ? (
+        <p className="no-billings">No billing records available.</p>
       ) : (
         <div className="billing-list">
-          {bills.map((bill) => (
-            <BillingCard
-              key={bill.billID}
-              bill={bill}
-              isExpanded={expandedBill === bill.billID}
-              onClick={() => toggleExpand(bill.billID)}
-            />
+          {billings.map((bill) => (
+            <BillingCard key={bill.billID} bill={bill} />
           ))}
         </div>
       )}

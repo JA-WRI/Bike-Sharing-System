@@ -8,8 +8,8 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AddPayment from "./pages/AddPayment";
-import BillingPage from "./pages/BillingPage";
 import OauthRedirect from "./pages/OauthRedirect";
+import BillingPage from "./pages/BillingPage";
 
 
 const App = () => {
@@ -22,8 +22,8 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/add-payment" element={<AddPayment />} />
          <Route path="/payment-plans" element={<PaymentPlans />} />
-         <Route path="/billing" element={<BillingPage />} />
          <Route path="/oauth2/redirect" element={<OauthRedirect />} />
+         <Route path="/billing" element={<BillingPage />} />
       </Routes>
     </Router>
   );

@@ -5,7 +5,6 @@ import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;

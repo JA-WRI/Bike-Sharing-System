@@ -40,14 +40,6 @@ public class Billing {
         this.ratePerMinute = ratePerMinute;
         this.cost = cost;
     }
-    //    public Billing(String riderID, String description, double cost, LocalDateTime dateTransaction, String tripId) {
-//        this.riderID = riderID;
-//        this.description = description;
-//        this.cost = cost;
-//        this.dateTransaction = dateTransaction;
-//        this.tripId = tripId;
-//        //this.paymentMethod = paymentMethod;
-//    }
 
     public Billing( String description,LocalDateTime dateTransaction, String riderID,double cost) {
         this.riderID = riderID;

@@ -1,37 +1,53 @@
-import React from "react";
-import "../styles/BillingPage.css";
 
-export default function BillingCard({ bill, isExpanded, onClick }) {
-  const isTrip = bill.description?.toLowerCase() === "trip";
-  const trip = bill.trip || {};
+import React from "react";
+import "../styles/BillingCard.css";
+
+export default function BillingCard({ bill }) {
+  const {
+    description,
+    dateTransaction,
+    bikeID,
+    originStation,
+    arrivalStation,
+    startDate,
+    endDate,
+    ratePerMinute,
+    cost,
+  } = bill;
+
+  const formattedDate = new Date(dateTransaction).toLocaleString();
+
+  const isTrip = description === "Trip";
+  const isMonthly = description === "Monthly Base Fee";
 
   return (
-    <div
-      className={`billing-card ${isExpanded ? "expanded" : ""}`}
-      onClick={onClick}
-    >
-      <p><strong>Bill ID:</strong> {bill.billID || "N/A"}</p>
-      <p><strong>Rider ID:</strong> {bill.riderID || "N/A"}</p>
-      <p><strong>Description:</strong> {bill.description || "N/A"}</p>
+    <div className={`billing-card ${isTrip ? "trip-card" : "monthly-card"}`}>
+      <div className="billing-card-header">
+        <h3>{isTrip ? "Trip Billing" : "Monthly Base Fee"}</h3>
+        <p className="billing-date">{formattedDate}</p>
+      </div>
 
-      {isExpanded && (
-        <div className="billing-details">
-          {isTrip ? (
-            <>
-              <p><strong>Bike ID:</strong> {trip?.bike?.bikeId || "N/A"}</p>
-              <p><strong>Start Time:</strong> {trip?.startTime ? new Date(trip.startTime).toLocaleString() : "N/A"}</p>
-              <p><strong>End Time:</strong> {trip?.endTime ? new Date(trip.endTime).toLocaleString() : "N/A"}</p>
-              <p><strong>Origin Station:</strong> {trip?.originStation || "N/A"}</p>
-              <p><strong>Arrival Station:</strong> {trip?.arrivalStation || "N/A"}</p>
-              <p><strong>Plan Rate:</strong> {trip?.rate != null ? `$${trip.rate.toFixed(2)}` : "N/A"}</p>
-              <p><strong>E-Bike Surcharge:</strong> {trip?.isEBike ? "$5.00" : "$0.00"}</p>
-            </>
-          ) : (
-            <p><strong>Date:</strong> {bill?.dateTransaction ? new Date(bill.dateTransaction).toLocaleString() : "N/A"}</p>
-          )}
-          <p><strong>Total Cost:</strong> ${bill?.cost?.toFixed(2) || "0.00"}</p>
-        </div>
-      )}
+      <div className="billing-card-body">
+        {isTrip ? (
+          <>
+            <p><strong>Bike ID:</strong> {bikeID || "N/A"}</p>
+            <p><strong>Origin Station:</strong> {originStation || "N/A"}</p>
+            <p><strong>Arrival Station:</strong> {arrivalStation || "N/A"}</p>
+            <p><strong>Start Time:</strong> {startDate ? new Date(startDate).toLocaleString() : "N/A"}</p>
+            <p><strong>End Time:</strong> {endDate ? new Date(endDate).toLocaleString() : "N/A"}</p>
+            <p><strong>Rate per Minute:</strong> ${ratePerMinute?.toFixed(2) ?? "N/A"}</p>
+          </>
+        ) : (
+          <>
+            <p><strong>Billing Type:</strong> Monthly Base Fee</p>
+            <p>This charge covers your monthly plan subscription.</p>
+          </>
+        )}
+
+        <p className="billing-cost">
+          <strong>Total Cost:</strong> ${cost.toFixed(2)}
+        </p>
+      </div>
     </div>
   );
 }
