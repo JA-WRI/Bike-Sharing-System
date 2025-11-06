@@ -7,31 +7,31 @@ import com.veloMTL.veloMTL.Model.Users.Rider;
 public class TripMapper {
 
     public static Trip dtoToEntity(TripDTO tripDTO, Bike bike, Rider rider) {
+        Trip trip = new Trip();
+        trip.setTripId(tripDTO.getTripId());
+        trip.setBike(bike);
+        trip.setRider(rider);
+        trip.setStartTime(tripDTO.getStartTime());
 
-        Trip trip;
-//        if (bikeDTO.getBikeType().equalsIgnoreCase("regular")){
-//            //create the bike and assign the dock to bike
-//            bike = new Bike(bikeDTO.getBikId(), bikeDTO.getBikeType(), bikeDTO.getBikeStatus(), dock);
-//
-//        } else {
-//            bike = new ElectricBike(bikeDTO.getBikId(), bikeDTO.getBikeType(), bikeDTO.getBikeStatus(), dock, "100");
-//        }
+        if(tripDTO.getEndTime() != null){
+            trip.setEndTime(tripDTO.getEndTime());
+        }
 
-        return new Trip(tripDTO.getTripId(), tripDTO.getStartTime(), tripDTO.getEndTime(), bike, rider);
+        return trip;
     }
 
 
     public static TripDTO entityToDto(Trip trip) {
-        return new TripDTO(trip.getTripId(), trip.getStartTime(), trip.getEndTime(), trip.getBike().getBikeId(), trip.getRider().getId());
+        TripDTO tripdto = new TripDTO();
+        tripdto.setTripId(trip.getTripId());
+        tripdto.setRiderId(trip.getRider().getId());
+        tripdto.setBikeId(trip.getBike().getBikeId());
+        tripdto.setStartTime(trip.getStartTime());
 
-//        if(bike.getDock() == null)
-//            dto.setDockId(null);
-//        else
-//            dto.setDockId(bike.getDock().getDockId());
-//
-//        dto.setBikId(bike.getBikeId());
-
-//        return dto;
+        if(trip.getEndTime() != null){
+            tripdto.setEndTime(trip.getEndTime());
+        }
+        return tripdto;
     }
 
 }

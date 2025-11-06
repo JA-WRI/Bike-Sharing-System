@@ -1,11 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
+import PaymentPlans from "./pages/PaymentPlans";
 
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AddPayment from "./pages/AddPayment";
+import BillingPage from "./pages/BillingPage";
 import History from './pages/History';
 
 const App = () => {
@@ -16,7 +19,6 @@ const App = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/History" element={<History />} />
       </Routes>
     </Router>
   );

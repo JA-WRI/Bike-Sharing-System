@@ -4,6 +4,7 @@ import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Stations.*;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
@@ -34,7 +35,7 @@ public class StationService {
         return StationMapper.entityToDto(savedStation);
     }
 
-    public ResponseDTO<StationDTO> markStationOutOfService(String stationId){
+    public ResponseDTO<StationDTO> markStationOutOfService(String stationId, UserStatus role){
         Station station = loadDockWithState(stationId);
         StateChangeResponse message = station.getStationState().markStationOutOfService(station);
         stationRepository.save(station);
@@ -46,7 +47,7 @@ public class StationService {
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), StationMapper.entityToDto(station));
     }
 
-    public ResponseDTO<StationDTO> restoreStation(String stationId){
+    public ResponseDTO<StationDTO> restoreStation(String stationId, UserStatus role){
         Station station = loadDockWithState(stationId);
         StateChangeResponse message = station.getStationState().restoreStation(station);
         stationRepository.save(station);
@@ -58,13 +59,7 @@ public class StationService {
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), StationMapper.entityToDto(station));
     }
 
-    private Station loadDockWithState(String stationId) {
-        Station station = stationRepository.findById(stationId)
-                .orElseThrow(() -> new RuntimeException("Dock not found with ID: " + stationId));
-        station.setStationState(createStateFromStatus(station.getStationStatus()));
-        return station;
-    }
-
+    //Helper methods
     public void updateStationOccupancy(Station station, int newOccupancy) {
         station.setOccupancy(newOccupancy);
 
@@ -82,6 +77,13 @@ public class StationService {
         }
 
         stationRepository.save(station);
+    }
+
+    private Station loadDockWithState(String stationId) {
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Dock not found with ID: " + stationId));
+        station.setStationState(createStateFromStatus(station.getStationStatus()));
+        return station;
     }
 
     private StationState createStateFromStatus(StationStatus status) {

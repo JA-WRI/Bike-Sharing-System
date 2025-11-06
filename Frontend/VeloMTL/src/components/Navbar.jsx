@@ -30,7 +30,7 @@ const Navbar = () => {
 
   const handleBellClick = () => {
     setIsBellOpen(!isBellOpen);
-    setUnreadCount(0); // clear red dot when opening
+    setUnreadCount(0);
   };
 
   const handleDeleteNotification = (index) => {
@@ -41,7 +41,20 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-left">
         <Link to="/" className="navbar-link">Dashboard</Link>
-        {user && <Link to="/History" className="navbar-link">History</Link>}
+
+        {/* Show Payment Plans and Billing History only if user is not an operator */}
+        {userRole !== "OPERATOR" && (
+          <>
+            <Link to="/payment-plans" className="navbar-link">
+              Payment Plans
+            </Link>
+
+            <Link to="/billing" className="navbar-link">
+              Billing History
+            </Link>
+            <Link to="/History" className="navbar-link">History</Link>}
+          </>
+        )}
       </div>
 
       <div className="navbar-right">
@@ -49,14 +62,12 @@ const Navbar = () => {
           <Link to="/login" className="navbar-link">Login</Link>
         ) : (
           <div className="navbar-user-container">
-
             {/* Only show bell for operators */}
             {userRole === "OPERATOR" && (
               <div className="notification-bell-container">
                 <FaBell
                   className="notification-bell-icon"
                   onClick={handleBellClick}
-                  
                 />
                 {unreadCount > 0 && <span className="red-dot"></span>}
                 {isBellOpen && (
@@ -74,18 +85,35 @@ const Navbar = () => {
                 )}
               </div>
             )}
-          <div className="navbar-user">
-            <FaUserCircle
-              className="user-icon"
-              onClick={() => setShowDropdown(!showDropdown)}
-            />
-            {showDropdown && (
-              <div className="user-dropdown">
-                <p><strong>{user.name}</strong></p>
-                <p>{user.email}</p>
-                <button onClick={handleLogout}>Logout</button>
-              </div>
-            )}
+
+            <div className="navbar-user">
+              <FaUserCircle
+                className="user-icon"
+                onClick={() => setShowDropdown(!showDropdown)}
+              />
+              {showDropdown && (
+                <div className="user-dropdown">
+                  <p>
+                    {user.role === "RIDER"
+                      ? "Rider"
+                      : user.role === "OPERATOR"
+                      ? "Operator"
+                      : ""}{" "}
+                    {user.name}
+                  </p>
+
+                  <p>{user.email}</p>
+
+                  {/* Add Payment button only for riders */}
+                  {userRole === "RIDER" && (
+                    <button onClick={() => navigate("/add-payment")}>
+                      Add Payment
+                    </button>
+                  )}
+
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              )}
             </div>
           </div>
         )}
