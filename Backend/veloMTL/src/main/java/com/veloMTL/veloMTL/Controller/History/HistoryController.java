@@ -1,6 +1,6 @@
 package com.veloMTL.veloMTL.Controller.History;
 
-import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import com.veloMTL.veloMTL.DTO.History.TripHistoryDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.Model.Users.User;
@@ -22,9 +22,9 @@ public class HistoryController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<List<Trip>> fetchRiderTrips() {
+    public ResponseEntity<List<TripHistoryDTO>> fetchRiderTrips() {
         User currentUser = historyService.fetchCurrentUser();
-        ResponseEntity<List<Trip>> response;
+        ResponseEntity<List<TripHistoryDTO>> response;
         if (currentUser instanceof Operator) {
             response = ResponseEntity.ok(historyService.fetchAllTrips());
         } else if (currentUser instanceof Rider) {

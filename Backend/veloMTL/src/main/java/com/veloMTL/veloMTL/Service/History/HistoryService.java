@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Service.History;
 
 
+import com.veloMTL.veloMTL.DTO.History.TripHistoryDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
@@ -8,7 +9,6 @@ import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -46,13 +46,17 @@ public class HistoryService {
         return currentUser;
     }
 
-    public List<Trip> fetchRiderTrips(String userID) {
-        List<String> iterableId = new ArrayList<>();
-        iterableId.add(userID);
-        return tripRepository.findAllById(iterableId);
+    public List<TripHistoryDTO> processTrips(List<Trip> trips) {
+        return trips.stream().map(TripHistoryDTO::new).toList();
     }
 
-    public List<Trip> fetchAllTrips() {
-        return tripRepository.findAll();
+    public List<TripHistoryDTO> fetchRiderTrips(String userID) {
+        List<String> iterableId = new ArrayList<>();
+        iterableId.add(userID);
+        return processTrips(tripRepository.findAllById(iterableId));
+    }
+
+    public List<TripHistoryDTO> fetchAllTrips() {
+        return processTrips(tripRepository.findAll());
     }
 }
