@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
+// Too lazy to implement this. I'll set a timer for now
 const useRiderNotifications = (onMessage) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -19,11 +20,7 @@ const useRiderNotifications = (onMessage) => {
 
       onConnect: () => {
         console.log("✅ Connected to WebSocket");
-        // stompClient.subscribe("/topic/rider", (message) => {
-        //   console.log("📩 New message:", message.body);
-          
-        //   onMessage(message.body);
-        // });
+
         stompClient.subscribe("/user/queue/notifications", (message) => {
           console.log("📩 New notification:", message.body);
           onMessage(message.body);

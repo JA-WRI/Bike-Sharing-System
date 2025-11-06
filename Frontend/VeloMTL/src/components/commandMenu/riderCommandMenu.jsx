@@ -1,5 +1,5 @@
 // src/components/CommandMenu/RiderCommandMenu.jsx
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { reserveDock, reserveBike, unlockBike, lockBike } from "../../api/riderApi";
 
@@ -16,8 +16,27 @@ const getLocalISODateTime = (date) => {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 };
 
+const RESERVE_TIME = 15*60*1000; // 15 mins as MS
+
 const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus }) => {
   const { user } = useContext(AuthContext);
+  const [timerStarted, setTimerStarted] = useState(false);
+
+  
+  const startTimer = () => {
+    clearTimeout();
+    setTimeout(() => {
+      alert("Reservation time has expired.");
+      setTimerStarted(false);
+    }, RESERVE_TIME);
+  };
+
+  useEffect(() => {
+    if (timerStarted) {
+      startTimer();
+    }
+    return () => clearTimeout();
+  }, [timerStarted]);
 
   const handleCommand = async (action, ...args) => {
     let extraParams = {};
@@ -39,9 +58,11 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
       switch (action) {
         case "RB":
           response = await reserveBike(user.id, dock.bikeId, dock.dockId, getLocalISODateTime(new Date()));
+          if (response.status === "SUCCESS") setTimerStarted(true);
           break;
         case "RD":
           response = await reserveDock(user.id, dock.bikeId, dock.dockId, getLocalISODateTime(new Date()));
+          if (response.status === "SUCCESS") setTimerStarted(true);
           break;
         case "UB":
           response = await unlockBike(user.id, dock.bikeId, dock.dockId);
