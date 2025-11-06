@@ -36,10 +36,57 @@
   overflow: hidden;
 }
 
+.dashboard-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  margin: 1rem auto;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.95rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #aaa;
+}
+
+.legend-color.red {
+  background-color: #e74c3c; /* red */
+}
+
+.legend-color.yellow {
+  background-color: #f1c40f; /* yellow */
+}
+
+.legend-color.green {
+  background-color: #2ecc71; /* green */
+}
+
+
 /* Responsive for mobile screens */
 @media (max-width: 768px) {
   .dashboard-title {
     font-size: 1.4rem;
+  }
+  .dashboard-legend {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
   }
 
   .map-container {

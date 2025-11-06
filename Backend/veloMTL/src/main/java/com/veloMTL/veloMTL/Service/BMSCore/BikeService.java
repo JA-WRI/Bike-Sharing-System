@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -95,7 +97,7 @@ public class BikeService {
 
             //if user is a rider then we create them a trip
             if (role == UserStatus.RIDER) {
-                tripService.createTrip(bikeId, userId);
+                Trip trip = tripService.createTrip(bikeId, userId);
                 return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
             }
         }
@@ -196,4 +198,20 @@ public class BikeService {
                 .orElseThrow(() -> new RuntimeException("Bike not found with ID: " + bikeId));
         return BikeMapper.entityToDto(bike);
     }
+
+    public List<BikeDTO> getBikesByStation(String stationId) {
+        List<Bike> allBikes = bikeRepository.findAll(); // fetch all bikes
+        List<BikeDTO> stationBikes = allBikes.stream()
+                .filter(b -> b.getDock() != null && b.getDock().getDockId().startsWith(stationId + "-"))
+                .map(b -> new BikeDTO(
+                        b.getBikeId(),
+                        b.getBikeType(),
+                        b.getDock().getDockId(),
+                        b.getBikeStatus()
+                ))
+                .collect(Collectors.toList());
+
+        return stationBikes;
+    }
 }
+

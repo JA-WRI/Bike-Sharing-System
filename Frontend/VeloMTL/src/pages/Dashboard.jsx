@@ -4,8 +4,8 @@ import MapView from "../components/MapView";
 import SidePanel from "../components/SidePanel";
 import '../styles/Dashboard.css';
 import '../styles/SidePanel.css';
-import { getStationById } from "../api/stationApi";
 import { getBikeById } from "../api/bikeApi";
+import { getStationById, getBikesByStationId } from "../api/stationApi";
 import CommandMenu from "../components/commandMenu/CommandMenu";
 
 const stations = [
@@ -20,32 +20,60 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  // Fetch all stations 
-const handleMarkerClick = async (stationId) => {
-  // Instantly open the panel with minimal info
-  const clickedStation = stations.find((s) => s.id === stationId);
-  setSelectedStation({ stationName: clickedStation.stationName }); // Open right away
-  setLoading(true);
+  // Fetch full station data + all bikes
+  const handleMarkerClick = async (stationId) => {
+    const clickedStation = stations.find((s) => s.id === stationId);
+    setSelectedStation({ stationName: clickedStation.stationName }); // open panel instantly
+    setLoading(true);
 
-  try {
-    const data = await getStationById(stationId);
-    for (const dockDTO of data.docks) {
-      if (dockDTO.bikeId) {
-        dockDTO.bike = await getBikeById(dockDTO.bikeId);
+    try {
+      const [stationData, bikesData] = await Promise.all([
+        getStationById(stationId),
+        getBikesByStationId(stationId),
+      ]);
+
+      // Attach bikes to station
+      stationData.bikes = bikesData;
+
+      for (const dockDTO of stationData.docks) {
+        if (dockDTO.bikeId) {
+          dockDTO.bike = bikesData.find((b) => b.bikId === dockDTO.bikeId);
+        }
       }
+
+      setSelectedStation(stationData);
+    } catch (err) {
+      console.error("Failed to fetch station or bike details:", err);
+    } finally {
+      setLoading(false);
     }
-    setSelectedStation(data); // Replace placeholder with full data
-  } catch (err) {
-    console.error("Failed to fetch station details:", err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   return (
     <div className="dashboard-container">
-      <h1 className="dashboard-title"></h1>
+      <div className="dashboard-legend">
+        <div className="legend-item">
+          <span className="legend-color red"></span>
+          <span>Empty / Full (0% or 100%)</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color yellow"></span>
+          <span>Almost Full (&lt;25% or &gt;85%)</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color green"></span>
+          <span>Balanced</span>
+        </div>
+        <div className="legend-item">
+          <span className="bike-type e-bike">E:</span>
+          <span>E-Bike</span>
+        </div>
+        <div className="legend-item">
+          <span className="bike-type standard-bike">S:</span>
+          <span>Standard Bike</span>
+        </div>
+      </div>
       <div className="map-container">
         <MapView
           stations={stations}

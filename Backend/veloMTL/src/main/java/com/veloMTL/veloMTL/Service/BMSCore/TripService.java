@@ -37,11 +37,8 @@ public class TripService {
         // Create Trip object
         Trip trip = new Trip(bike, rider);
         trip.setStartTime(LocalDateTime.now());
-        //save the trip
-        Trip savedTrip = tripRepository.save(trip);
-        riderRepository.save(rider);
 
-        return trip;
+        return tripRepository.save(trip);
     }
 
     public TripDTO endTrip(Trip trip) {

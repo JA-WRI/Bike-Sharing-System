@@ -18,16 +18,16 @@ const useOperatorNotifications = (onMessage) => {
       debug: (msg) => console.log(msg),
 
       onConnect: () => {
-        console.log("✅ Connected to WebSocket");
+        console.log("Connected to WebSocket");
         stompClient.subscribe("/topic/operator", (message) => {
-          console.log("📩 New message:", message.body);
+          console.log("New message:", message.body);
           
           onMessage(message.body);
         });
       },
 
       onStompError: (error) => {
-        console.error("❌ STOMP error:", error);
+        console.error("STOMP error:", error);
       },
     });
 

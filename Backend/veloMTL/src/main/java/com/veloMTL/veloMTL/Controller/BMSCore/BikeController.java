@@ -2,6 +2,7 @@ package com.veloMTL.veloMTL.Controller.BMSCore;
 
 import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
 import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

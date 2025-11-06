@@ -38,11 +38,13 @@ public class StationService {
     public ResponseDTO<StationDTO> markStationOutOfService(String stationId, UserStatus role){
         Station station = loadDockWithState(stationId);
         StateChangeResponse message = station.getStationState().markStationOutOfService(station);
-        stationRepository.save(station);
 
-        List<Dock> docks = station.getDocks();
-        for(Dock dock: docks){
-            dockRepository.save(dock);
+        if(message.isSuccess()) {
+            stationRepository.save(station);
+            List<Dock> docks = station.getDocks();
+            for (Dock dock : docks) {
+                dockRepository.save(dock);
+            }
         }
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), StationMapper.entityToDto(station));
     }
@@ -50,11 +52,14 @@ public class StationService {
     public ResponseDTO<StationDTO> restoreStation(String stationId, UserStatus role){
         Station station = loadDockWithState(stationId);
         StateChangeResponse message = station.getStationState().restoreStation(station);
-        stationRepository.save(station);
 
-        List<Dock> docks = station.getDocks();
-        for(Dock dock: docks){
-            dockRepository.save(dock);
+        if (message.isSuccess()) {
+            stationRepository.save(station);
+
+            List<Dock> docks = station.getDocks();
+            for (Dock dock : docks) {
+                dockRepository.save(dock);
+            }
         }
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), StationMapper.entityToDto(station));
     }
