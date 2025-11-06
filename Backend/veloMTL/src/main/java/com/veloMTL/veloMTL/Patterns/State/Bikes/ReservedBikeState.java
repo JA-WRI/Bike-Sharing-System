@@ -8,6 +8,7 @@ import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
 import com.veloMTL.veloMTL.Patterns.State.Docks.OccupiedDockState;
+import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 import java.time.LocalDateTime;
@@ -37,9 +38,18 @@ public class ReservedBikeState implements BikeState{
         return response;
     }
 
+    // For reserved bikes, locking will return it to AVAILABLE state
     @Override
     public StateChangeResponse lockBike(Bike bike, Dock dock, UserStatus userStatus) {
-        return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Bike is already locked");
+//        Copied from below
+        bike.setBikeStatus(BikeStatus.AVAILABLE);
+        dock.setStatus(DockStatus.OCCUPIED);
+        bike.setState(new AvailableBikeState());
+        dock.setState(new OccupiedDockState());
+        bike.setReserveUser(null);
+        bike.setReserveDate(null);
+
+        return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike reservation has been cancelled.");
     }
 
     @Override
@@ -49,7 +59,7 @@ public class ReservedBikeState implements BikeState{
 
     private StateChangeResponse unlockPrivateBike(Bike bike, Dock dock, LocalDateTime currentTime, String reserveUser) {
         StateChangeResponse response;
-        if (currentTime.isAfter(bike.getReserveDate().plusMinutes(15))) { //If reserveUser does not unlock before the reservation time
+        if (currentTime.isAfter(bike.getReserveDate().plusMinutes(BikeService.EXPIRY_TIME_MINS))) { //If reserveUser does not unlock before the reservation time
             bike.setBikeStatus(BikeStatus.AVAILABLE);
             dock.setStatus(DockStatus.OCCUPIED);
             bike.setState(new AvailableBikeState());

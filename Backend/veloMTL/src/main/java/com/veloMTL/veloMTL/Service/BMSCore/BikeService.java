@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
 import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
@@ -14,10 +15,14 @@ import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.utils.Mappers.BikeMapper;
+import com.veloMTL.veloMTL.utils.Mappers.StationMapper;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,13 +35,17 @@ public class BikeService {
     private final StationService stationService;
     private final TripService tripService;
     private final BillingService billingService;
+    private final TimerService timerService;
 
-    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, TripService tripService, RiderRepository riderRepository, BillingService billingService) {
+    public static final int EXPIRY_TIME_MINS = 15;
+
+    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, TripService tripService, TimerService timerService, RiderRepository riderRepository, BillingService billingService) {
         this.bikeRepository = bikeRepository;
         this.dockRepository = dockRepository;
         this.stationRepository = stationRepository;
         this.stationService = stationService;
         this.tripService = tripService;
+        this.timerService = timerService;
         this.billingService = billingService;
     }
 
@@ -137,10 +146,37 @@ public class BikeService {
     }
 
     public ResponseDTO<BikeDTO> reserveBike(String bikeId, String username, String dockId, LocalDateTime reserveDate, UserStatus role) {
+        // Check if user already has existing reservation
+        List<Bike> reservedBikes = bikeRepository.findByReserveUser(username);
+        if (!reservedBikes.isEmpty()) throw new RuntimeException("Existing reservation for bike with ID: " + reservedBikes.getFirst().getBikeId());
+
         Bike bike = loadDockWithState(bikeId);
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
 
         StateChangeResponse message = bike.getState().reserveBike(bike, dock, reserveDate, username);
+        Bike savedBike = bikeRepository.save(bike);
+
+        long expiryTimeMs = EXPIRY_TIME_MINS*60*1000;
+        long latencyDelayMs = 1000;
+        timerService.scheduleReservationExpiry(bikeId, username, expiryTimeMs + latencyDelayMs, () -> {
+            Bike reservedBike = loadDockWithState(bikeId);
+
+            LocalDateTime now = LocalDateTime.now();
+            if (reservedBike.getReserveDate() != null && now.isAfter(reservedBike.getReserveDate().plusSeconds(4))) {
+                expireReservation(bikeId, username, role);
+            }
+        });
+
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
+    }
+
+
+    public ResponseDTO<BikeDTO> expireReservation(String bikeId, String userId, UserStatus userStatus) {
+        List<Bike> reservedBikes = bikeRepository.findByReserveUser(userId);
+        if (reservedBikes.isEmpty()) throw new RuntimeException("No existing reservations found.");
+
+        Bike bike = loadDockWithState(reservedBikes.getFirst().getBikeId());
+        StateChangeResponse message = bike.getState().lockBike(bike, bike.getDock(), userStatus);
         Bike savedBike = bikeRepository.save(bike);
 
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
@@ -163,6 +199,12 @@ public class BikeService {
         };
     }
 
+    public BikeDTO getBikeById(String bikeId) {
+        Bike bike = bikeRepository.findById(bikeId)
+                .orElseThrow(() -> new RuntimeException("Bike not found with ID: " + bikeId));
+        return BikeMapper.entityToDto(bike);
+    }
+
     public List<BikeDTO> getBikesByStation(String stationId) {
         List<Bike> allBikes = bikeRepository.findAll(); // fetch all bikes
         List<BikeDTO> stationBikes = allBikes.stream()
@@ -178,3 +220,4 @@ public class BikeService {
         return stationBikes;
     }
 }
+

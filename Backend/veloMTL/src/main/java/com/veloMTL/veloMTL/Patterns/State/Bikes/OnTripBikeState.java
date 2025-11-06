@@ -59,8 +59,8 @@ public class OnTripBikeState implements BikeState{
                 bike.setReserveUser(null);
                 bike.setReserveDate(null);
 
-                dock.setState(new EmptyDockState());
-                dock.setStatus(DockStatus.EMPTY);
+                dock.setState(new OccupiedDockState());
+                dock.setStatus(DockStatus.OCCUPIED);
                 dock.setBike(bike.getBikeType());
                 dock.setReserveDate(null);
                 dock.setReserveUser(null);

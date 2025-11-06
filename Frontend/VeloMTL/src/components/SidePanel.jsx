@@ -93,6 +93,11 @@ const SidePanel = ({ station, onClose, loading, onDockSelect }) => {
                             <span style={{ color: "#555" }}>
                               ({bike.type === "ELECTRIC" ? "E" : "S"})
                             </span>
+                            {dock.bike?.bikeStatus && (dock.bike.bikeStatus === "RESERVED") &&
+                              <span style={{ color: "red" }}>
+                                &nbsp; (Reserved)
+                              </span>
+                            }
                           </div>
                         ) : (
                           <p className="no-bike">No bike in this dock</p>
