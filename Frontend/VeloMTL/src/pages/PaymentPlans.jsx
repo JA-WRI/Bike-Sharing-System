@@ -65,7 +65,6 @@ export default function PaymentPlans() {
               selectedPlan === "Basic" ? "pp-chosen" : ""
             } ${isDisabled ? "pp-disabled" : ""}`}
             onClick={() => handleSelectPlan("Basic")}
-            // NOTE: we intentionally do NOT disable the buttons when a plan is selected
             // so a user clicking again will trigger the "already have a plan" alert
             disabled={isDisabled}
             aria-pressed={selectedPlan === "Basic"}
