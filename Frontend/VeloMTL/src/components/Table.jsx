@@ -36,10 +36,10 @@ export default function TripTable() {
                 {trips.length === 0 ? 
                 <tr>No User Data Found</tr> : 
                 trips.map((trip) => (
-                    <tr key={trip.tripId}>
+                    <tr className="tripData" key={trip.tripId}>
                         <td>{trip.tripId}</td>
                         <td>{trip.riderId}</td>
-                        <td>-</td>
+                        <td>{trip.reserveTime}</td>
                         <td>{trip.startTime}</td>
                         <td>{trip.endTime}</td>
                         <td>{trip.bikeType}</td>
