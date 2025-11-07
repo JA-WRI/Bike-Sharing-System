@@ -6,6 +6,8 @@ import com.stripe.model.SetupIntent;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.SetupIntentCreateParams;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.PCR.Billing;
+import com.veloMTL.veloMTL.PCR.BillingRepository;
 import com.veloMTL.veloMTL.PCR.Strategy.Basic;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import com.veloMTL.veloMTL.PCR.Strategy.Premium;
@@ -16,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,13 +27,15 @@ import java.util.Optional;
 public class RiderService implements UserDetailsService {
 
     private final RiderRepository riderRepository;
+    private final BillingRepository billingRepository;
 
     // Inject the Stripe secret key from application.properties or environment variable
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
-    public RiderService(RiderRepository riderRepository) {
+    public RiderService(RiderRepository riderRepository, BillingRepository billingRepository) {
         this.riderRepository = riderRepository;
+        this.billingRepository = billingRepository;
     }
 
     /**
@@ -117,6 +122,8 @@ public class RiderService implements UserDetailsService {
         } else if(chosenPlan.equalsIgnoreCase("Premium")){
             plan = new Premium();
         }
+        Billing billing = new Billing("Monthly Base Fee", LocalDateTime.now(), rider.getId(), plan.getBaseFee());
+        billingRepository.save(billing);
 
         rider.setPlan(plan);
         return riderRepository.save(rider);
