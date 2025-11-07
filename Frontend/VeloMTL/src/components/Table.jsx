@@ -3,10 +3,17 @@ import api from "../api/api"
 import { useState, useEffect } from "react";
 
 function calculateDuration(startTime, endTime) {
-    const date1 = new Date(startTime);
-    const date2 = new Date(endTime);
+    var date1 = new Date(startTime);
+    var date2;
+    if (endTime == null) {
+        date2 = new Date()
+    } else {
+        date2 = new Date(endTime);
+    }
+    console.log(date2);
     const diff = date2 - date1;
     const diffInMinutes = diff/(1000 * 60);   
+    console.log(diffInMinutes);
     return Math.floor(diffInMinutes);
 }
 
@@ -37,6 +44,7 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
 
     },[])
         
+    // Search and filter function
     useEffect(() => {
         if (!search && !startDateFilter && !endDateFilter && bikeFilter != "") {
             setFilterTrips(trips);
@@ -73,6 +81,7 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                 <tr>Search Term and Filters don't match any trips :( try again!</tr> :
                 filterTrips.map((trip, index) => (
                     <>
+                    {/* Main Details */}
                     <tr className="tripData" key={trip.tripId} onClick={() => handleTripClick(index)}>
                         <td>{trip.tripId}</td>
                         <td>{trip.riderId}</td>
@@ -83,10 +92,11 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                         <td>{trip.bikeType}</td>
                         <td>{trip.cost}</td>
                     </tr>
+                    {/* Drop down section for additional details */}
                     {index === selectedTrip &&
                         <tr>
-                            <th>Start Time: {trip.startTime}</th>
-                            <th>End Time: {trip.endTime}</th>
+                            <th>Start Time: {new Date(trip.startTime).toLocaleString()}</th>
+                            <th>End Time: {new Date(trip.endTime).toLocaleString()}</th>
                             <th>Duration: {calculateDuration(trip.startTime, trip.endTime)}</th>
                             <th></th>
                         </tr>

@@ -50,9 +50,6 @@ public class TripService {
     }
 
     public TripDTO endTrip(Trip trip, Station station, Billing billing) {
-        String arrivalStation = station.getStationName();
-        trip.setEndTime(LocalDateTime.now());
-        trip.setArrivalStation(arrivalStation);
         trip.setBilling(billing);
         Trip savedTrip = tripRepository.save(trip);
 

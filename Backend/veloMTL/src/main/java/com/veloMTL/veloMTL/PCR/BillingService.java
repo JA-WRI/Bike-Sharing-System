@@ -31,10 +31,8 @@ public class BillingService {
         return Duration.between(trip.getStartTime(), trip.getEndTime()).toMinutes();
     }
 
-    public Billing pay(String tripId){
+    public Billing pay(Trip trip){
 
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
 
         Rider rider = trip.getRider();
         Plan plan = rider.getPlan();

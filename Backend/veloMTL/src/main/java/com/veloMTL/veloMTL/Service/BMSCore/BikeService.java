@@ -132,9 +132,12 @@ public class BikeService {
             if(role == UserStatus.RIDER){
                 //call end trip
                 Trip trip = tripService.findOngoingTrip(bikeId, userId);
+
                 if (trip != null) {
-                    String tripID = trip.getTripId();
-                    Billing bill = billingService.pay(tripID);
+                    String arrivalStation = station.getStationName();
+                    trip.setEndTime(LocalDateTime.now());
+                    trip.setArrivalStation(arrivalStation);
+                    Billing bill = billingService.pay(trip);
                     tripService.endTrip(trip, station, bill);
                 }
             }

@@ -3,8 +3,8 @@ import { useState } from "react";
 
 export default function History() {
     const [searchTerm, setSearchTerm] = useState("");
-    const [startDateFilter, setStartDateFilter] = useState(new Date());
-    const [endDateFilter, setEndDateFilter] = useState(new Date());
+    const [startDateFilter, setStartDateFilter] = useState("");
+    const [endDateFilter, setEndDateFilter] = useState("");
     const [bikeFilter, setBikeFilter] = useState("");
     const handleInput = (e) => {
         setSearchTerm(e.target.value);
