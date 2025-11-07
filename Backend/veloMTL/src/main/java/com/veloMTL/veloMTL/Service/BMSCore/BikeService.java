@@ -8,6 +8,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Enums.*;
+import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.PCR.BillingService;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
@@ -132,10 +133,9 @@ public class BikeService {
                 //call end trip
                 Trip trip = tripService.findOngoingTrip(bikeId, userId);
                 if (trip != null) {
-                    tripService.endTrip(trip, station);
                     String tripID = trip.getTripId();
-                    billingService.pay(tripID);
-
+                    Billing bill = billingService.pay(tripID);
+                    tripService.endTrip(trip, station, bill);
                 }
             }
             return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));

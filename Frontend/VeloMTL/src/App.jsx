@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import AddPayment from "./pages/AddPayment";
 import OauthRedirect from "./pages/OauthRedirect";
 import BillingPage from "./pages/BillingPage";
+import History from "./pages/History"
 
 
 const App = () => {

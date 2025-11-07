@@ -5,6 +5,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
@@ -48,10 +49,11 @@ public class TripService {
         return trip;
     }
 
-    public TripDTO endTrip(Trip trip, Station station) {
+    public TripDTO endTrip(Trip trip, Station station, Billing billing) {
         String arrivalStation = station.getStationName();
         trip.setEndTime(LocalDateTime.now());
         trip.setArrivalStation(arrivalStation);
+        trip.setBilling(billing);
         Trip savedTrip = tripRepository.save(trip);
 
         return TripMapper.entityToDto(savedTrip);

@@ -20,20 +20,12 @@ th {
 
 td {
     text-align: center;
-    border-right: 1px;
-    border-color: solid black;
 }
 
-.tripData {
+tr {
     height: 50px;
-    border-radius: 10px;
-    border-color: solid black;
 }
 
 .tripData:hover {
     transform: translateY(-2px);
-}
-
-.tripData:active {
-    transform: translateX(-10px);
 }

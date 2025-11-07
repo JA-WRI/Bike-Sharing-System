@@ -4,6 +4,7 @@ package com.veloMTL.veloMTL.Service.History;
 import com.veloMTL.veloMTL.DTO.History.TripHistoryDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.User;
+import com.veloMTL.veloMTL.PCR.BillingRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
@@ -22,11 +23,13 @@ public class HistoryService {
     private RiderRepository riderRepository;
     private OperatorRepository operatorRepository;
     private TripRepository tripRepository;
+    private BillingRepository billingRepository;
 
-    public HistoryService(RiderRepository riderRepository, TripRepository tripRepository, OperatorRepository operatorRepository) {
+    public HistoryService(RiderRepository riderRepository, TripRepository tripRepository, OperatorRepository operatorRepository, BillingRepository billingRepository) {
         this.riderRepository = riderRepository;
         this.tripRepository = tripRepository;
         this.operatorRepository = operatorRepository;
+        this.billingRepository = billingRepository;
     }
 
     //Fetches Current Session's User Email from SecurityContextHolder
@@ -51,9 +54,8 @@ public class HistoryService {
     }
 
     public List<TripHistoryDTO> fetchRiderTrips(String userID) {
-        List<String> iterableId = new ArrayList<>();
-        iterableId.add(userID);
-        return processTrips(tripRepository.findAllById(iterableId));
+        List<Trip> filteredTrips = tripRepository.fetchTripsByUserId(userID);
+        return processTrips(filteredTrips);
     }
 
     public List<TripHistoryDTO> fetchAllTrips() {

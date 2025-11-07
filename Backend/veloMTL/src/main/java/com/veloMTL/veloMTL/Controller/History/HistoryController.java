@@ -29,6 +29,7 @@ public class HistoryController {
             response = ResponseEntity.ok(historyService.fetchAllTrips());
         } else if (currentUser instanceof Rider) {
             response = ResponseEntity.ok(historyService.fetchRiderTrips(currentUser.getId()));
+            System.out.println(response);
         } else {
             throw new RuntimeException("Current User does not have a Role!");
         }
