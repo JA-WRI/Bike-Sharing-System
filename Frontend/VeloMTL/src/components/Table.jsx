@@ -3,6 +3,9 @@ import api from "../api/api"
 import { useState, useEffect } from "react";
 
 function calculateDuration(startTime, endTime) {
+    if (startTime == null) {
+        return 0;
+    }
     var date1 = new Date(startTime);
     var date2;
     if (endTime == null) {
@@ -95,8 +98,8 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                     {/* Drop down section for additional details */}
                     {index === selectedTrip &&
                         <tr>
-                            <th>Start Time: {new Date(trip.startTime).toLocaleString()}</th>
-                            <th>End Time: {new Date(trip.endTime).toLocaleString()}</th>
+                            <th>Start Time: {trip.startTime != null ? new Date(trip.startTime).toLocaleString() : null}</th>
+                            <th>End Time: {trip.endTime != null ? new Date(trip.endTime).toLocaleString() : null}</th>
                             <th>Duration: {calculateDuration(trip.startTime, trip.endTime)}</th>
                             <th></th>
                         </tr>
