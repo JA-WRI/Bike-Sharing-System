@@ -15,14 +15,10 @@ import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.utils.Mappers.BikeMapper;
-import com.veloMTL.veloMTL.utils.Mappers.StationMapper;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +35,9 @@ public class BikeService {
 
     public static final int EXPIRY_TIME_MINS = 15;
 
-    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, TripService tripService, BillingService billingService, TimerService timerService) {
+    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository,
+                       StationRepository stationRepository, StationService stationService, TripService tripService,
+                       TimerService timerService, RiderRepository riderRepository, BillingService billingService) {
         this.bikeRepository = bikeRepository;
         this.dockRepository = dockRepository;
         this.stationRepository = stationRepository;
@@ -135,7 +133,8 @@ public class BikeService {
                 Trip trip = tripService.findOngoingTrip(bikeId, userId);
                 if (trip != null) {
                     tripService.endTrip(trip, station);
-                    billingService.pay(trip);
+                    String tripID = trip.getTripId();
+                    billingService.pay(tripID);
 
                 }
             }

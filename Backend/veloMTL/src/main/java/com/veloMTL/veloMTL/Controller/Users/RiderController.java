@@ -53,10 +53,13 @@ public class RiderController {
             return ResponseEntity.badRequest().body("Error adding plan: " + e.getMessage());
         }
     }
-    @GetMapping("/{riderID}/billing")
-    public ResponseEntity<List<Billing>> getAllBillingForRider(@PathVariable String riderID) {
-        List<Billing> bills = billingService.getAllRiderBilling(riderID);
+    @PostMapping("/billing")
+    public ResponseEntity<List<Billing>> getAllBillingForRider(@RequestBody Map<String, String> request) {
+        String riderEmail = request.get("email");
+        List<Billing> bills = billingService.getAllRiderBilling(riderEmail);
+
         return ResponseEntity.ok(bills);
     }
+
 }
 

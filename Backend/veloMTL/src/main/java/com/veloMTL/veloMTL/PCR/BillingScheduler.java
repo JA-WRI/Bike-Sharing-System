@@ -20,6 +20,7 @@ public class BillingScheduler {
 
     // Runs every month on the 1st at midnight
     @Scheduled(cron = "0 0 0 1 * ?")
+    //@Scheduled(cron = "0 */1 * * * *") // every 1 minute
     public void billAllRidersMonthly() {
         List<Rider> riders = riderRepository.findAll();
         for (Rider rider : riders) {

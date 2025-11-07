@@ -3,7 +3,8 @@ package com.veloMTL.veloMTL.PCR;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
+import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -14,28 +15,45 @@ import java.util.List;
 
 @Service
 public class BillingService {
-    @Autowired
-    private BillingRepository billingRepository;
+
+    private final BillingRepository billingRepository;
+    private final RiderRepository riderRepository;
+    private final TripRepository tripRepository;
+
+    public BillingService(BillingRepository billingRepository, RiderRepository riderRepository, TripRepository tripRepository) {
+        this.billingRepository = billingRepository;
+        this.riderRepository = riderRepository;
+        this.tripRepository = tripRepository;
+    }
 
     private long getTripDurationInMinutes(Trip trip){
         if(trip.getStartTime() == null || trip.getEndTime() == null) return 0;
         return Duration.between(trip.getStartTime(), trip.getEndTime()).toMinutes();
     }
 
-    public Billing pay(Trip trip){
-        if(trip == null || trip.getRider() == null || trip.getBike() == null) return null;
+    public Billing pay(String tripId){
+
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new RuntimeException("Trip not found"));
 
         Rider rider = trip.getRider();
         Plan plan = rider.getPlan();
-        System.out.println(rider +" "+plan);
-        if(plan == null) return null;
 
+        LocalDateTime startDate = trip.getStartTime();
+        LocalDateTime endDate = trip.getEndTime();
+        String bikeId = trip.getBike().getBikeId();
+        String originStation = trip.getOriginStation();
+        String arrivalStation = trip.getArrivalStation();
+
+        if(plan == null) return null;
         boolean isEBike = trip.getBike().getBikeType().equalsIgnoreCase("e-Bike");
         long tripDuration = getTripDurationInMinutes(trip);
 
+        double ratePerMinute = plan.getRatebyMinute();
         double tripCost = plan.calculateTripCost(tripDuration, isEBike);
 
-        Billing bill = new Billing(rider.getId(), "Trip", tripCost, LocalDateTime.now(),trip);
+
+        Billing bill = new Billing("Trip", LocalDateTime.now(),rider.getId(),bikeId,originStation,arrivalStation, startDate,endDate,ratePerMinute,tripCost);
         billingRepository.save(bill);
 
         return bill;
@@ -49,14 +67,17 @@ public class BillingService {
         if(plan == null) return null;
 
         int baseFee = plan.getBaseFee();
-        Billing bill = new Billing(rider.getId(), "Monthly Base Fee", baseFee, LocalDateTime.now());
+        Billing bill = new Billing("Monthly Base Fee",LocalDateTime.now(),rider.getId(),  baseFee);
         billingRepository.save(bill);
 
         return bill;
     }
 
-    public List<Billing> getAllRiderBilling(String riderID){
-        return billingRepository.findAllByriderID(riderID);
+
+    public List<Billing> getAllRiderBilling(String riderEmail){
+        Rider rider = riderRepository.findByEmail(riderEmail)
+                .orElseThrow(() -> new RuntimeException("Rider not found"));
+        return billingRepository.findAllByriderID(rider.getId());
     }
 
 

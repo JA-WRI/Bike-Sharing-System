@@ -7,22 +7,13 @@ public class LoginResponseDTO {
     private String email;
     private String role;
 
-    public LoginResponseDTO(String token, String id, String name, String email, String role) {
+    public LoginResponseDTO(String token,String id, String name, String email, String role) {
         this.token = token;
-        this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String token) {
         this.id = id;
     }
-
     public String getToken() {
         return token;
     }
@@ -54,4 +45,8 @@ public class LoginResponseDTO {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public String getId() {return id;}
+
+    public void setId(String id) {this.id = id;}
 }

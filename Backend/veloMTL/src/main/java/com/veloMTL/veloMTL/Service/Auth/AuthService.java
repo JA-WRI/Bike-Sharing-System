@@ -16,30 +16,30 @@ import java.util.Optional;
 
 @Service
 public class AuthService {
-    private final RiderRepository riderRepository;
-    private final OperatorRepository operatorRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+        private final RiderRepository riderRepository;
+        private final OperatorRepository operatorRepository;
+        private final PasswordEncoder passwordEncoder;
+        private final JwtService jwtService;
 
-    public AuthService(RiderRepository riderRepository, OperatorRepository operatorRepository, PasswordEncoder passwordEncoder, JwtService jwtService){
-        this.riderRepository = riderRepository;
-        this.operatorRepository = operatorRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-    }
+        public AuthService(RiderRepository riderRepository, OperatorRepository operatorRepository, PasswordEncoder passwordEncoder, JwtService jwtService){
+            this.riderRepository = riderRepository;
+            this.operatorRepository = operatorRepository;
+            this.passwordEncoder = passwordEncoder;
+            this.jwtService = jwtService;
+        }
 
     public LoginResponseDTO registerRider (RegistrationDTO registrationDTO){
-    if(riderRepository.existsByEmail(registrationDTO.getEmail())){
-        throw  new RuntimeException("Email already used");
-    }
-     String encodedPassword = passwordEncoder.encode(registrationDTO.getPassword());
-     Rider rider = new Rider(
-            registrationDTO.getName(),
-            registrationDTO.getEmail(),
-            encodedPassword
-    );
-    riderRepository.save(rider);
-    String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
+        if(riderRepository.existsByEmail(registrationDTO.getEmail())){
+            throw  new RuntimeException("Email already used");
+        }
+        String encodedPassword = passwordEncoder.encode(registrationDTO.getPassword());
+        Rider rider = new Rider(
+                registrationDTO.getName(),
+                registrationDTO.getEmail(),
+                encodedPassword
+        );
+        riderRepository.save(rider);
+        String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
     return new LoginResponseDTO(
             token,

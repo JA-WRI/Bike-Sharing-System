@@ -6,4 +6,5 @@ public interface Plan {
     double calculateTripCost(long tripDuration, boolean isEbike);
 
     int getBaseFee();
+    double getRatebyMinute();
 }  
