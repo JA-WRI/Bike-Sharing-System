@@ -41,6 +41,8 @@ export default function PaymentPlans() {
   return (
     <div className="plans-container">
       <h1 className="plans-title">Choose Your Plan</h1>
+      <h1 className="plans-title">Bike and Dock Reservations are free</h1>
+
 
       {user?.role === "OPERATOR" && (
         <p style={{ color: "#666", marginBottom: "20px" }}>
