@@ -8,6 +8,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Enums.*;
+import com.veloMTL.veloMTL.PCR.BillingService;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
@@ -33,17 +34,19 @@ public class BikeService {
     private final StationRepository stationRepository;
     private final StationService stationService;
     private final TripService tripService;
+    private final BillingService billingService;
     private final TimerService timerService;
 
     public static final int EXPIRY_TIME_MINS = 15;
 
-    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, TripService tripService, TimerService timerService, RiderRepository riderRepository) {
+    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, TripService tripService, TimerService timerService, RiderRepository riderRepository, BillingService billingService) {
         this.bikeRepository = bikeRepository;
         this.dockRepository = dockRepository;
         this.stationRepository = stationRepository;
         this.stationService = stationService;
         this.tripService = tripService;
         this.timerService = timerService;
+        this.billingService = billingService;
     }
 
     //can change this later if needed
@@ -97,7 +100,7 @@ public class BikeService {
 
             //if user is a rider then we create them a trip
             if (role == UserStatus.RIDER) {
-                Trip trip = tripService.createTrip(bikeId, userId);
+                tripService.createTrip(bikeId, userId, station);
                 return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
             }
         }
@@ -131,7 +134,10 @@ public class BikeService {
                 //call end trip
                 Trip trip = tripService.findOngoingTrip(bikeId, userId);
                 if (trip != null) {
-                    tripService.endTrip(trip);
+                    tripService.endTrip(trip, station);
+                    String tripID = trip.getTripId();
+                    billingService.pay(tripID);
+
                 }
             }
             return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));

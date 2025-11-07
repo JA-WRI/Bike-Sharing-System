@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@TypeAlias("electricBike")
+@TypeAlias("e-Bike")
 public class ElectricBike extends Bike{
     private String battery;
 
