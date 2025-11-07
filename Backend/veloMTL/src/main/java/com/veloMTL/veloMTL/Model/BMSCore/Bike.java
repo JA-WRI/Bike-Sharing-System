@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Document(collection = "Bikes")
-@TypeAlias("bike")
+@TypeAlias("Standard")
 public class Bike {
     @Id
     private String bikeId;

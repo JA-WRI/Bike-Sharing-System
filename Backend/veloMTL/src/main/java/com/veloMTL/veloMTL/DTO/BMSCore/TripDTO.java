@@ -23,19 +23,13 @@ public class TripDTO {
     public String getTripId() {
         return tripId;
     }
-
     public String getBikeId() {
         return bikeId;
     }
-
     public String getRiderId() {
         return riderId;
     }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
+    public LocalDateTime getStartTime() {return startTime;}
     public LocalDateTime getEndTime() {
         return endTime;
     }
@@ -43,19 +37,15 @@ public class TripDTO {
     public void setTripId(String tripId) {
         this.tripId = tripId;
     }
-
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
-
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
-
     public void setBikeId(String bikeId) {
         this.bikeId = bikeId;
     }
-
     public void setRiderId(String riderId) {
         this.riderId = riderId;
     }

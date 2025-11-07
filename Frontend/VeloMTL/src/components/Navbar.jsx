@@ -31,7 +31,7 @@ const Navbar = () => {
 
   const handleBellClick = () => {
     setIsBellOpen(!isBellOpen);
-    setUnreadCount(0); // clear red dot when opening
+    setUnreadCount(0);
   };
 
   const handleDeleteNotification = (index) => {
@@ -42,6 +42,20 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-left">
         <Link to="/" className="navbar-link">Dashboard</Link>
+
+        {/* Show Payment Plans for all non-operators */}
+        {userRole !== "OPERATOR" && (
+          <Link to="/payment-plans" className="navbar-link">
+            Payment Plans
+          </Link>
+        )}
+
+        {/* Show Billing only for riders */}
+        {userRole === "RIDER" && (
+          <Link to="/billing" className="navbar-link">
+            Billing
+          </Link>
+        )}
       </div>
 
       <div className="navbar-right">
@@ -101,7 +115,12 @@ const Navbar = () => {
                 </div>
                 <p className="user-email">{user.email}</p>
               </div>
-
+                 {/* Add Payment button only for riders */}
+                                  {userRole === "RIDER" && (
+                                    <button onClick={() => navigate("/add-payment")}>
+                                      Add Payment
+                                    </button>
+                                  )}
               <button className="logout-btn" onClick={handleLogout}>
                 Logout
               </button>
