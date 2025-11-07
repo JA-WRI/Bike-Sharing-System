@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class BikeDTO {
 
-    private String bikId;
+    private String bikeId;
     private String bikeType;
     private String dockId;
     private BikeStatus bikeStatus;
@@ -15,8 +15,8 @@ public class BikeDTO {
 
     public BikeDTO(){};
 
-    public BikeDTO(String bikId, String bikeType, String dockId, BikeStatus bikeStatus, LocalDateTime reserveDate) {
-        this.bikId = bikId;
+    public BikeDTO(String bikeId, String bikeType, String dockId, BikeStatus bikeStatus) {
+        this.bikeId = bikeId;
         this.bikeType = bikeType;
         this.dockId = dockId;
         this.bikeStatus = bikeStatus;
@@ -24,11 +24,11 @@ public class BikeDTO {
 
 
     public String getBikId() {
-        return bikId;
+        return bikeId;
     }
 
     public void setBikId(String bikId) {
-        this.bikId = bikId;
+        this.bikeId = bikId;
     }
 
     public String getBikeType() {

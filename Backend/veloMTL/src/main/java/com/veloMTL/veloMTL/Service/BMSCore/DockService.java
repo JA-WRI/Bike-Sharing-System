@@ -5,6 +5,7 @@ import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
@@ -36,27 +37,28 @@ public class DockService {
         return new DockDTO(savedDock.getDockId(), savedDock.getStatus(), savedDock.getStation().getId(), null);
    }
 
-   public ResponseDTO<DockDTO> reserveDock(String dockId, String riderId, LocalDateTime reservationTime){
+   public ResponseDTO<DockDTO> reserveDock(String dockId, String riderId, LocalDateTime reservationTime, UserStatus role){
         Dock dock = loadDockWithState(dockId);
         StateChangeResponse message = dock.getState().reserveDock(dock, riderId, reservationTime);
         Dock savedDock = dockRepo.save(dock);
         return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(savedDock));
    }
 
-   public ResponseDTO<DockDTO> markDockOutOfService(String dockId){
+   public ResponseDTO<DockDTO> markDockOutOfService(String dockId, UserStatus role){
        Dock dock = loadDockWithState(dockId);
        StateChangeResponse message = dock.getState().markDockOutOfService(dock);
        dockRepo.save(dock);
        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
    }
 
-    public ResponseDTO<DockDTO> restoreDockStatus(String dockId){
+    public ResponseDTO<DockDTO> restoreDockStatus(String dockId, UserStatus role){
         Dock dock = loadDockWithState(dockId);
         StateChangeResponse message = dock.getState().restoreService(dock);
         dockRepo.save(dock);
         return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
     }
 
+    //helper methods
     private Dock loadDockWithState(String dockId) {
         Dock dock = dockRepo.findById(dockId)
                 .orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));

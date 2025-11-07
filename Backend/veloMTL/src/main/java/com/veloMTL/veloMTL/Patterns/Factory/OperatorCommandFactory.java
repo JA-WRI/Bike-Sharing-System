@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Patterns.Factory;
 
 import com.veloMTL.veloMTL.DTO.Helper.CommandDTO;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.Command.*;
 import com.veloMTL.veloMTL.Patterns.Command.OperatorCommands.*;
 import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
@@ -21,20 +22,20 @@ public class OperatorCommandFactory extends CommandFactory{
     }
 
     @Override
-    public Command<?> createCommand(CommandDTO commandDTO) {
+    public Command<?> createCommand(CommandDTO commandDTO, UserStatus role) {
         return switch (commandDTO.getCommand()) {
             //mark dock out of service
-            case "MDOS" -> new MarkDockOutOfService(dockService, commandDTO.getUserId(), commandDTO.getObjectId());
+            case "MDOS" -> new MarkDockOutOfService(dockService, commandDTO.getUserId(), commandDTO.getObjectId(), role);
             //mark station out of service
-            case "MSOS" -> new MarkStationOutOfService(stationService, commandDTO.getUserId(), commandDTO.getObjectId());
+            case "MSOS" -> new MarkStationOutOfService(stationService, commandDTO.getUserId(), commandDTO.getObjectId(), role);
             //restore dock
-            case "RD" -> new RestoreDock(dockService, commandDTO.getUserId(), commandDTO.getObjectId());
+            case "RD" -> new RestoreDock(dockService, commandDTO.getUserId(), commandDTO.getObjectId(), role);
             //restore station
-            case "RS" -> new RestoreStation(stationService, commandDTO.getUserId(), commandDTO.getObjectId());
+            case "RS" -> new RestoreStation(stationService, commandDTO.getUserId(), commandDTO.getObjectId(), role);
             //unlock bike
-            case "UB" -> new OperatorUnlockBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId());
+            case "UB" -> new OperatorUnlockBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId(), role);
             //lock bike
-            case "LB" -> new OperatorLockBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId(), commandDTO.getDockId());
+            case "LB" -> new OperatorLockBike(bikeService, commandDTO.getUserId(), commandDTO.getObjectId(), commandDTO.getDockId(), role);
             default -> throw new IllegalArgumentException("Unknown operator action: " + commandDTO.getCommand());
         };
     }

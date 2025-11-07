@@ -1,5 +1,7 @@
 package com.veloMTL.veloMTL.Model.Users;
 
+import com.veloMTL.veloMTL.Model.Enums.Permissions;
+import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -8,8 +10,11 @@ import java.util.List;
 @Document(collection = "Riders")
 public class Rider extends User{
 
-    private String paymentInfo; //this should be turned into a PaymentInfo object
+
     private String reservationId; //only if a user reserves a bike
+    private String stripeCustomerId;
+    private Plan plan;
+
 
     public Rider() {
         super();
@@ -17,15 +22,8 @@ public class Rider extends User{
     }
 
     public Rider(String name, String email, String password) {
-        super(name, email, password, "RIDER", List.of("RESERVE_DOCK", "UNLOCK_BIKE", "VIEW_STATION"));
-    }
-
-    public String getPaymentInfo() {
-        return paymentInfo;
-    }
-
-    public void setPaymentInfo(String paymentInfo) {
-        this.paymentInfo = paymentInfo;
+        super(name, email, password, "RIDER",
+                List.of(Permissions.BIKE_UNLOCK, Permissions.BIKE_RETURN, Permissions.BIKE_RESERVE, Permissions.DOCK_RESERVE));
     }
 
     public String getReservationId() {
@@ -34,5 +32,21 @@ public class Rider extends User{
 
     public void setReservationId(String reservationId) {
         this.reservationId = reservationId;
+    }
+
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
+
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 }

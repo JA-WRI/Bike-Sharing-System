@@ -1,0 +1,52 @@
+.billing-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-left: 5px solid transparent;
+}
+
+.billing-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* Color-coded borders */
+.trip-card {
+  border-left-color: #2a7ae4; /* blue */
+}
+
+.monthly-card {
+  border-left-color: #4CAF50; /* green */
+}
+
+.billing-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.billing-card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #222;
+}
+
+.billing-date {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.billing-card-body p {
+  margin: 0.3rem 0;
+  color: #333;
+}
+
+.billing-cost {
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #1a1a1a;
+  font-size: 1.1rem;
+}

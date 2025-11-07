@@ -67,7 +67,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 }
             }
 
-            // ✅ Continue chain (even if controller throws)
+            // Continue chain (even if controller throws)
             filterChain.doFilter(request, response);
 
         } catch (io.jsonwebtoken.ExpiredJwtException e) {

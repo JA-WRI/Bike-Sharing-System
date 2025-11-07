@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Security;
 
+import com.veloMTL.veloMTL.Model.Enums.Permissions;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -24,14 +26,18 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
                 .signWith(SIGNING_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     // Convenience method to generate token for a specific role
-    public String generateToken(String email, String role) {
-        return generateToken(email, Map.of("role", role));
+    public String generateToken(String email, String role, List<Permissions> permissions) {
+        Map<String, Object> claims = Map.of(
+                "role", role,
+                "permissions", permissions
+        );
+        return generateToken(email, claims);
     }
 
     // Extract email from JWT

@@ -1,11 +1,14 @@
 package com.veloMTL.veloMTL.utils.Mappers;
 
+import com.veloMTL.veloMTL.DTO.BMSCore.DockDTO;
 import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class StationMapper {
 
@@ -31,11 +34,16 @@ public class StationMapper {
         dto.setStationStatus(station.getStationStatus());
         dto.setCapacity(station.getCapacity());
         dto.setDocks(new ArrayList<>());
+        dto.setOccupancy(station.getOccupancy());
 
         if (station.getDocks() != null) {
             List<Dock> docks = station.getDocks();
-            for (Dock dock: docks){
-                dto.getDocks().add(dock.getDockId());
+            Set<String> seenDockIds = new HashSet<>();
+            for (Dock dock : docks) {
+                if (!seenDockIds.contains(dock.getDockId())) {
+                    dto.getDocks().add(DockMapper.entityToDto(dock));
+                    seenDockIds.add(dock.getDockId());
+                }
             }
         }
         return dto;

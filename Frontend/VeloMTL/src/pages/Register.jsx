@@ -1,63 +1,92 @@
-import React, { useState } from 'react';
-import './register.css';
+
+import React, { useState, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { registerUser } from "../api/authApi";
+import { AuthContext } from "../context/AuthContext";
+import "../styles/register.css";
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+
+const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
 
-    // For now, just log the form data (replace with backend call later)
-    console.log('Registering user:', formData);
-
-    // Reset the form
-    setFormData({ name: '', email: '', password: '' });
+    try {
+      const data = await registerUser(name, email, password);
+      login(data.token, {name: data.name, email: data.email, role: data.role,});
+      navigate("/"); // go straight to dashboard
+    } catch (err) {
+      console.error("Registration failed:", err);
+      setError("Registration failed. Please try again.");
+    }
   };
 
   return (
-    <div className="register-container">
-      <h2>Create an Account</h2>
-      <form className="register-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
+    <div className="auth-shell">
+      <div className="auth-card fancy">
+        {/* LEFT PANEL */}
+        <div className="auth-side reg">
+          <h2>Join VeloMTL</h2>
+          <p>Create an account to manage your rides and stations.</p>
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+        {/* RIGHT PANEL */}
+        <div className="auth-main">
+          <div className="auth-header">
+            <h1>Create an account</h1>
+            <p>Enter your details to get started.</p>
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <label className="auth-label">Full name</label>
+            <input
+              className="auth-input"
+              type="text"
+              name="name"
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
 
-        <button type="submit">Register</button>
-      </form>
+            <label className="auth-label">Email</label>
+            <input
+              className="auth-input"
+              type="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <label className="auth-label">Password</label>
+            <input
+              className="auth-input"
+              type="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            {error && <p className="auth-error">{error}</p>}
+
+            <button type="submit" className="primary-btn">
+              Sign up
+            </button>
+          </form>
+
+          <p className="auth-footer">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

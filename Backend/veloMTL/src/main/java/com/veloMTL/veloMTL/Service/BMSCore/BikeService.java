@@ -1,23 +1,27 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
 import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
-import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
-import com.veloMTL.veloMTL.Model.Enums.DockStatus;
-import com.veloMTL.veloMTL.Model.Enums.StationStatus;
-import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import com.veloMTL.veloMTL.Model.Enums.*;
+import com.veloMTL.veloMTL.PCR.Billing;
+import com.veloMTL.veloMTL.PCR.BillingService;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
+import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.utils.Mappers.BikeMapper;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,12 +30,22 @@ public class BikeService {
     private final DockRepository dockRepository;
     private final StationRepository stationRepository;
     private final StationService stationService;
+    private final TripService tripService;
+    private final TimerService timerService;
+    private final BillingService billingService;
 
-    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService) {
+    public static final int EXPIRY_TIME_MINS = 15;
+
+    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository,
+                       StationRepository stationRepository, StationService stationService, TripService tripService,
+                       TimerService timerService, RiderRepository riderRepository, BillingService billingService) {
         this.bikeRepository = bikeRepository;
         this.dockRepository = dockRepository;
         this.stationRepository = stationRepository;
         this.stationService = stationService;
+        this.tripService = tripService;
+        this.timerService = timerService;
+        this.billingService = billingService;
     }
 
     //can change this later if needed
@@ -46,7 +60,7 @@ public class BikeService {
         //update the dock status
         dock.setStatus(DockStatus.OCCUPIED);
         //assign the bike to the dock
-        dock.setBike(bike);
+        dock.setBike(bike.getBikeId());
         //save the dock
         dockRepository.save(dock);
         //change the station status
@@ -60,59 +74,122 @@ public class BikeService {
         return BikeMapper.entityToDto(bike);
     }
 
-    public ResponseDTO<BikeDTO> unlockBike(String bikeId, String userId, UserStatus userStatus){
+    public ResponseDTO<BikeDTO> unlockBike(String bikeId, String userId, UserStatus role){
         Bike bike = loadDockWithState(bikeId);
         Dock dock = bike.getDock();
 
-        StateChangeResponse message = bike.getState().unlockBike(bike, dock, userStatus, LocalDateTime.now(), userId);
+        StateChangeResponse message = bike.getState().unlockBike(bike, dock, role, LocalDateTime.now(), userId);
         if (dock == null) {
             return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
         }
         Station station = dock.getStation();
 
-        //update station occupancy
-        int newOccupancy = station.getOccupancy()-1;
-        stationService.updateStationOccupancy(station, newOccupancy);
+        //only do this if we were able to perform the command
+        if(message.isSuccess()) {
+            //update station occupancy
+            int newOccupancy = station.getOccupancy() - 1;
+            stationService.updateStationOccupancy(station, newOccupancy);
 
-        dock.setBike(null);
-        bike.setDock(null);
+            dock.setBike(null);
+            bike.setDock(null);
 
-        bikeRepository.save(bike);
-        dockRepository.save(dock);
-        stationRepository.save(station);
+            Bike savedBike = bikeRepository.save(bike);
+            dockRepository.save(dock);
+            stationRepository.save(station);
+
+            //if user is a rider then we create them a trip
+            if (role == UserStatus.RIDER) {
+                Trip trip = tripService.findOngoingTrip(bikeId, userId);
+                if (trip != null) {
+                    tripService.startReserveTrip(trip);
+                } else {
+                    tripService.createTrip(bikeId, userId, station);
+                }
+                return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
+            }
+        }
 
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
     }
 
-    public ResponseDTO<BikeDTO> lockBike(String bikeId, String operatorId, String dockId){
+    public ResponseDTO<BikeDTO> lockBike(String bikeId, String userId, String dockId, UserStatus role){
         Bike bike = loadDockWithState(bikeId);
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
         Station station = dock.getStation();
-        StateChangeResponse message = bike.getState().lockBike(bike, dock);
-        bike.setDock(dock);
+        StateChangeResponse message = bike.getState().lockBike(bike, dock, role);
 
-        //update station occupancy
-        int newOccupancy = station.getOccupancy()+1;
-        stationService.updateStationOccupancy(station, newOccupancy);
-        dock.setBike(bike);
+        //only do this if successful
+        if (message.getStatus()== StateChangeStatus.SUCCESS) {
 
-        Bike savedBike = bikeRepository.save(bike);
-        dockRepository.save(dock);
-        stationRepository.save(station);
+            //setting bike and dock
+            bike.setDock(dock);
+            dock.setBike(bike.getBikeId());
 
-        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
+            //update station occupancy
+            int newOccupancy = station.getOccupancy() + 1;
+            stationService.updateStationOccupancy(station, newOccupancy);
+
+            //saving to database
+            Bike savedBike = bikeRepository.save(bike);
+            dockRepository.save(dock);
+            stationRepository.save(station);
+
+            if(role == UserStatus.RIDER){
+                //call end trip
+                Trip trip = tripService.findOngoingTrip(bikeId, userId);
+
+                if (trip != null) {
+                    String arrivalStation = station.getStationName();
+                    trip.setEndTime(LocalDateTime.now());
+                    trip.setArrivalStation(arrivalStation);
+                    Billing bill = billingService.pay(trip);
+                    tripService.endTrip(trip, station, bill);
+                }
+            }
+            return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
+        }
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(bike));
     }
 
-    public ResponseDTO<BikeDTO> reserveBike(String bikeId, String username, String dockId, LocalDateTime reserveDate) {
+    public ResponseDTO<BikeDTO> reserveBike(String bikeId, String username, String dockId, LocalDateTime reserveDate, UserStatus role) {
+        // Check if user already has existing reservation
+        List<Bike> reservedBikes = bikeRepository.findByReserveUser(username);
+        if (!reservedBikes.isEmpty()) throw new RuntimeException("Existing reservation for bike with ID: " + reservedBikes.getFirst().getBikeId());
+
         Bike bike = loadDockWithState(bikeId);
         Dock dock = dockRepository.findById(dockId).orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
 
         StateChangeResponse message = bike.getState().reserveBike(bike, dock, reserveDate, username);
         Bike savedBike = bikeRepository.save(bike);
+        //Create Reserve Trip
+        tripService.createReserveTrip(bikeId, username, bike.getDock().getStation());
+        long expiryTimeMs = EXPIRY_TIME_MINS*60*1000;
+        long latencyDelayMs = 1000;
+        timerService.scheduleReservationExpiry(bikeId, username, expiryTimeMs + latencyDelayMs, () -> {
+            Bike reservedBike = loadDockWithState(bikeId);
+
+            LocalDateTime now = LocalDateTime.now();
+            if (reservedBike.getReserveDate() != null && now.isAfter(reservedBike.getReserveDate().plusSeconds(4))) {
+                expireReservation(bikeId, username, role);
+            }
+        });
 
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
     }
 
+
+    public ResponseDTO<BikeDTO> expireReservation(String bikeId, String userId, UserStatus userStatus) {
+        List<Bike> reservedBikes = bikeRepository.findByReserveUser(userId);
+        if (reservedBikes.isEmpty()) throw new RuntimeException("No existing reservations found.");
+
+        Bike bike = loadDockWithState(reservedBikes.getFirst().getBikeId());
+        StateChangeResponse message = bike.getState().lockBike(bike, bike.getDock(), userStatus);
+        Bike savedBike = bikeRepository.save(bike);
+
+        return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
+    }
+
+    //Helper methods
     private Bike loadDockWithState(String bikeId) {
         Bike bike = bikeRepository.findById(bikeId)
                 .orElseThrow(() -> new RuntimeException("Bike not found with ID: " + bikeId));
@@ -127,5 +204,26 @@ public class BikeService {
             case ON_TRIP -> new OnTripBikeState();
             case OUT_OF_SERVICE -> new MaintenanceBikeState();
         };
+    }
+
+    public BikeDTO getBikeById(String bikeId) {
+        Bike bike = bikeRepository.findById(bikeId)
+                .orElseThrow(() -> new RuntimeException("Bike not found with ID: " + bikeId));
+        return BikeMapper.entityToDto(bike);
+    }
+
+    public List<BikeDTO> getBikesByStation(String stationId) {
+        List<Bike> allBikes = bikeRepository.findAll(); // fetch all bikes
+        List<BikeDTO> stationBikes = allBikes.stream()
+                .filter(b -> b.getDock() != null && b.getDock().getDockId().startsWith(stationId + "-"))
+                .map(b -> new BikeDTO(
+                        b.getBikeId(),
+                        b.getBikeType(),
+                        b.getDock().getDockId(),
+                        b.getBikeStatus()
+                ))
+                .collect(Collectors.toList());
+
+        return stationBikes;
     }
 }

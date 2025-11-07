@@ -8,6 +8,7 @@ import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
 import com.veloMTL.veloMTL.Patterns.State.Docks.OccupiedDockState;
+import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 import java.time.LocalDateTime;
@@ -16,10 +17,11 @@ public class ReservedBikeState implements BikeState{
 
 
     @Override
-    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus userStatus, LocalDateTime currentTime, String username) {
+    public StateChangeResponse unlockBike(Bike bike, Dock dock, UserStatus role, LocalDateTime currentTime, String username) {
         StateChangeResponse response;
 
-        switch(userStatus) {
+        //needs to cancel the reservation figure out how to do that later
+        switch(role) {
             case UserStatus.OPERATOR:
                 bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
                 dock.setStatus(DockStatus.EMPTY);
@@ -33,15 +35,21 @@ public class ReservedBikeState implements BikeState{
             default:
                 return new StateChangeResponse(StateChangeStatus.SUCCESS, "You have to be signed in to unlock a bike");
         }
-
         return response;
     }
 
-
-
+    // For reserved bikes, locking will return it to AVAILABLE state
     @Override
-    public StateChangeResponse lockBike(Bike bike, Dock dock) {
-        return new StateChangeResponse(StateChangeStatus.INVALID_TRANSITION, "Bike is already locked");
+    public StateChangeResponse lockBike(Bike bike, Dock dock, UserStatus userStatus) {
+//        Copied from below
+        bike.setBikeStatus(BikeStatus.AVAILABLE);
+        dock.setStatus(DockStatus.OCCUPIED);
+        bike.setState(new AvailableBikeState());
+        dock.setState(new OccupiedDockState());
+        bike.setReserveUser(null);
+        bike.setReserveDate(null);
+
+        return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike reservation has been cancelled.");
     }
 
     @Override
@@ -49,15 +57,9 @@ public class ReservedBikeState implements BikeState{
         return new StateChangeResponse(StateChangeStatus.NOT_ALLOWED, "Bike is already reserved");
     }
 
-    @Override
-    public StateChangeResponse markOutOfService(Bike bike) {
-        //Add logic here
-        return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike is put out of service and reservation is canceled");
-    }
-
     private StateChangeResponse unlockPrivateBike(Bike bike, Dock dock, LocalDateTime currentTime, String reserveUser) {
         StateChangeResponse response;
-        if (currentTime.isAfter(bike.getReserveDate().plusMinutes(15))) { //If reserveUser does not unlock before the reservation time
+        if (currentTime.isAfter(bike.getReserveDate().plusMinutes(BikeService.EXPIRY_TIME_MINS))) { //If reserveUser does not unlock before the reservation time
             bike.setBikeStatus(BikeStatus.AVAILABLE);
             dock.setStatus(DockStatus.OCCUPIED);
             bike.setState(new AvailableBikeState());
