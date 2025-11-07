@@ -8,6 +8,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Dock;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Enums.*;
+import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.PCR.BillingService;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
@@ -15,14 +16,10 @@ import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.utils.Mappers.BikeMapper;
-import com.veloMTL.veloMTL.utils.Mappers.StationMapper;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,12 +31,14 @@ public class BikeService {
     private final StationRepository stationRepository;
     private final StationService stationService;
     private final TripService tripService;
-    private final BillingService billingService;
     private final TimerService timerService;
+    private final BillingService billingService;
 
     public static final int EXPIRY_TIME_MINS = 15;
 
-    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository, StationService stationService, TripService tripService, TimerService timerService, RiderRepository riderRepository, BillingService billingService) {
+    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository,
+                       StationRepository stationRepository, StationService stationService, TripService tripService,
+                       TimerService timerService, RiderRepository riderRepository, BillingService billingService) {
         this.bikeRepository = bikeRepository;
         this.dockRepository = dockRepository;
         this.stationRepository = stationRepository;
@@ -100,7 +99,12 @@ public class BikeService {
 
             //if user is a rider then we create them a trip
             if (role == UserStatus.RIDER) {
-                tripService.createTrip(bikeId, userId, station);
+                Trip trip = tripService.findOngoingTrip(bikeId, userId);
+                if (trip != null) {
+                    tripService.startReserveTrip(trip);
+                } else {
+                    tripService.createTrip(bikeId, userId, station);
+                }
                 return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
             }
         }
@@ -133,11 +137,13 @@ public class BikeService {
             if(role == UserStatus.RIDER){
                 //call end trip
                 Trip trip = tripService.findOngoingTrip(bikeId, userId);
-                if (trip != null) {
-                    tripService.endTrip(trip, station);
-                    String tripID = trip.getTripId();
-                    billingService.pay(tripID);
 
+                if (trip != null) {
+                    String arrivalStation = station.getStationName();
+                    trip.setEndTime(LocalDateTime.now());
+                    trip.setArrivalStation(arrivalStation);
+                    Billing bill = billingService.pay(trip);
+                    tripService.endTrip(trip, station, bill);
                 }
             }
             return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
@@ -155,7 +161,8 @@ public class BikeService {
 
         StateChangeResponse message = bike.getState().reserveBike(bike, dock, reserveDate, username);
         Bike savedBike = bikeRepository.save(bike);
-
+        //Create Reserve Trip
+        tripService.createReserveTrip(bikeId, username, bike.getDock().getStation());
         long expiryTimeMs = EXPIRY_TIME_MINS*60*1000;
         long latencyDelayMs = 1000;
         timerService.scheduleReservationExpiry(bikeId, username, expiryTimeMs + latencyDelayMs, () -> {
@@ -220,4 +227,3 @@ public class BikeService {
         return stationBikes;
     }
 }
-

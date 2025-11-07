@@ -5,6 +5,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
@@ -48,10 +49,8 @@ public class TripService {
         return trip;
     }
 
-    public TripDTO endTrip(Trip trip, Station station) {
-        String arrivalStation = station.getStationName();
-        trip.setEndTime(LocalDateTime.now());
-        trip.setArrivalStation(arrivalStation);
+    public TripDTO endTrip(Trip trip, Station station, Billing billing) {
+        trip.setBilling(billing);
         Trip savedTrip = tripRepository.save(trip);
 
         return TripMapper.entityToDto(savedTrip);
@@ -59,5 +58,36 @@ public class TripService {
 
     public Trip findOngoingTrip(String bikeId, String riderId) {
         return tripRepository.findOngoingTrip(bikeId, riderId);
+    }
+
+    /**
+     *  This function creates a Trip object during a reservation foregoing the startTime of the trip
+     * @param bikeId of the reserved Bike
+     * @param riderId of the user reserving the bike
+     * @param station of the station holding the bike
+     * @return Trip object containing the details of the reservation
+     */
+    public Trip createReserveTrip(String bikeId, String riderId, Station station) {
+        //Find the bike
+        Bike bike = bikeRepository.findById(bikeId).orElseThrow(() -> new RuntimeException("Bike not found"));
+        //Find the rider
+        Rider rider = riderRepository.findById(riderId).orElseThrow(() -> new RuntimeException("Rider not found"));
+        String originStation = station.getStationName();
+        Trip trip = new Trip(bike, rider);
+        trip.setOriginStation(originStation);
+        Trip savedTrip = tripRepository.save(trip);
+        riderRepository.save(rider);
+        return savedTrip;
+    }
+
+    public Trip startReserveTrip(Trip trip) {
+        //Find the bike
+        Bike bike = bikeRepository.findById(trip.getBike().getBikeId()).orElseThrow(() -> new RuntimeException("Bike not found"));
+        //Find the rider
+        Rider rider = riderRepository.findById(trip.getRider().getId()).orElseThrow(() -> new RuntimeException("Rider not found"));
+        trip.setStartTime(LocalDateTime.now());
+        //save the trip
+        Trip savedTrip = tripRepository.save(trip);
+        return savedTrip;
     }
 }

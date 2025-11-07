@@ -43,7 +43,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-left">
         <Link to="/" className="navbar-link">Dashboard</Link>
-
+        {userRole && <Link to="/History" className="navbar-link">History</Link>}
         {/* Show Payment Plans for all non-operators */}
         {userRole !== "OPERATOR" && (
           <Link to="/payment-plans" className="navbar-link">
@@ -64,14 +64,12 @@ const Navbar = () => {
           <Link to="/login" className="navbar-link">Login</Link>
         ) : (
           <div className="navbar-user-container">
-
             {/* Only show bell for operators */}
             {userRole === "OPERATOR" && (
               <div className="notification-bell-container">
                 <FaBell
                   className="notification-bell-icon"
                   onClick={handleBellClick}
-                  
                 />
                 {unreadCount > 0 && <span className="red-dot"></span>}
                 {isBellOpen && (

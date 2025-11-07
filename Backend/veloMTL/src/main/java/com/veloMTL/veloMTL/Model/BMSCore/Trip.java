@@ -2,6 +2,7 @@ package com.veloMTL.veloMTL.Model.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.BikeState;
 import com.veloMTL.veloMTL.Patterns.State.Docks.DockState;
 import org.springframework.data.annotation.Id;
@@ -25,6 +26,8 @@ public class Trip {
     private Bike bike;
     @DBRef(lazy = true)
     private Rider rider;
+    @DBRef (lazy = true)
+    private Billing billing;
 
     public Trip(){}
 
@@ -61,4 +64,6 @@ public class Trip {
     public void setOriginStation(String originStation) {this.originStation = originStation;}
     public String getArrivalStation() {return arrivalStation;}
     public void setArrivalStation(String arrivalStation) {this.arrivalStation = arrivalStation;}
+    public Billing getBilling() { return billing; }
+    public void setBilling(Billing billing) { this.billing = billing; }
 }
