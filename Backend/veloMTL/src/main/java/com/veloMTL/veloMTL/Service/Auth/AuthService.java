@@ -28,31 +28,42 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public Rider registerRider (RegistrationDTO registrationDTO){
+    public LoginResponseDTO registerRider (RegistrationDTO registrationDTO){
     if(riderRepository.existsByEmail(registrationDTO.getEmail())){
         throw  new RuntimeException("Email already used");
     }
      String encodedPassword = passwordEncoder.encode(registrationDTO.getPassword());
-    Rider rider = new Rider(
+     Rider rider = new Rider(
             registrationDTO.getName(),
             registrationDTO.getEmail(),
             encodedPassword
     );
-        return riderRepository.save(rider);
+    riderRepository.save(rider);
+    String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
+
+    return new LoginResponseDTO(
+            token,
+            rider.getId(),
+            rider.getName(),
+            rider.getEmail(),
+            rider.getRole()
+    );
     }
 
-    public Rider registerGoogleUser(String name, String email) {
+    public LoginResponseDTO registerGoogleUser(String name, String email) {
         Optional<Rider> existing = riderRepository.findByEmail(email);
 
+        Rider rider;
         if (existing.isPresent()) {
-            return existing.get();
+            rider = existing.get();
+        } else {
+            rider = new Rider(name, email, null);
+            riderRepository.save(rider);
         }
 
-        Rider newRider = new Rider(
-        name,
-        email,
-        null);
-        return riderRepository.save(newRider);
+        String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
+        return new LoginResponseDTO(token, rider.getId(), rider.getName(), rider.getEmail(), rider.getRole());
+
     }
 
 public LoginResponseDTO loginRider(LoginDTO loginDTO){
@@ -66,6 +77,7 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
 
     return new LoginResponseDTO(
             token,
+            rider.getId(),
             rider.getName(),
             rider.getEmail(),
             rider.getRole()
@@ -83,6 +95,7 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
 
         return new LoginResponseDTO(
                 token,
+                operator.getId(),
                 operator.getName(),
                 operator.getEmail(),
                 operator.getRole()

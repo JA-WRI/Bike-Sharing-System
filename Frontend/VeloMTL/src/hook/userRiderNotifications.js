@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
-const useOperatorNotifications = (onMessage) => {
+// Not using this rn, I'll set a timer for now
+const useRiderNotifications = (onMessage) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -18,16 +19,16 @@ const useOperatorNotifications = (onMessage) => {
       debug: (msg) => console.log(msg),
 
       onConnect: () => {
-        console.log("Connected to WebSocket");
-        stompClient.subscribe("/topic/operator", (message) => {
-          console.log("New message:", message.body);
-          
+        console.log("✅ Connected to WebSocket");
+
+        stompClient.subscribe("/user/queue/notifications", (message) => {
+          console.log("📩 New notification:", message.body);
           onMessage(message.body);
         });
       },
 
       onStompError: (error) => {
-        console.error("STOMP error:", error);
+        console.error("❌ STOMP error:", error);
       },
     });
 
@@ -39,4 +40,4 @@ const useOperatorNotifications = (onMessage) => {
   }, [onMessage]);
 };
 
-export default useOperatorNotifications;
+export default useRiderNotifications;

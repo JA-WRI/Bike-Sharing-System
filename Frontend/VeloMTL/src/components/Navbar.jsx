@@ -25,12 +25,13 @@ const Navbar = () => {
   });
 
   const handleLogout = () => {
+    setShowDropdown(false);
     logout(navigate);
   };
 
   const handleBellClick = () => {
     setIsBellOpen(!isBellOpen);
-    setUnreadCount(0);
+    setUnreadCount(0); // clear red dot when opening
   };
 
   const handleDeleteNotification = (index) => {
@@ -70,8 +71,14 @@ const Navbar = () => {
                 />
                 {unreadCount > 0 && <span className="red-dot"></span>}
                 {isBellOpen && (
-                  <div className="notification-dropdown">
-                    {notifications.map((msg, i) => (
+                <div className="notification-dropdown">
+                  <div className="notification-dropdown-title">
+                    <strong>Notifications</strong>
+                  </div>
+                  {notifications.length === 0 ? (
+                    <div className="notification-item empty">No notifications</div>
+                  ) : (
+                    notifications.map((msg, i) => (
                       <div key={i} className="notification-item">
                         {msg}
                         <FaTimes
@@ -79,40 +86,38 @@ const Navbar = () => {
                           onClick={() => handleDeleteNotification(i)}
                         />
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="navbar-user">
-              <FaUserCircle
-                className="user-icon"
-                onClick={() => setShowDropdown(!showDropdown)}
-              />
-              {showDropdown && (
-                <div className="user-dropdown">
-                  <p>
-                    {user.role === "RIDER"
-                      ? "Rider"
-                      : user.role === "OPERATOR"
-                      ? "Operator"
-                      : ""}{" "}
-                    {user.name}
-                  </p>
-
-                  <p>{user.email}</p>
-
-                  {/* Add Payment button only for riders */}
-                  {userRole === "RIDER" && (
-                    <button onClick={() => navigate("/add-payment")}>
-                      Add Payment
-                    </button>
+                    ))
                   )}
-
-                  <button onClick={handleLogout}>Logout</button>
                 </div>
               )}
+              </div>
+            )}
+          <div className="navbar-user">
+            <FaUserCircle
+              className="user-icon"
+              onClick={() => setShowDropdown(!showDropdown)}
+            />
+            {showDropdown && (
+            <div className="user-dropdown">
+              <div className="user-info">
+                <div className="user-header">
+                  <p className="user-name"><strong>{user.name}</strong></p>
+                  <span
+                    className={`user-role-badge ${
+                      user.role === "OPERATOR" ? "operator" : "rider"
+                    }`}
+                  >
+                    {user.role}
+                  </span>
+                </div>
+                <p className="user-email">{user.email}</p>
+              </div>
+
+              <button className="logout-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          )}
             </div>
           </div>
         )}
