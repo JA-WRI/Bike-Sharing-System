@@ -26,7 +26,8 @@ const Navbar = () => {
 
   const handleLogout = () => {
     setShowDropdown(false);
-    logout(navigate);
+     logout();
+     navigate("/login");
   };
 
   const handleBellClick = () => {

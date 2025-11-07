@@ -1,9 +1,9 @@
-
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/authApi";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/login.css";
+
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -12,9 +12,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("RIDER");
   const [error, setError] = useState(null);
-  const [showRoleSelector, setShowRoleSelector] = useState(false);
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
@@ -22,7 +21,6 @@ const handleSubmit = async (e) => {
       const data = await loginUser(email, password, role);
       login(data.token, { id: data.id, email: data.email, name: data.name, role: data.role });
       console.log("Login successful:", data);
-
       navigate("/");
     } catch (err) {
       setError("Login failed. Check your credentials.");
@@ -35,43 +33,43 @@ const handleSubmit = async (e) => {
   };
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card fancy">
+    <div className="login-shell">
+      <div className="login-card">
         {/* LEFT PANEL */}
-        <div className="auth-side">
+        <div className="login-side">
           <h2>VeloMTL</h2>
           <p>Smart bike sharing for Montreal. Monitor trips, riders and docks.</p>
         </div>
 
         {/* RIGHT PANEL */}
-        <div className="auth-main">
-          <div className="auth-header">
-            <h1>Welcome back </h1>
+        <div className="login-main">
+          <div className="login-header">
+            <h1>Welcome back</h1>
             <p>Sign in to continue to the dashboard.</p>
           </div>
 
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <label className="auth-label">Email</label>
+          <form className="login-form" onSubmit={handleSubmit}>
+            <label className="login-label">Email</label>
             <input
-              className="auth-input"
+              className="login-input"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
 
-            <label className="auth-label">Password</label>
+            <label className="login-label">Password</label>
             <input
-              className="auth-input"
+              className="login-input"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
 
-            <label className="auth-label">Role</label>
+            <label className="login-label">Role</label>
             <select
-              className="auth-input"
+              className="login-input"
               value={role}
               onChange={(e) => setRole(e.target.value)}
             >
@@ -79,23 +77,23 @@ const handleSubmit = async (e) => {
               <option value="OPERATOR">Operator</option>
             </select>
 
-            {error && <p className="auth-error">{error}</p>}
+            {error && <p className="login-error">{error}</p>}
 
-            <button type="submit" className="primary-btn">
+            <button type="submit" className="login-btn">
               Sign in
             </button>
           </form>
 
-          <div className="auth-divider">
+          <div className="login-divider">
             <span>or continue with</span>
           </div>
 
-          <button type="button" className="google-btn" onClick={handleGoogle}>
+          <button type="button" className="login-google-btn" onClick={handleGoogle}>
             <span className="google-icon">G</span>
             Google
           </button>
 
-          <p className="auth-footer">
+          <p className="login-footer">
             Don&apos;t have an account? <Link to="/register">Create account</Link>
           </p>
         </div>
