@@ -44,8 +44,8 @@ const Navbar = () => {
       <div className="navbar-left">
         <Link to="/" className="navbar-link">Dashboard</Link>
         {userRole && <Link to="/History" className="navbar-link">History</Link>}
-        {/* Show Payment Plans for all non-operators */}
-        {userRole !== "OPERATOR" && (
+        {/* Show Payment Plans for all users */}
+        {userRole && (
           <Link to="/payment-plans" className="navbar-link">
             Payment Plans
           </Link>

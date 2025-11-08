@@ -1,38 +1,33 @@
-/******************************************
- * REGISTRATION PAGE — Sleek, Balanced, and Welcoming
- ******************************************/
-
 .auth-shell {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f9fafb 0%, #fff7f2 100%);
+  background: var(--background-light);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.4rem;
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-/* CARD */
 .auth-card.fancy {
   width: min(820px, 100%);
-  background: #ffffff;
-  border-radius: 20px;
+  background: var(--background);
+  border-radius: 6px;
   display: grid;
   grid-template-columns: 0.48fr 0.52fr;
   overflow: hidden;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  min-height: 460px; /* slightly shorter */
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.2s ease;
+  min-height: 460px; 
 }
 
 .auth-card.fancy:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 /* LEFT PANEL */
 .auth-side.reg {
-  background: linear-gradient(180deg, #fb923c 0%, #f97316 100%);
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
   color: #ffffff;
   padding: 2rem 2rem;
   display: flex;
@@ -91,54 +86,53 @@
 }
 
 .auth-input {
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
   padding: 0.6rem 0.75rem;
   font-size: 0.82rem;
   outline: none;
-  background-color: #f9fafb;
+  background-color: var(--background);
   transition: all 0.2s ease;
 }
 
 .auth-input:hover {
-  border-color: #5cc8ff;
+  border-color: var(--border-dark);
 }
 
 .auth-input:focus {
-  border-color: #5cc8ff;
-  box-shadow: 0 0 0 3px rgba(92, 200, 255, 0.25);
-  background-color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+  background-color: var(--background);
 }
 
-/* BUTTONS */
 .primary-btn {
   margin-top: 0.5rem;
-  background: #5cc8ff; /* blue button as requested */
+  background: var(--primary);
   border: none;
   color: #ffffff;
-  border-radius: 999px;
+  border-radius: 4px;
   padding: 0.65rem 0;
   font-weight: 600;
   cursor: pointer;
   font-size: 0.85rem;
-  transition: background 0.25s ease, transform 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .primary-btn:hover {
-  background: #fb923c; /* hover orange */
-  transform: translateY(-1px);
+  background: var(--primary-dark);
+  box-shadow: var(--shadow-md);
 }
 
 .primary-btn:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 /* SUCCESS / ERROR MESSAGES */
 .auth-error {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #b91c1c;
-  border-radius: 10px;
+  color: #dc2626;
+  border-radius: 4px;
   font-size: 0.75rem;
   padding: 0.4rem 0.6rem;
 }
@@ -152,14 +146,14 @@
 }
 
 .auth-footer a {
-  color: #5cc8ff;
+  color: var(--primary);
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .auth-footer a:hover {
-  color: #fb923c;
+  color: var(--primary-dark);
 }
 
 /* RESPONSIVE */

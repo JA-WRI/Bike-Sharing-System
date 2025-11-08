@@ -2,6 +2,8 @@ import "../styles/TripTable.css"
 import api from "../api/api"
 import { useState, useEffect } from "react";
 
+const ITEMS_PER_PAGE = 10;
+
 function calculateDuration(startTime, endTime) {
     if (startTime == null) {
         return 0;
@@ -25,11 +27,7 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
     const [trips, setTrips] = useState([]);
     const [filterTrips, setFilterTrips] = useState([]);
     const [selectedTrip, setSelectedTrip] = useState(-1);
-
-    const handleTripClick = (index) => {
-        setSelectedTrip(selectedTrip === index ? null : index);
-        console.log(selectedTrip);
-    }
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         const loadTrips = async () => {
@@ -63,7 +61,39 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
             setFilterTrips(filtered);
         }
     }, [trips, search, startDateFilter, endDateFilter, bikeFilter]);
-        
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, startDateFilter, endDateFilter, bikeFilter]);
+
+    // Calculate pagination
+    const totalPages = Math.ceil(filterTrips.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const currentTrips = filterTrips.slice(startIndex, endIndex);
+
+    // Adjust selectedTrip index to match the original filterTrips array
+    const handleTripClick = (pageIndex) => {
+        const actualIndex = startIndex + pageIndex;
+        setSelectedTrip(selectedTrip === actualIndex ? null : actualIndex);
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            setSelectedTrip(null); // Reset selection when changing pages
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            setSelectedTrip(null); // Reset selection when changing pages
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
 
     return (
         <div className="PageSpace">
@@ -82,10 +112,12 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                 <tr>No User Data Found</tr> : 
                 filterTrips.length === 0 ? 
                 <tr>Search Term and Filters don't match any trips :( try again!</tr> :
-                filterTrips.map((trip, index) => (
+                currentTrips.map((trip, pageIndex) => {
+                    const actualIndex = startIndex + pageIndex;
+                    return (
                     <>
                     {/* Main Details */}
-                    <tr className="tripData" key={trip.tripId} onClick={() => handleTripClick(index)}>
+                    <tr className="tripData" key={trip.tripId} onClick={() => handleTripClick(pageIndex)}>
                         <td>{trip.tripId}</td>
                         <td>{trip.riderId}</td>
                         <td>{trip.bikeId}</td>
@@ -96,7 +128,7 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                         <td>{trip.cost}</td>
                     </tr>
                     {/* Drop down section for additional details */}
-                    {index === selectedTrip &&
+                    {actualIndex === selectedTrip &&
                         <tr>
                             <th>Start Time: {trip.startTime != null ? new Date(trip.startTime).toLocaleString() : null}</th>
                             <th>End Time: {trip.endTime != null ? new Date(trip.endTime).toLocaleString() : null}</th>
@@ -105,8 +137,69 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                         </tr>
                         }
                     </>
-                ))}
+                    );
+                })}
             </table>
+            
+            {/* Pagination Controls */}
+            {filterTrips.length > ITEMS_PER_PAGE && (
+                <div style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "16px",
+                    marginTop: "32px",
+                    padding: "20px"
+                }}>
+                    <button
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        style={{
+                            padding: "10px 20px",
+                            borderRadius: "6px",
+                            border: "1px solid #ddd",
+                            backgroundColor: currentPage === 1 ? "#f5f5f5" : "white",
+                            color: currentPage === 1 ? "#999" : "#333",
+                            cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px"
+                        }}
+                    >
+                        ← Previous
+                    </button>
+                    
+                    <span style={{
+                        fontSize: "14px",
+                        color: "#666",
+                        fontWeight: "500"
+                    }}>
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    
+                    <button
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                        style={{
+                            padding: "10px 20px",
+                            borderRadius: "6px",
+                            border: "1px solid #ddd",
+                            backgroundColor: currentPage === totalPages ? "#f5f5f5" : "white",
+                            color: currentPage === totalPages ? "#999" : "#333",
+                            cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px"
+                        }}
+                    >
+                        Next →
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

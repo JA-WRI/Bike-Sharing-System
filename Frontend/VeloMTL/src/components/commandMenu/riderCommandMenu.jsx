@@ -18,7 +18,7 @@ const getLocalISODateTime = (date) => {
 
 const RESERVE_TIME = 15*60*1000; // 15 mins as MS
 
-const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus }) => {
+const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus, onCommandSuccess }) => {
   const { user } = useContext(AuthContext);
   const [timerStarted, setTimerStarted] = useState(false);
 
@@ -77,6 +77,14 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
       console.log("Command response:", response);
       setResponseMessage(response.message);
       setResponseStatus(response.status);
+      
+      // Refresh station data if command was successful
+      if (response.status === "SUCCESS" && onCommandSuccess) {
+        // Small delay to ensure backend has processed the change
+        setTimeout(() => {
+          onCommandSuccess();
+        }, 500);
+      }
     } catch (err) {
       console.error("Command failed:", err);
       setResponseMessage(err?.response?.data?.error || "An error occurred while performing the command.");
