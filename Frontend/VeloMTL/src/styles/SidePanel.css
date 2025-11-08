@@ -1,6 +1,6 @@
 .side-panel {
   position: relative;
-  height: calc(75vh + 4 rem); /* matches map height (75vh) + legend height (~4 rem including margin) */
+  height: calc(75vh + 4rem); /* matches map height (75vh) + legend height (~4 rem including margin) */
   width: 360px;
   background-color: var(--background);
   border-left: 1px solid var(--border-dark);
