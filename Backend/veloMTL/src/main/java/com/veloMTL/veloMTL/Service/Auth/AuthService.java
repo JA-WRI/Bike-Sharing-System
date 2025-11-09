@@ -38,15 +38,16 @@ public class AuthService {
                 registrationDTO.getEmail(),
                 encodedPassword
         );
-        riderRepository.save(rider);
+
+        Rider savedRider = riderRepository.save(rider);
         String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
     return new LoginResponseDTO(
             token,
-            rider.getId(),
-            rider.getName(),
-            rider.getEmail(),
-            rider.getRole()
+            savedRider.getId(),
+            savedRider.getName(),
+            savedRider.getEmail(),
+            savedRider.getRole()
     );
     }
 

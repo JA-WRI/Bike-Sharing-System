@@ -1,7 +1,10 @@
 // src/components/CommandMenu/RiderCommandMenu.jsx
 import React, { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { reserveDock, reserveBike, unlockBike, lockBike } from "../../api/riderApi";
+import { checkPaymentMethod } from "../../api/paymentMethodApi";
+import { getCurrentPlan } from "../../api/planApi";
 
 const getLocalISODateTime = (date) => {
     const pad = (num) => num.toString().padStart(2, '0');
@@ -20,7 +23,30 @@ const RESERVE_TIME = 15*60*1000; // 15 mins as MS
 
 const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus, onCommandSuccess }) => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [timerStarted, setTimerStarted] = useState(false);
+
+  // Check if rider has payment method and plan
+  const checkRiderPaymentSetup = async () => {
+    if (!user || user.role !== "RIDER") {
+      return { hasPaymentMethod: true, hasPaymentPlan: true };
+    }
+
+    try {
+      const [hasPaymentMethod, paymentPlan] = await Promise.all([
+        checkPaymentMethod(user.email),
+        getCurrentPlan(user.email)
+      ]);
+
+      return {
+        hasPaymentMethod,
+        hasPaymentPlan: !!paymentPlan
+      };
+    } catch (error) {
+      console.error("Error checking payment setup:", error);
+      return { hasPaymentMethod: false, hasPaymentPlan: false };
+    }
+  };
 
   
   const startTimer = () => {
@@ -39,6 +65,29 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
   }, [timerStarted]);
 
   const handleCommand = async (action, ...args) => {
+    // Validate payment setup before executing any command
+    if (user?.role === "RIDER") {
+      const { hasPaymentMethod, hasPaymentPlan } = await checkRiderPaymentSetup();
+      
+      if (!hasPaymentMethod) {
+        setResponseMessage("Please add a payment method before using bike services");
+        setResponseStatus("ERROR");
+        setTimeout(() => {
+          navigate("/add-payment");
+        }, 2000);
+        return;
+      }
+
+      if (!hasPaymentPlan) {
+        setResponseMessage("Please select a payment plan before using bike services");
+        setResponseStatus("ERROR");
+        setTimeout(() => {
+          navigate("/payment-plans");
+        }, 2000);
+        return;
+      }
+    }
+
     let extraParams = {};
 
     if (action === "LB") {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import MapView from "../components/MapView";
 import SidePanel from "../components/SidePanel";
 import '../styles/Dashboard.css';
@@ -7,6 +8,8 @@ import '../styles/SidePanel.css';
 import { getBikeById } from "../api/bikeApi";
 import { getStationById, getBikesByStationId } from "../api/stationApi";
 import CommandMenu from "../components/commandMenu/CommandMenu";
+import { checkPaymentMethod } from "../api/paymentMethodApi";
+import { getCurrentPlan } from "../api/planApi";
 
 const stations = [
   { id: "ST001", position: "45.5017,-73.5673", stationName: "Downtown Central", streetAddress: "123 Main St, Montreal, QC", capacity: 5, occupancy: 3 },
@@ -16,6 +19,7 @@ const stations = [
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [selectedStation, setSelectedStation] = useState(null);
   const [selectedDock, setSelectedDock] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -74,13 +78,59 @@ const Dashboard = () => {
     }
   };
 
-  // Handle dock selection with authentication check
-  const handleDockSelect = (dock) => {
+  // Check if rider has payment method and plan
+  const checkRiderPaymentSetup = async () => {
+    if (!user || user.role !== "RIDER") {
+      return { hasPaymentMethod: true, hasPaymentPlan: true }; // Not a rider, no check needed
+    }
+
+    try {
+      const [hasPaymentMethod, paymentPlan] = await Promise.all([
+        checkPaymentMethod(user.email),
+        getCurrentPlan(user.email)
+      ]);
+
+      return {
+        hasPaymentMethod,
+        hasPaymentPlan: !!paymentPlan
+      };
+    } catch (error) {
+      console.error("Error checking payment setup:", error);
+      return { hasPaymentMethod: false, hasPaymentPlan: false };
+    }
+  };
+
+  // Handle dock selection with authentication and payment check
+  const handleDockSelect = async (dock) => {
     if (!user) {
       setErrorMessage("Please login to interact with stations");
       setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
+
+    // For riders, check payment method and plan
+    if (user.role === "RIDER") {
+      const { hasPaymentMethod, hasPaymentPlan } = await checkRiderPaymentSetup();
+      
+      if (!hasPaymentMethod) {
+        setErrorMessage("Please add a payment method before using bike services");
+        setTimeout(() => {
+          setErrorMessage(null);
+          navigate("/add-payment");
+        }, 3000);
+        return;
+      }
+
+      if (!hasPaymentPlan) {
+        setErrorMessage("Please select a payment plan before using bike services");
+        setTimeout(() => {
+          setErrorMessage(null);
+          navigate("/payment-plans");
+        }, 3000);
+        return;
+      }
+    }
+
     setSelectedDock(dock);
   };
 
@@ -92,6 +142,10 @@ const Dashboard = () => {
           {errorMessage}
         </div>
       )}
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">VeloMTL</h1>
+        <p className="dashboard-slogan">Your Ride, Your City, Your Way</p>
+      </div>
       <div className="map-container">
         <div className="map-wrapper-container">
           <div className="dashboard-legend">
