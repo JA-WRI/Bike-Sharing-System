@@ -109,9 +109,9 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                     <th>Cost</th>
                 </tr>
                 {trips.length === 0 ? 
-                <tr>No User Data Found</tr> : 
+                <tr className="empty-state"><td colSpan="8">No User Data Found</td></tr> : 
                 filterTrips.length === 0 ? 
-                <tr>Search Term and Filters don't match any trips :( try again!</tr> :
+                <tr className="empty-state"><td colSpan="8">Search Term and Filters don't match any trips 😔 Try again!</td></tr> :
                 currentTrips.map((trip, pageIndex) => {
                     const actualIndex = startIndex + pageIndex;
                     return (
@@ -129,11 +129,13 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                     </tr>
                     {/* Drop down section for additional details */}
                     {actualIndex === selectedTrip &&
-                        <tr>
-                            <th>Start Time: {trip.startTime != null ? new Date(trip.startTime).toLocaleString() : null}</th>
-                            <th>End Time: {trip.endTime != null ? new Date(trip.endTime).toLocaleString() : null}</th>
-                            <th>Duration: {calculateDuration(trip.startTime, trip.endTime)}</th>
-                            <th></th>
+                        <tr className="expanded-row">
+                            <td colSpan="8" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+                                <div><strong>Start Time:</strong><br />{trip.startTime != null ? new Date(trip.startTime).toLocaleString() : "N/A"}</div>
+                                <div><strong>End Time:</strong><br />{trip.endTime != null ? new Date(trip.endTime).toLocaleString() : "N/A"}</div>
+                                <div><strong>Duration:</strong><br />{calculateDuration(trip.startTime, trip.endTime)} minutes</div>
+                                <div></div>
+                            </td>
                         </tr>
                         }
                     </>
@@ -143,58 +145,23 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
             
             {/* Pagination Controls */}
             {filterTrips.length > ITEMS_PER_PAGE && (
-                <div style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "16px",
-                    marginTop: "32px",
-                    padding: "20px"
-                }}>
+                <div className="pagination-container">
                     <button
+                        className="pagination-button"
                         onClick={handlePreviousPage}
                         disabled={currentPage === 1}
-                        style={{
-                            padding: "10px 20px",
-                            borderRadius: "6px",
-                            border: "1px solid #ddd",
-                            backgroundColor: currentPage === 1 ? "#f5f5f5" : "white",
-                            color: currentPage === 1 ? "#999" : "#333",
-                            cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px"
-                        }}
                     >
                         ← Previous
                     </button>
                     
-                    <span style={{
-                        fontSize: "14px",
-                        color: "#666",
-                        fontWeight: "500"
-                    }}>
+                    <span className="pagination-info">
                         Page {currentPage} of {totalPages}
                     </span>
                     
                     <button
+                        className="pagination-button"
                         onClick={handleNextPage}
                         disabled={currentPage === totalPages}
-                        style={{
-                            padding: "10px 20px",
-                            borderRadius: "6px",
-                            border: "1px solid #ddd",
-                            backgroundColor: currentPage === totalPages ? "#f5f5f5" : "white",
-                            color: currentPage === totalPages ? "#999" : "#333",
-                            cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px"
-                        }}
                     >
                         Next →
                     </button>

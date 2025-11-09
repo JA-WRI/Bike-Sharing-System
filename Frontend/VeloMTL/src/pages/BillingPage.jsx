@@ -32,8 +32,6 @@ export default function BillingPage() {
     setCurrentPage(1);
   }, [billings]);
 
-  if (loading) return <p className="loading">Loading billing history...</p>;
-
   // Calculate pagination
   const totalPages = Math.ceil(billings.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -56,78 +54,56 @@ export default function BillingPage() {
 
   return (
     <div className="billing-page">
-      <h1 className="billing-title">Billings</h1>
-      {billings.length === 0 ? (
-        <p className="no-billings">No billing records available.</p>
-      ) : (
-        <>
-          <div className="billing-list">
-            {currentBillings.map((bill) => (
-              <BillingCard key={bill.billID} bill={bill} />
-            ))}
+      <div className="billing-container">
+        <div className="billing-header">
+          <h1 className="billing-title">Billing History</h1>
+          <p className="billing-subtitle">View your past invoices and payments</p>
+        </div>
+        
+        {loading ? (
+          <div className="loading">
+            <div className="loading-spinner"></div>
+            Loading billing history...
           </div>
-          
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "16px",
-              marginTop: "32px",
-              padding: "20px"
-            }}>
-              <button
-                onClick={handlePreviousPage}
-                disabled={currentPage === 1}
-                style={{
-                  padding: "10px 20px",
-                  borderRadius: "6px",
-                  border: "1px solid #ddd",
-                  backgroundColor: currentPage === 1 ? "#f5f5f5" : "white",
-                  color: currentPage === 1 ? "#999" : "#333",
-                  cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px"
-                }}
-              >
-                ← Previous
-              </button>
-              
-              <span style={{
-                fontSize: "14px",
-                color: "#666",
-                fontWeight: "500"
-              }}>
-                Page {currentPage} of {totalPages}
-              </span>
-              
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                style={{
-                  padding: "10px 20px",
-                  borderRadius: "6px",
-                  border: "1px solid #ddd",
-                  backgroundColor: currentPage === totalPages ? "#f5f5f5" : "white",
-                  color: currentPage === totalPages ? "#999" : "#333",
-                  cursor: currentPage === totalPages ? "not-allowed" : "pointer",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px"
-                }}
-              >
-                Next →
-              </button>
+        ) : billings.length === 0 ? (
+          <p className="no-billings">No billing records available.</p>
+        ) : (
+          <>
+            <div className="billing-list">
+              {currentBillings.map((bill, index) => (
+                <div key={bill.billID} style={{ animationDelay: `${index * 0.1}s` }}>
+                  <BillingCard bill={bill} />
+                </div>
+              ))}
             </div>
-          )}
-        </>
-      )}
+            
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="billing-pagination">
+                <button
+                  className="billing-pagination-button"
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                >
+                  ← Previous
+                </button>
+                
+                <span className="billing-pagination-info">
+                  Page {currentPage} of {totalPages}
+                </span>
+                
+                <button
+                  className="billing-pagination-button"
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

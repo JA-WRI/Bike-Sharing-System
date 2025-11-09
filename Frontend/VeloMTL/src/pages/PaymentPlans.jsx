@@ -116,7 +116,7 @@ export default function PaymentPlans() {
     setPlanToConfirm(null);
   };
 
-  const isDisabled = user?.role === "OPERATOR" || !hasStripeCustomerId || !hasPaymentMethod || checkingPaymentMethod;
+  const isDisabled = !user || user?.role === "OPERATOR" || !hasStripeCustomerId || !hasPaymentMethod || checkingPaymentMethod;
 
   return (
     <section className="pp-wrap-modern v2">
@@ -129,6 +129,23 @@ export default function PaymentPlans() {
             </p>
           </div>
         </header>
+
+        {!user && (
+          <div className="pp-note-modern" style={{ 
+            backgroundColor: "#fee", 
+            border: "1px solid #f44336", 
+            padding: "16px", 
+            borderRadius: "8px",
+            marginBottom: "24px"
+          }}>
+            <p style={{ margin: "0 0 8px 0", fontWeight: "600", color: "#c62828" }}>
+              Login Required
+            </p>
+            <p style={{ margin: 0, fontSize: "14px", color: "#d32f2f" }}>
+              You need to <Link to="/login" style={{ color: "#0066cc", textDecoration: "underline", fontWeight: "600" }}>log in</Link> to select a payment plan.
+            </p>
+          </div>
+        )}
 
         {user?.role === "OPERATOR" && (
           <div className="pp-note-modern" style={{ 

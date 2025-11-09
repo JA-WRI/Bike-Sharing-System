@@ -17,6 +17,12 @@
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease-out;
+  --transition-base: 0.2s ease-out;
+  --transition-slow: 0.3s ease-out;
+  --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html, body {
@@ -30,6 +36,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--text-primary);
   background-color: var(--background-light);
+  scroll-behavior: smooth;
 }
 
 *, *::before, *::after {
@@ -41,4 +48,27 @@ html, body {
   padding: 0;
   width: 100%;
   min-height: 100%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Global fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Smooth transitions for interactive elements */
+button, a, input, select, textarea {
+  transition: all var(--transition-base);
+}
+
+/* Improved focus styles */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
