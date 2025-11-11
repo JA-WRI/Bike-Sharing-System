@@ -3,9 +3,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.mongodb.repository.Query;
-
 import java.util.List;
-
 
 @Repository
 public interface TripRepository extends MongoRepository<Trip,String> {
@@ -14,5 +12,4 @@ public interface TripRepository extends MongoRepository<Trip,String> {
 
     @Query("{ 'rider.id': ?0 }")
     List<Trip> fetchTripsByUserId(String userId);
-
 }
