@@ -20,7 +20,6 @@ public class Premium implements Plan{
 
     @Override
     public double calculateTripCost(long tripDuration, boolean isEbike) {
-        if(tripDuration<1) tripDuration = 1;
         return tripDuration*ratebyMinute;
 
     }

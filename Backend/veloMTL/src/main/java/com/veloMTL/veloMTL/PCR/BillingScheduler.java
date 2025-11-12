@@ -2,7 +2,6 @@ package com.veloMTL.veloMTL.PCR;
 
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
-import com.veloMTL.veloMTL.Service.PRC.BillingService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

@@ -1,62 +1,15 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import "../styles/PaymentPlans.css";
 import { AuthContext } from "../context/AuthContext";
-import { addPlan, getCurrentPlan } from "../api/planApi";
-import { checkPaymentMethod, checkStripeCustomerId } from "../api/paymentMethodApi";
-import { Link } from "react-router-dom";
+import { addPlan } from "../api/planApi";
 
 export default function PaymentPlans() {
   const { user } = useContext(AuthContext);
   const [selectedPlan, setSelectedPlan] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [hasPaymentMethod, setHasPaymentMethod] = useState(false);
-  const [hasStripeCustomerId, setHasStripeCustomerId] = useState(false);
-  const [checkingPaymentMethod, setCheckingPaymentMethod] = useState(true);
-  const [hasExistingPlan, setHasExistingPlan] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [planToConfirm, setPlanToConfirm] = useState(null);
 
-  useEffect(() => {
-    const checkPaymentAndPlan = async () => {
-      if (!user) {
-        setCheckingPaymentMethod(false);
-        return;
-      }
-
-      // Only check payment methods for riders
-      if (user.role === "OPERATOR") {
-        setCheckingPaymentMethod(false);
-        return;
-      }
-
-      try {
-        setCheckingPaymentMethod(true);
-        // Check Stripe customer ID, payment method, and existing plan in parallel
-        const [hasStripeId, hasPayment, currentPlan] = await Promise.all([
-          checkStripeCustomerId(user.email),
-          checkPaymentMethod(user.email),
-          getCurrentPlan(user.email)
-        ]);
-        setHasStripeCustomerId(hasStripeId);
-        setHasPaymentMethod(hasPayment);
-        if (currentPlan) {
-          setSelectedPlan(currentPlan);
-          setHasExistingPlan(true);
-        }
-      } catch (error) {
-        console.error("Failed to check payment method or plan:", error);
-        setHasStripeCustomerId(false);
-        setHasPaymentMethod(false);
-      } finally {
-        setCheckingPaymentMethod(false);
-      }
-    };
-
-    checkPaymentAndPlan();
-  }, [user]);
-
-  const handleSelectPlan = (plan) => {
+  const handleSelectPlan = async (plan) => {
     //Check login before allowing plan selection
     if (!user) {
       setMessage("Please log in to select a payment plan.");
@@ -68,55 +21,26 @@ export default function PaymentPlans() {
       return;
     }
 
-    // Check if user has a Stripe customer ID (which means they've started adding a payment method)
-    if (!hasStripeCustomerId) {
-      setMessage("Please add a payment method before selecting a plan.");
-      return;
-    }
-
-    // Check if user has a payment method
-    if (!hasPaymentMethod) {
-      setMessage("Please add a payment method before selecting a plan.");
-      return;
-    }
-
     if (selectedPlan) {
       setMessage("You already have a plan. You can only change it next year.");
       return;
     }
 
-    // Show confirmation dialog
-    setPlanToConfirm(plan);
-    setShowConfirmation(true);
-  };
-
-  const handleConfirmPlan = async () => {
-    if (!planToConfirm) return;
-
     try {
       setLoading(true);
-      setShowConfirmation(false);
-      const res = await addPlan(user.email, planToConfirm);
+      const res = await addPlan(user.email, plan);
       console.log(res);
-      setSelectedPlan(planToConfirm);
-      setMessage(`Thank you! Your ${planToConfirm} membership was added to your account.`);
-      setPlanToConfirm(null);
+      setSelectedPlan(plan);
+      setMessage(`Thank you! Your ${plan} membership was added to your account.`);
     } catch (error) {
       console.error("Failed to add plan:", error);
-      // Show backend error message if available
-      const errorMessage = error.response?.data || error.message || "Something went wrong while adding your plan. Please try again.";
-      setMessage(typeof errorMessage === 'string' ? errorMessage : "Something went wrong while adding your plan. Please try again.");
+      setMessage("Something went wrong while adding your plan. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCancelConfirmation = () => {
-    setShowConfirmation(false);
-    setPlanToConfirm(null);
-  };
-
-  const isDisabled = !user || user?.role === "OPERATOR" || !hasStripeCustomerId || !hasPaymentMethod || checkingPaymentMethod;
+  const isDisabled = user?.role === "OPERATOR";
 
   return (
     <section className="pp-wrap-modern v2">
@@ -130,58 +54,10 @@ export default function PaymentPlans() {
           </div>
         </header>
 
-        {!user && (
-          <div className="pp-note-modern" style={{ 
-            backgroundColor: "#fee", 
-            border: "1px solid #f44336", 
-            padding: "16px", 
-            borderRadius: "8px",
-            marginBottom: "24px"
-          }}>
-            <p style={{ margin: "0 0 8px 0", fontWeight: "600", color: "#c62828" }}>
-              Login Required
-            </p>
-            <p style={{ margin: 0, fontSize: "14px", color: "#d32f2f" }}>
-              You need to <Link to="/login" style={{ color: "#0066cc", textDecoration: "underline", fontWeight: "600" }}>log in</Link> to select a payment plan.
-            </p>
-          </div>
-        )}
-
         {user?.role === "OPERATOR" && (
-          <div className="pp-note-modern" style={{ 
-            backgroundColor: "#e3f2fd", 
-            border: "1px solid #2196f3", 
-            padding: "16px", 
-            borderRadius: "8px",
-            marginBottom: "24px"
-          }}>
-            <p style={{ margin: "0 0 8px 0", fontWeight: "600" }}>
-              View Only Mode
-            </p>
-            <p style={{ margin: 0, fontSize: "14px" }}>
-              You are viewing this page as an operator. To select a payment plan, please log in as a rider.
-            </p>
-          </div>
-        )}
-
-        {user && user.role !== "OPERATOR" && !checkingPaymentMethod && (!hasStripeCustomerId || !hasPaymentMethod) && !hasExistingPlan && (
-          <div className="pp-note-modern" style={{ 
-            backgroundColor: "#fff3cd", 
-            border: "1px solid #ffc107", 
-            padding: "16px", 
-            borderRadius: "8px",
-            marginBottom: "24px"
-          }}>
-            <p style={{ margin: "0 0 8px 0", fontWeight: "600" }}>
-              Payment Method Required
-            </p>
-            <p style={{ margin: 0, fontSize: "14px" }}>
-              You need to add a payment method before selecting a plan.{" "}
-              <Link to="/add-payment" style={{ color: "#0066cc", textDecoration: "underline" }}>
-                Add Payment Method
-              </Link>
-            </p>
-          </div>
+          <p className="pp-note-modern">
+            Payment plans are not available for operators.
+          </p>
         )}
 
         <div className="pp-grid-modern">
@@ -302,8 +178,7 @@ export default function PaymentPlans() {
       message.includes("Please log in") ||
       message.includes("cannot") ||
       message.includes("wrong") ||
-      message.includes("already") ||
-      message.includes("Please add a payment method")
+      message.includes("already")
         ? "pp-toast-error"
         : ""
     }`}
@@ -311,81 +186,6 @@ export default function PaymentPlans() {
     {message}
   </div>
 )}
-
-        {/* Confirmation Modal */}
-        {showConfirmation && planToConfirm && (
-          <div 
-            className="pp-modal-overlay"
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 1000,
-            }}
-            onClick={handleCancelConfirmation}
-          >
-            <div
-              className="pp-modal-content"
-              style={{
-                backgroundColor: "white",
-                borderRadius: "12px",
-                padding: "32px",
-                maxWidth: "500px",
-                width: "90%",
-                boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 style={{ marginTop: 0, marginBottom: "16px", fontSize: "24px", fontWeight: "600" }}>
-                Confirm Payment Plan Selection
-              </h2>
-              <p style={{ marginBottom: "24px", color: "#666", lineHeight: "1.6" }}>
-                Are you sure you want to select the <strong>{planToConfirm}</strong> plan? 
-                This plan will be billed monthly to your payment method.
-              </p>
-              <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <button
-                  onClick={handleCancelConfirmation}
-                  style={{
-                    padding: "10px 24px",
-                    borderRadius: "6px",
-                    border: "1px solid #ddd",
-                    backgroundColor: "white",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                    color: "#333",
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirmPlan}
-                  disabled={loading}
-                  style={{
-                    padding: "10px 24px",
-                    borderRadius: "6px",
-                    border: "none",
-                    backgroundColor: "#0066cc",
-                    color: "white",
-                    cursor: loading ? "not-allowed" : "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                    opacity: loading ? 0.6 : 1,
-                  }}
-                >
-                  {loading ? "Processing..." : "Confirm"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
       </div>
     </section>

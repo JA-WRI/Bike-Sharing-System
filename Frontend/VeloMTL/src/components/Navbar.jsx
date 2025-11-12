@@ -44,10 +44,12 @@ const Navbar = () => {
       <div className="navbar-left">
         <Link to="/" className="navbar-link">Dashboard</Link>
         {userRole && <Link to="/History" className="navbar-link">History</Link>}
-        {/* Show Payment Plans for all users (logged in and logged out) */}
-        <Link to="/payment-plans" className="navbar-link">
-          Payment Plans
-        </Link>
+        {/* Show Payment Plans for all non-operators */}
+        {userRole !== "OPERATOR" && (
+          <Link to="/payment-plans" className="navbar-link">
+            Payment Plans
+          </Link>
+        )}
 
         {/* Show Billing only for riders */}
         {userRole === "RIDER" && (
@@ -64,57 +66,30 @@ const Navbar = () => {
           <div className="navbar-user-container">
             {/* Only show bell for operators */}
             {userRole === "OPERATOR" && (
-              <div className="notification-bell-container" onClick={handleBellClick}>
+              <div className="notification-bell-container">
                 <FaBell
                   className="notification-bell-icon"
+                  onClick={handleBellClick}
                 />
-                {unreadCount > 0 && (
-                  unreadCount > 9 ? (
-                    <span className="red-dot"></span>
-                  ) : (
-                    <span className="notification-badge">{unreadCount}</span>
-                  )
-                )}
+                {unreadCount > 0 && <span className="red-dot"></span>}
                 {isBellOpen && (
-                <div className="notification-dropdown" onClick={(e) => e.stopPropagation()}>
+                <div className="notification-dropdown">
                   <div className="notification-dropdown-title">
                     <strong>Notifications</strong>
-                    {notifications.length > 0 && (
-                      <span style={{ 
-                        fontSize: "0.85rem", 
-                        color: "var(--text-muted)",
-                        fontWeight: "500"
-                      }}>
-                        {notifications.length} {notifications.length === 1 ? 'notification' : 'notifications'}
-                      </span>
-                    )}
                   </div>
-                  <div className="notification-dropdown-content">
-                    {notifications.length === 0 ? (
-                      <div className="notification-item empty">
-                        <div>No notifications</div>
-                        <div style={{ fontSize: "0.85rem", marginTop: "0.5rem" }}>
-                          You're all caught up!
-                        </div>
+                  {notifications.length === 0 ? (
+                    <div className="notification-item empty">No notifications</div>
+                  ) : (
+                    notifications.map((msg, i) => (
+                      <div key={i} className="notification-item">
+                        {msg}
+                        <FaTimes
+                          className="delete-notification-icon"
+                          onClick={() => handleDeleteNotification(i)}
+                        />
                       </div>
-                    ) : (
-                      notifications.map((msg, i) => (
-                        <div key={i} className="notification-item">
-                          <div className="notification-item-content">
-                            {msg}
-                          </div>
-                          <FaTimes
-                            className="delete-notification-icon"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteNotification(i);
-                            }}
-                            title="Delete notification"
-                          />
-                        </div>
-                      ))
-                    )}
-                  </div>
+                    ))
+                  )}
                 </div>
               )}
               </div>

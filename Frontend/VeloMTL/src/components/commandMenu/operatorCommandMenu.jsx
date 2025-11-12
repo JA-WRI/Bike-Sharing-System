@@ -9,7 +9,7 @@ import {
   lockBike,
 } from "../../api/operatorApi";
 
-const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus, onCommandSuccess }) => {
+const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus }) => {
   const { user } = useContext(AuthContext);
 
   const handleCommand = async (action, ...args) => {
@@ -55,14 +55,6 @@ const OperatorCommandMenu = ({ station, dock, setResponseMessage, setResponseSta
       console.log("Command response:", response);
       setResponseMessage(response.message);
       setResponseStatus(response.status);
-      
-      // Refresh station data if command was successful
-      if (response.status === "SUCCESS" && onCommandSuccess) {
-        // Small delay to ensure backend has processed the change
-        setTimeout(() => {
-          onCommandSuccess();
-        }, 500);
-      }
     } catch (err) {
       console.error("Command failed:", err);
       setResponseMessage("An error occurred while performing the command.");
