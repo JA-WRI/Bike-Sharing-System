@@ -31,14 +31,29 @@ public class BikeMapper {
         dto.setReserveDate(bike.getReserveDate());
         dto.setReserveUser(bike.getReserveUser());
 
-
-        if(bike.getDock() == null)
+        // Safely get dockId, handling lazy loading exceptions
+        try {
+            if(bike.getDock() == null) {
+                dto.setDockId(null);
+            } else {
+                dto.setDockId(bike.getDock().getDockId());
+            }
+        } catch (Exception e) {
+            // Handle lazy loading exception - dock reference couldn't be loaded
             dto.setDockId(null);
-        else
-            dto.setDockId(bike.getDock().getDockId());
+        }
 
         dto.setBikId(bike.getBikeId());
 
+        return dto;
+    }
+    
+    // Overloaded method that accepts dockId to avoid lazy loading
+    public static BikeDTO entityToDto(Bike bike, String dockId) {
+        BikeDTO dto = entityToDto(bike);
+        if (dockId != null) {
+            dto.setDockId(dockId);
+        }
         return dto;
     }
 
