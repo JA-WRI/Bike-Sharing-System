@@ -1,11 +1,10 @@
-package com.veloMTL.veloMTL.PCR;
+package com.veloMTL.veloMTL.Repository.PRC;
 
-import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.PCR.Billing;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface BillingRepository extends MongoRepository<Billing, String> {

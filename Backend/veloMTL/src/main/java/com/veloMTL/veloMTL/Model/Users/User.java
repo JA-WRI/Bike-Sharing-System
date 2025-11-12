@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Model.Users;
 
 import com.veloMTL.veloMTL.Model.Enums.Permissions;
+import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
@@ -14,6 +15,11 @@ public abstract class User {
     private String password;
     private String role;
     private List<Permissions> permissions;
+    private double flexDollars;
+    private String reservationId; //only if a user reserves a bike
+    private String stripeCustomerId;
+    private Plan plan;
+
 
     public User() {
     }
@@ -72,5 +78,36 @@ public abstract class User {
 
     public void setPermissions(List<Permissions> permissions) {
         this.permissions = permissions;
+    }
+
+    public double getFlexDollars() {
+        return flexDollars;
+    }
+
+    public void setFlexDollars(double flexDollars) {
+        this.flexDollars = flexDollars;
+    }
+    public String getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(String reservationId) {
+        this.reservationId = reservationId;
+    }
+
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
+
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 }
