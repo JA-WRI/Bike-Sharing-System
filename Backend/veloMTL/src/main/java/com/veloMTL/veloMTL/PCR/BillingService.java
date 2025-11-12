@@ -1,9 +1,7 @@
-package com.veloMTL.veloMTL.Service.PRC;
+package com.veloMTL.veloMTL.PCR;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.Rider;
-import com.veloMTL.veloMTL.PCR.Billing;
-import com.veloMTL.veloMTL.Repository.PRC.BillingRepository;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
