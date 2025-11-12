@@ -4,7 +4,7 @@ import OperatorCommandMenu from "./operatorCommandMenu";
 import RiderCommandMenu from "./riderCommandMenu";
 import "../../styles/CommandMenu.css";
 
-const CommandMenu = ({ station, dock, onClose, onCommandSuccess }) => {
+const CommandMenu = ({ station, dock, onClose }) => {
   const { user } = useContext(AuthContext);
   const [responseMessage, setResponseMessage] = useState(null);
   const [responseStatus, setResponseStatus] = useState(null);
@@ -43,7 +43,6 @@ const CommandMenu = ({ station, dock, onClose, onCommandSuccess }) => {
             dock={dock} 
             setResponseMessage={setResponseMessage}
             setResponseStatus={setResponseStatus}
-            onCommandSuccess={onCommandSuccess}
             />
         ) : (
           <RiderCommandMenu
@@ -51,7 +50,6 @@ const CommandMenu = ({ station, dock, onClose, onCommandSuccess }) => {
              dock={dock} 
              setResponseMessage={setResponseMessage}
              setResponseStatus={setResponseStatus}
-             onCommandSuccess={onCommandSuccess}
              />
         )}
       </div>

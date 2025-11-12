@@ -7,12 +7,12 @@ const SidePanel = ({ station, onClose, loading, onDockSelect }) => {
     const capacity = station.capacity ?? 0;
     const occupancy = station.occupancy ?? 0;
 
-    if (capacity <= 0) return "#7f8c8d"; 
+    if (capacity <= 0) return "#7f8c8d"; // gray fallback
     const fullness = (occupancy / capacity) * 100;
 
-    if (fullness === 0 || fullness === 100) return "#e74c3c"; 
-    if (fullness < 25 || fullness > 85) return "#f1c40f"; 
-    return "#2ecc71"; 
+    if (fullness === 0 || fullness === 100) return "#e74c3c"; // red
+    if (fullness < 25 || fullness > 85) return "#f1c40f"; // yellow
+    return "#2ecc71"; // green
   };
 
   const fullnessColor = getFullnessColor();
@@ -67,7 +67,7 @@ const SidePanel = ({ station, onClose, loading, onDockSelect }) => {
                 </p>
                 <ul className="dock-list">
                   {station.docks.map((dock) => {
-                    const bike = dock.bike || findBikeForDock(dock.dockId);
+                    const bike = findBikeForDock(dock.dockId);
 
                     return (
                       <li
@@ -91,13 +91,13 @@ const SidePanel = ({ station, onClose, loading, onDockSelect }) => {
                           <div className="bike-item">
                             🚲 <strong>{bike.bikId}</strong>{" "}
                             <span style={{ color: "#555" }}>
-                              ({bike.bikeType === "electric" || bike.bikeType === "ELECTRIC" ? "E" : "S"})
+                              ({bike.type === "ELECTRIC" ? "E" : "S"})
                             </span>
-                            {bike.bikeStatus === "RESERVED" && (
+                            {dock.bike?.bikeStatus && (dock.bike.bikeStatus === "RESERVED") &&
                               <span style={{ color: "red" }}>
                                 &nbsp; (Reserved)
                               </span>
-                            )}
+                            }
                           </div>
                         ) : (
                           <p className="no-bike">No bike in this dock</p>
