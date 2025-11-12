@@ -11,10 +11,10 @@ import java.util.List;
 public class Rider extends User{
 
 
-    private String reservationId; //only if a user reserves a bike
-    private String stripeCustomerId;
-    private Plan plan;
-
+//    private String reservationId; //only if a user reserves a bike
+//    private String stripeCustomerId;
+//    private Plan plan;
+//
 
     public Rider() {
         super();
@@ -26,27 +26,28 @@ public class Rider extends User{
                 List.of(Permissions.BIKE_UNLOCK, Permissions.BIKE_RETURN, Permissions.BIKE_RESERVE, Permissions.DOCK_RESERVE));
     }
 
-    public String getReservationId() {
-        return reservationId;
-    }
+//    public String getReservationId() {
+//        return reservationId;
+//    }
+//
+//    public void setReservationId(String reservationId) {
+//        this.reservationId = reservationId;
+//    }
+//
+//    public String getStripeCustomerId() {
+//        return stripeCustomerId;
+//    }
+//
+//    public void setStripeCustomerId(String stripeCustomerId) {
+//        this.stripeCustomerId = stripeCustomerId;
+//    }
+//
+//    public Plan getPlan() {
+//        return plan;
+//    }
+//
+//    public void setPlan(Plan plan) {
+//        this.plan = plan;
+//    }
 
-    public void setReservationId(String reservationId) {
-        this.reservationId = reservationId;
-    }
-
-    public String getStripeCustomerId() {
-        return stripeCustomerId;
-    }
-
-    public void setStripeCustomerId(String stripeCustomerId) {
-        this.stripeCustomerId = stripeCustomerId;
-    }
-
-    public Plan getPlan() {
-        return plan;
-    }
-
-    public void setPlan(Plan plan) {
-        this.plan = plan;
-    }
 }
