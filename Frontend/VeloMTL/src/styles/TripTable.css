@@ -1,140 +1,31 @@
 .PageSpace {
     width: 100%;
+    height: 100vh;
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    animation: fadeIn 0.4s ease-out;
 }
 
 table {
-    border-collapse: collapse;
+    border: 2px solid red;
+    border-radius: 10px;
     width: 100%;
-    background-color: var(--background);
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
+    height: 200px;
+    margin-top: 10px;
+    padding-bottom: 8px;
 }
 
 th {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    color: white;
-    padding: 1rem 1.25rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: none;
-}
-
-th:first-child {
-    border-top-left-radius: 8px;
-}
-
-th:last-child {
-    border-top-right-radius: 8px;
+    border-bottom: 1px solid black;
 }
 
 td {
-    padding: 1rem 1.25rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.9rem;
-    transition: all var(--transition-base);
-}
-
-tr.tripData {
-    cursor: pointer;
-    transition: all var(--transition-base);
-    background-color: var(--background);
-}
-
-tr.tripData:hover {
-    background-color: rgba(234, 88, 12, 0.05);
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-tr.tripData:active {
-    transform: translateX(2px);
-}
-
-/* Expanded row styling */
-tr.expanded-row {
-    background-color: rgba(234, 88, 12, 0.08);
-}
-
-tr.expanded-row td {
-    padding: 1.25rem 1.25rem;
-    border-bottom: 2px solid var(--primary-light);
-}
-
-tr.expanded-row th {
-    background: rgba(234, 88, 12, 0.15);
-    color: var(--text-primary);
-    text-transform: none;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-/* Empty state */
-tr.empty-state {
     text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-muted);
 }
 
-tr.empty-state td {
-    padding: 3rem 1rem;
-    font-size: 1.1rem;
-    border: none;
+tr {
+    height: 50px;
 }
 
-/* Pagination */
-.pagination-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-    padding: 1.5rem;
-}
-
-.pagination-button {
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    border: 2px solid var(--border);
-    background: var(--background);
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-base);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.pagination-button:hover:not(:disabled) {
-    border-color: var(--primary);
-    background: var(--primary);
-    color: white;
+.tripData:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.pagination-button:disabled {
-    background: var(--background-gray);
-    color: var(--text-muted);
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.pagination-info {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    background: var(--background-gray);
-    border-radius: 8px;
 }

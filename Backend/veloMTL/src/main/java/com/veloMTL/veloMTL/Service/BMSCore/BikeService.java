@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
 import com.veloMTL.veloMTL.DTO.BMSCore.BikeDTO;
+import com.veloMTL.veloMTL.DTO.BMSCore.StationDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Dock;
@@ -8,7 +9,7 @@ import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Enums.*;
 import com.veloMTL.veloMTL.PCR.Billing;
-import com.veloMTL.veloMTL.Service.PRC.BillingService;
+import com.veloMTL.veloMTL.PCR.BillingService;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.*;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -211,34 +213,16 @@ public class BikeService {
     }
 
     public List<BikeDTO> getBikesByStation(String stationId) {
-        // Get all bikes and filter by station
-        List<Bike> allBikes = bikeRepository.findAll();
-        List<BikeDTO> stationBikes = new java.util.ArrayList<>();
-        
-        for (Bike bike : allBikes) {
-            try {
-                // Get dockId from bike (handles lazy loading)
-                String bikeDockId = null;
-                try {
-                    if (bike.getDock() != null) {
-                        bikeDockId = bike.getDock().getDockId();
-                    }
-                } catch (Exception e) {
-                    BikeDTO tempDto = BikeMapper.entityToDto(bike);
-                    bikeDockId = tempDto.getDockId();
-                }
-                
-                // Check if bike's dock belongs to this station (dockId starts with stationId-)
-                if (bikeDockId != null && bikeDockId.startsWith(stationId + "-")) {
-                    BikeDTO dto = BikeMapper.entityToDto(bike, bikeDockId);
-                    stationBikes.add(dto);
-                }
-            } catch (Exception e) {
-                // Log error but continue processing other bikes
-                System.err.println("Error processing bike " + bike.getBikeId() + ": " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
+        List<Bike> allBikes = bikeRepository.findAll(); // fetch all bikes
+        List<BikeDTO> stationBikes = allBikes.stream()
+                .filter(b -> b.getDock() != null && b.getDock().getDockId().startsWith(stationId + "-"))
+                .map(b -> new BikeDTO(
+                        b.getBikeId(),
+                        b.getBikeType(),
+                        b.getDock().getDockId(),
+                        b.getBikeStatus()
+                ))
+                .collect(Collectors.toList());
 
         return stationBikes;
     }

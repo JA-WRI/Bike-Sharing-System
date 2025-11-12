@@ -2,16 +2,13 @@ package com.veloMTL.veloMTL.Model.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 @TypeAlias("e-Bike")
 public class ElectricBike extends Bike{
     private String battery;
-
-    public ElectricBike() {
-        super();
-    }
 
     public ElectricBike(String bikeId, String bikeType, BikeStatus bikeStatus, Dock dock, String battery) {
         super(bikeId, bikeType, bikeStatus, dock);
