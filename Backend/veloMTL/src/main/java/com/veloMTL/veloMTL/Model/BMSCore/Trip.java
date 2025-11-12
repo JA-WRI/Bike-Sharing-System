@@ -1,13 +1,7 @@
 package com.veloMTL.veloMTL.Model.BMSCore;
 
-import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
-import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Billing;
-import com.veloMTL.veloMTL.Patterns.State.Bikes.BikeState;
-import com.veloMTL.veloMTL.Patterns.State.Docks.DockState;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,15 +19,15 @@ public class Trip {
     @DBRef(lazy = true)
     private Bike bike;
     @DBRef(lazy = true)
-    private Rider rider;
+    private String userEmail;
     @DBRef (lazy = true)
     private Billing billing;
 
     public Trip(){}
 
-    public Trip(Bike bike, Rider rider) {
+    public Trip(Bike bike, String userEmail) {
         this.bike = bike;
-        this.rider = rider;
+        this.userEmail = userEmail;
     }
 
     public String getTripId() {
@@ -58,8 +52,8 @@ public class Trip {
         return bike;
     }
     public void setBike(Bike bike) {this.bike = bike;}
-    public Rider getRider() {return rider;}
-    public void setRider(Rider rider) {this.rider = rider;}
+    public String getUserEmail() {return userEmail;}
+    public void setUserEmail(String userEmail) {this.userEmail = userEmail;}
     public String getOriginStation() {return originStation;}
     public void setOriginStation(String originStation) {this.originStation = originStation;}
     public String getArrivalStation() {return arrivalStation;}

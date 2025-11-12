@@ -14,7 +14,7 @@ public class TripHistoryDTO extends TripDTO {
 
     public TripHistoryDTO(Trip trip) {
         super(trip.getTripId(), trip.getStartTime(), trip.getEndTime(), trip.getBike().getBikeId(),
-                trip.getRider().getEmail());
+                trip.getUserEmail());
         this.bikeType = trip.getBike().getBikeType();
         this.originStation = trip.getOriginStation();
         this.arrivalStation = trip.getArrivalStation();

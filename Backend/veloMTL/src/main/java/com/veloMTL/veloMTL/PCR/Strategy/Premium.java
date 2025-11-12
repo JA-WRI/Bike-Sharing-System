@@ -1,15 +1,20 @@
 package com.veloMTL.veloMTL.PCR.Strategy;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
+import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class Premium implements Plan{
     private int baseFee = 20;
-    private double ratebyMinute = 0.05;
+    private double ratebyMinute = 0.15;
+    RiderRepository riderRepository;
     //private int eBikeCharge = 0;
 
     public Premium(){}
 
-    public Premium(int baseFee, double ratebyMinute) {
+    public Premium(int baseFee, double ratebyMinute,RiderRepository riderRepository) {
         this.baseFee = baseFee;
         this.ratebyMinute = ratebyMinute;
     }
@@ -19,9 +24,38 @@ public class Premium implements Plan{
     public void setRatebyMinute(double ratebyMinute) {this.ratebyMinute = ratebyMinute;}
 
     @Override
-    public double calculateTripCost(long tripDuration, boolean isEbike) {
+    public double calculateTripCostRider(long tripDuration, boolean isEbike, double flexDollars, RiderRepository riderRepository, String riderId, int arrivalStationOccupancy) {
         if(tripDuration<1) tripDuration = 1;
-        return tripDuration*ratebyMinute;
 
+        double tripCost = tripDuration * ratebyMinute;
+
+        if (flexDollars >= tripCost) {
+            flexDollars -= tripCost;
+            tripCost = 0;
+        } else {
+            tripCost -= flexDollars;
+            flexDollars = 0;
+        }
+        Rider rider = riderRepository.findById(riderId).orElseThrow(() -> new UsernameNotFoundException("Rider not found with id: " + riderId));
+        rider.setFlexDollars(flexDollars);
+
+        addFlexDollarsRider(rider, arrivalStationOccupancy);
+
+        return tripCost;
+
+    }
+    @Override
+    public void addFlexDollarsRider(Rider rider, int arrivalStationOccupancy){
+        double flexDollars = rider.getFlexDollars();
+
+        if(arrivalStationOccupancy<=25){
+            flexDollars+=1;
+            rider.setFlexDollars(flexDollars);
+        }
+    }
+
+    @Override
+    public double calculateTripCostOperator(long tripDuration, boolean isEbike, double flexDollars, OperatorRepository operatorRepository, String operatorId, int arrivalStationOccupancy){
+        return 1;
     }
 }
