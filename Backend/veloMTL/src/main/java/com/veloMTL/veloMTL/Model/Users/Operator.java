@@ -12,11 +12,11 @@ public class Operator extends User{
 
     public Operator() {
         super();
-        this.setRole(Set.of(UserStatus.OPERATOR, UserStatus.RIDER));
+        this.setRole(UserStatus.OPERATOR);
     }
 
     public Operator(String name, String email, String password) {
-        super(name, email, password, Set.of(UserStatus.OPERATOR, UserStatus.RIDER),
+        super(name, email, password, UserStatus.OPERATOR,
                 List.of(Permissions.DOCK_OOS, Permissions.RESTORE_DOCK, Permissions.STATION_OOS, Permissions.RESTORE_STATION, Permissions.BIKE_MOVE));
     }
 }

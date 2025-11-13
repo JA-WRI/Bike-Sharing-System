@@ -15,7 +15,7 @@ public abstract class User {
     private String name;
     private String email;
     private String password;
-    private Set<UserStatus> role;
+    private UserStatus role;
     private List<Permissions> permissions;
     private double flexDollars;
     private String reservationId; //only if a user reserves a bike
@@ -26,7 +26,7 @@ public abstract class User {
     public User() {
     }
 
-    public User(String name, String email, String password, Set<UserStatus> role, List<Permissions> permissions) {
+    public User(String name, String email, String password, UserStatus role, List<Permissions> permissions) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -66,11 +66,11 @@ public abstract class User {
         this.password = password;
     }
 
-    public Set<UserStatus> getRole() {
+    public UserStatus getRole() {
         return role;
     }
 
-    public void setRole(Set<UserStatus> role) {
+    public void setRole(UserStatus role) {
         this.role = role;
     }
 

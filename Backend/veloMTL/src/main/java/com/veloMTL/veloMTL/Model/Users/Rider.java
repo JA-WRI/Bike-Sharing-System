@@ -13,11 +13,11 @@ public class Rider extends User{
 
     public Rider() {
         super();
-        this.setRole(Set.of(UserStatus.RIDER));
+        this.setRole(UserStatus.RIDER);
     }
 
     public Rider(String name, String email, String password) {
-        super(name, email, password, Set.of(UserStatus.RIDER),
+        super(name, email, password, UserStatus.RIDER,
                 List.of(Permissions.BIKE_UNLOCK, Permissions.BIKE_RETURN, Permissions.BIKE_RESERVE, Permissions.DOCK_RESERVE));
     }
 
