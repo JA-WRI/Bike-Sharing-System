@@ -20,8 +20,8 @@ public class BillingController {
 
     @PostMapping("/list")
     public ResponseEntity<List<Billing>> getAllBillingForRider(@RequestBody Map<String, String> request) {
-        String riderEmail = request.get("email");
-        List<Billing> bills = billingService.getAllRiderBilling(riderEmail);
+        String userEmail = request.get("email");
+        List<Billing> bills = billingService.getAllRiderBilling(userEmail);
         return ResponseEntity.ok(bills);
     }
 }
