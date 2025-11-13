@@ -1,6 +1,8 @@
 package com.veloMTL.veloMTL.Model.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.BikeState;
@@ -26,6 +28,8 @@ public class Trip {
     private Bike bike;
     @DBRef(lazy = true)
     private Rider rider;
+    @DBRef(lazy = true)
+    private Operator operator;
     @DBRef (lazy = true)
     private Billing billing;
 
@@ -34,6 +38,11 @@ public class Trip {
     public Trip(Bike bike, Rider rider) {
         this.bike = bike;
         this.rider = rider;
+    }
+
+    public Trip(Bike bike, Operator operator) {
+        this.bike = bike;
+        this.operator = operator;
     }
 
     public String getTripId() {
@@ -59,7 +68,44 @@ public class Trip {
     }
     public void setBike(Bike bike) {this.bike = bike;}
     public Rider getRider() {return rider;}
-    public void setRider(Rider rider) {this.rider = rider;}
+    public void setRider(Rider rider) {
+        this.rider = rider;
+        if (rider != null) {
+            this.operator = null; // Ensure only one is set
+        }
+    }
+    public Operator getOperator() {return operator;}
+    public void setOperator(Operator operator) {
+        this.operator = operator;
+        if (operator != null) {
+            this.rider = null; // Ensure only one is set
+        }
+    }
+    
+    /**
+     * Gets the user ID regardless of whether it's a Rider or Operator
+     */
+    public String getUserId() {
+        if (rider != null) {
+            return rider.getId();
+        } else if (operator != null) {
+            return operator.getId();
+        }
+        return null;
+    }
+    
+    /**
+     * Gets the user status (RIDER or OPERATOR) based on which field is set
+     */
+    public UserStatus getUserStatus() {
+        if (rider != null) {
+            return UserStatus.RIDER;
+        } else if (operator != null) {
+            return UserStatus.OPERATOR;
+        }
+        return null;
+    }
+    
     public String getOriginStation() {return originStation;}
     public void setOriginStation(String originStation) {this.originStation = originStation;}
     public String getArrivalStation() {return arrivalStation;}

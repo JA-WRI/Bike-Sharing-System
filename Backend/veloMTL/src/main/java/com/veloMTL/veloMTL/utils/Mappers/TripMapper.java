@@ -24,7 +24,8 @@ public class TripMapper {
     public static TripDTO entityToDto(Trip trip) {
         TripDTO tripdto = new TripDTO();
         tripdto.setTripId(trip.getTripId());
-        tripdto.setRiderId(trip.getRider().getId());
+        // Use getUserId() which handles both Rider and Operator
+        tripdto.setRiderId(trip.getUserId());
         tripdto.setBikeId(trip.getBike().getBikeId());
         tripdto.setStartTime(trip.getStartTime());
 

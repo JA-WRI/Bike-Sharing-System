@@ -1,7 +1,9 @@
 package com.veloMTL.veloMTL.Service.PRC;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.Repository.PRC.BillingRepository;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
@@ -34,10 +36,17 @@ public class BillingService {
     }
 
     public Billing pay(Trip trip){
-
-
-        Rider rider = trip.getRider();
-        Plan plan = rider.getPlan();
+        // Get user (Rider or Operator) from trip
+        User user;
+        if (trip.getRider() != null) {
+            user = trip.getRider();
+        } else if (trip.getOperator() != null) {
+            user = trip.getOperator();
+        } else {
+            throw new RuntimeException("Trip must have either a rider or operator");
+        }
+        
+        Plan plan = user.getPlan();
 
         LocalDateTime startDate = trip.getStartTime();
         LocalDateTime endDate = trip.getEndTime();
@@ -53,7 +62,7 @@ public class BillingService {
         double tripCost = plan.calculateTripCost(tripDuration, isEBike);
 
 
-        Billing bill = new Billing("Trip", LocalDateTime.now(),rider.getId(),bikeId,originStation,arrivalStation, startDate,endDate,ratePerMinute,tripCost);
+        Billing bill = new Billing("Trip", LocalDateTime.now(), user.getId(), bikeId, originStation, arrivalStation, startDate, endDate, ratePerMinute, tripCost);
         billingRepository.save(bill);
 
         return bill;

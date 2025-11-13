@@ -10,6 +10,12 @@ public interface TripRepository extends MongoRepository<Trip,String> {
     @Query("{ 'bike.$id': ?0, 'rider.$id': { $oid: ?1 }, $or: [ { 'endTime': null }, { 'endTime': { $exists: false } } ] }")
     Trip findOngoingTrip(String bikeId, String riderId);
 
+    @Query("{ 'bike.$id': ?0, 'rider.$id': { $oid: ?1 }, $or: [ { 'endTime': null }, { 'endTime': { $exists: false } } ] }")
+    Trip findOngoingTripByRider(String bikeId, String riderId);
+
+    @Query("{ 'bike.$id': ?0, 'operator.$id': { $oid: ?1 }, $or: [ { 'endTime': null }, { 'endTime': { $exists: false } } ] }")
+    Trip findOngoingTripByOperator(String bikeId, String operatorId);
+
     @Query("{ 'rider.id': ?0 }")
     List<Trip> fetchTripsByUserId(String userId);
 }
