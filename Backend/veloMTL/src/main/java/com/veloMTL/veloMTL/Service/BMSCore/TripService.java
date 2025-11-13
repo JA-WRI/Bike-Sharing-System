@@ -39,7 +39,7 @@ public class TripService {
         // Create Trip object
         String originStation = station.getStationName();
 
-        Trip trip = new Trip(bike, rider);
+        Trip trip = new Trip(bike, rider.getEmail());
         trip.setStartTime(LocalDateTime.now());
         trip.setOriginStation(originStation);
         //save the trip
@@ -60,20 +60,13 @@ public class TripService {
         return tripRepository.findOngoingTrip(bikeId, riderId);
     }
 
-    /**
-     *  This function creates a Trip object during a reservation foregoing the startTime of the trip
-     * @param bikeId of the reserved Bike
-     * @param riderId of the user reserving the bike
-     * @param station of the station holding the bike
-     * @return Trip object containing the details of the reservation
-     */
     public Trip createReserveTrip(String bikeId, String riderId, Station station) {
         //Find the bike
         Bike bike = bikeRepository.findById(bikeId).orElseThrow(() -> new RuntimeException("Bike not found"));
         //Find the rider
         Rider rider = riderRepository.findById(riderId).orElseThrow(() -> new RuntimeException("Rider not found"));
         String originStation = station.getStationName();
-        Trip trip = new Trip(bike, rider);
+        Trip trip = new Trip(bike, rider.getEmail());
         trip.setOriginStation(originStation);
         Trip savedTrip = tripRepository.save(trip);
         riderRepository.save(rider);
@@ -84,7 +77,7 @@ public class TripService {
         //Find the bike
         Bike bike = bikeRepository.findById(trip.getBike().getBikeId()).orElseThrow(() -> new RuntimeException("Bike not found"));
         //Find the rider
-        Rider rider = riderRepository.findById(trip.getRider().getId()).orElseThrow(() -> new RuntimeException("Rider not found"));
+        Rider rider = riderRepository.findById(trip.getUserEmail()).orElseThrow(() -> new RuntimeException("Rider not found"));
         trip.setStartTime(LocalDateTime.now());
         //save the trip
         Trip savedTrip = tripRepository.save(trip);
