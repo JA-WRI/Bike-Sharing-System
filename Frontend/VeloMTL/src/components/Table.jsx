@@ -1,6 +1,7 @@
 import "../styles/TripTable.css"
 import api from "../api/api"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -28,11 +29,14 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
     const [filterTrips, setFilterTrips] = useState([]);
     const [selectedTrip, setSelectedTrip] = useState(-1);
     const [currentPage, setCurrentPage] = useState(1);
+    const { activeRole } = useContext(AuthContext);
 
     useEffect(() => {
         const loadTrips = async () => {
             try {
-                const res = await api.get("/api/history/fetch");
+                // Pass activeRole as query parameter if it exists
+                const params = activeRole ? { activeRole } : {};
+                const res = await api.get("/api/history/fetch", { params });
                 const sortedTrips = [...res.data].sort((a, b) => new Date(a.endTime) - new Date(b.endTime));
                 console.log(sortedTrips);
                 setTrips(sortedTrips);
@@ -43,7 +47,7 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
         };
         loadTrips();
 
-    },[])
+    }, [activeRole])
         
     // Search and filter function
     useEffect(() => {
