@@ -11,5 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface StationRepository extends MongoRepository<Station, String>{
-    Optional<Station> findByName(String stationName);
+    Optional<Station> findByStationName(String stationName);
 }

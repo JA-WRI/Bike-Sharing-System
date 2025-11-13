@@ -52,23 +52,34 @@ public class TripService {
             return rider != null ? rider.getId() : operator.getId();
         }
     }
-    
 
-    private UserReference findUser(String userEmail) {
 
-        // Try to find as Rider by email
-        Rider rider = riderRepository.findByEmail(userEmail).orElse(null);
+    private UserReference findUser(String userId) {
+        // First, try to find as Rider by ID
+        Rider rider = riderRepository.findById(userId).orElse(null);
         if (rider != null) {
             return new UserReference(rider);
         }
 
-        // Try to find as Operator by email
-        Operator operator = operatorRepository.findByEmail(userEmail).orElse(null);
+        // Try to find as Rider by email
+        rider = riderRepository.findByEmail(userId).orElse(null);
+        if (rider != null) {
+            return new UserReference(rider);
+        }
+
+        // Try to find as Operator by ID
+        Operator operator = operatorRepository.findById(userId).orElse(null);
         if (operator != null) {
             return new UserReference(operator);
         }
-        
-        throw new RuntimeException("User not found with ID or email: " + userEmail);
+
+        // Try to find as Operator by email
+        operator = operatorRepository.findByEmail(userId).orElse(null);
+        if (operator != null) {
+            return new UserReference(operator);
+        }
+
+        throw new RuntimeException("User not found with ID or email: " + userId);
     }
 
     //can change this later if needed
@@ -110,18 +121,12 @@ public class TripService {
     }
 
     public Trip findOngoingTrip(String bikeId, String userId) {
-        // Find user to get the correct ID
+        // Find user to get the email
         UserReference userRef = findUser(userId);
-        String userDbId = userRef.getId();
+        String userEmail = userRef.rider != null ? userRef.rider.getEmail() : userRef.operator.getEmail();
         
-        // Try to find trip with rider reference
-        Trip trip = tripRepository.findOngoingTripByRider(bikeId, userDbId);
-        if (trip != null) {
-            return trip;
-        }
-        
-        // Try to find trip with operator reference
-        trip = tripRepository.findOngoingTripByOperator(bikeId, userDbId);
+        // Find trip by userEmail (works for both riders and operators)
+        Trip trip = tripRepository.findOngoingTrip(bikeId, userEmail);
         return trip;
     }
 

@@ -49,7 +49,7 @@ public class BillingScheduler {
         List<Operator> operators = operatorRepository.findAll();
         for (Operator operator : operators) {
             try {
-                if(operator.getRole().contains("RIDER")) {
+                if(operator.getStripeCustomerId() != null) {
                     billingService.generateMonthlyBillingOperator(operator);
                     System.out.println("Billed rider " + operator.getId() + " for monthly base fee.");
                 }

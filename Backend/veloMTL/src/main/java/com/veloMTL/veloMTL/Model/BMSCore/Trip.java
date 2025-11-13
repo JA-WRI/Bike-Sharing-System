@@ -26,7 +26,6 @@ public class Trip {
 
     @DBRef(lazy = true)
     private Bike bike;
-    @DBRef(lazy = true)
     private String userEmail;
     @DBRef (lazy = true)
     private Billing billing;
@@ -64,7 +63,7 @@ public class Trip {
     public Bike getBike() {
         return bike;
     }
-//    public void setBike(Bike bike) {this.bike = bike;}
+    public void setBike(Bike bike) {this.bike = bike;}
 //    public Rider getRider() {return rider;}
 //    public void setRider(Rider rider) {
 //        this.rider = rider;

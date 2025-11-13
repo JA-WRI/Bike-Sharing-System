@@ -46,7 +46,7 @@ public class BillingService {
 
         //get user based on email
         User user = riderRepository.findByEmail(userEmail).orElse(null);
-        if (user == null) user = operatorRepository.findByEmail(userEmail).orElse(null);
+        if (user == null) user = operatorRepository.findByEmail(userEmail).orElseThrow(()-> new RuntimeException("User does not exist with email: "+ userEmail));
 
         //process bill if the user is found
         if (user != null) {
@@ -66,7 +66,7 @@ public class BillingService {
             String bikeId = trip.getBike().getBikeId();
 
             // get data from the trip to perform trip calculations
-            int arrivalStationOccupancy = stationRepository.findByName(arrivalStation)
+            int arrivalStationOccupancy = stationRepository.findByStationName(arrivalStation)
                     .orElseThrow(() -> new RuntimeException("Station not found: " + arrivalStation))
                     .getOccupancy();
 
@@ -74,11 +74,11 @@ public class BillingService {
             long tripDuration = getTripDurationInMinutes(trip);
             double ratePerMinute = plan.getRatebyMinute();
 
-            if (user.getRole().contains("OPERATOR")) {
-                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository, user.getId(), arrivalStationOccupancy);
+            if (user instanceof Operator) {
+                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars,riderRepository,operatorRepository, user.getId(), arrivalStationOccupancy);
                 tripCost = tripCost*(1-0.05);
             } else {
-                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository, user.getId(), arrivalStationOccupancy);
+                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository,operatorRepository, user.getId(), arrivalStationOccupancy);
             }
             bill = new Billing("Trip", LocalDateTime.now(), user.getId(), bikeId, originStation, arrivalStation, startDate, endDate, ratePerMinute, tripCost);
             billingRepository.save(bill);

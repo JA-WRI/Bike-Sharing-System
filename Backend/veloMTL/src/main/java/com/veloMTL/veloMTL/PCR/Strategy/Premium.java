@@ -2,6 +2,7 @@ package com.veloMTL.veloMTL.PCR.Strategy;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +25,7 @@ public class Premium implements Plan{
     public void setRatebyMinute(double ratebyMinute) {this.ratebyMinute = ratebyMinute;}
 
     @Override
-    public double calculateTripCost(long tripDuration, boolean isEbike, double flexDollars, RiderRepository riderRepository, String riderId, int arrivalStationOccupancy) {
+    public double calculateTripCost(long tripDuration, boolean isEbike, double flexDollars, RiderRepository riderRepository,OperatorRepository operatorRepository, String userId, int arrivalStationOccupancy) {
         if(tripDuration<1) tripDuration = 1;
 
         double tripCost = tripDuration * ratebyMinute;
@@ -36,21 +37,24 @@ public class Premium implements Plan{
             tripCost -= flexDollars;
             flexDollars = 0;
         }
-        Rider rider = riderRepository.findById(riderId).orElseThrow(() -> new UsernameNotFoundException("Rider not found with id: " + riderId));
-        rider.setFlexDollars(flexDollars);
+        User user = riderRepository.findById(userId).orElse(null);
+        if (user == null) user = operatorRepository.findById(userId).orElseThrow(()-> new RuntimeException("User does not exist with id: "+ userId));
 
-        addFlexDollars(rider, arrivalStationOccupancy);
+
+        user.setFlexDollars(flexDollars);
+
+        addFlexDollars(user, arrivalStationOccupancy);
 
         return tripCost;
 
     }
     @Override
-    public void addFlexDollars(Rider rider, int arrivalStationOccupancy){
-        double flexDollars = rider.getFlexDollars();
+    public void addFlexDollars(User user, int arrivalStationOccupancy){
+        double flexDollars = user.getFlexDollars();
 
         if(arrivalStationOccupancy<=25){
             flexDollars+=1;
-            rider.setFlexDollars(flexDollars);
+            user.setFlexDollars(flexDollars);
         }
     }
 }
