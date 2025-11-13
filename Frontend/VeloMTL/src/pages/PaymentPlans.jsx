@@ -3,10 +3,11 @@ import "../styles/PaymentPlans.css";
 import { AuthContext } from "../context/AuthContext";
 import { addPlan, getCurrentPlan } from "../api/planApi";
 import { checkPaymentMethod, checkStripeCustomerId } from "../api/paymentMethodApi";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function PaymentPlans() {
-  const { user } = useContext(AuthContext);
+  const { user, activeRole } = useContext(AuthContext);
+  const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,15 +25,14 @@ export default function PaymentPlans() {
         return;
       }
 
-      // Only check payment methods for riders
-      if (user.role === "OPERATOR") {
-        setCheckingPaymentMethod(false);
-        return;
-      }
-
       try {
         setCheckingPaymentMethod(true);
         // Check Stripe customer ID, payment method, and existing plan in parallel
+        // Using user.email ensures operators and riders share the same payment data
+        // Note: Operators and riders use the same endpoints (based on email),
+        // so payment methods/plans added as an operator are available in rider view
+        // We check payment methods for operators too, so when they switch to rider view,
+        // the state is already correct
         const [hasStripeId, hasPayment, currentPlan] = await Promise.all([
           checkStripeCustomerId(user.email),
           checkPaymentMethod(user.email),
@@ -43,6 +43,8 @@ export default function PaymentPlans() {
         if (currentPlan) {
           setSelectedPlan(currentPlan);
           setHasExistingPlan(true);
+        } else {
+          setHasExistingPlan(false);
         }
       } catch (error) {
         console.error("Failed to check payment method or plan:", error);
@@ -54,7 +56,7 @@ export default function PaymentPlans() {
     };
 
     checkPaymentAndPlan();
-  }, [user]);
+  }, [user, activeRole, location.pathname]);
 
   const handleSelectPlan = (plan) => {
     //Check login before allowing plan selection
@@ -63,8 +65,8 @@ export default function PaymentPlans() {
       return;
     }
 
-    if (user.role === "OPERATOR") {
-      setMessage("Operators cannot select a payment plan.");
+    if (activeRole === "OPERATOR") {
+      setMessage("Operators cannot select a payment plan. Switch to rider view to select a plan.");
       return;
     }
 
@@ -116,7 +118,7 @@ export default function PaymentPlans() {
     setPlanToConfirm(null);
   };
 
-  const isDisabled = !user || user?.role === "OPERATOR" || !hasStripeCustomerId || !hasPaymentMethod || checkingPaymentMethod;
+  const isDisabled = !user || activeRole === "OPERATOR" || !hasStripeCustomerId || !hasPaymentMethod || checkingPaymentMethod;
 
   return (
     <section className="pp-wrap-modern v2">
@@ -147,7 +149,7 @@ export default function PaymentPlans() {
           </div>
         )}
 
-        {user?.role === "OPERATOR" && (
+        {activeRole === "OPERATOR" && user?.role === "OPERATOR" && (
           <div className="pp-note-modern" style={{ 
             backgroundColor: "#e3f2fd", 
             border: "1px solid #2196f3", 
@@ -159,12 +161,12 @@ export default function PaymentPlans() {
               View Only Mode
             </p>
             <p style={{ margin: 0, fontSize: "14px" }}>
-              You are viewing this page as an operator. To select a payment plan, please log in as a rider.
+              You are viewing this page as an operator. Switch to rider view to select a payment plan.
             </p>
           </div>
         )}
 
-        {user && user.role !== "OPERATOR" && !checkingPaymentMethod && (!hasStripeCustomerId || !hasPaymentMethod) && !hasExistingPlan && (
+        {user && activeRole !== "OPERATOR" && !checkingPaymentMethod && (!hasStripeCustomerId || !hasPaymentMethod) && !hasExistingPlan && (
           <div className="pp-note-modern" style={{ 
             backgroundColor: "#fff3cd", 
             border: "1px solid #ffc107", 

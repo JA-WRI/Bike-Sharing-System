@@ -12,6 +12,15 @@ public class TripHistoryDTO extends TripDTO {
     private final double cost;
     private final LocalDateTime reserveTime;
 
+//    private static String getUserEmail(Trip trip) {
+//        if (trip.getRider() != null) {
+//            return trip.getRider().getEmail();
+//        } else if (trip.getOperator() != null) {
+//            return trip.getOperator().getEmail();
+//        }
+//        return null; // Fallback if neither is set
+//    }
+
     public TripHistoryDTO(Trip trip) {
         super(trip.getTripId(), trip.getStartTime(), trip.getEndTime(), trip.getBike().getBikeId(),
                 trip.getUserEmail());

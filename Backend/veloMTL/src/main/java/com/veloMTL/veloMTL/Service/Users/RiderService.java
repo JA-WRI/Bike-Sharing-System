@@ -16,9 +16,6 @@ public class RiderService implements UserDetailsService {
         this.riderRepository = riderRepository;
     }
 
-    /**
-     * Load a rider by email (used by Spring Security).
-     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Rider rider = riderRepository.findByEmail(email)

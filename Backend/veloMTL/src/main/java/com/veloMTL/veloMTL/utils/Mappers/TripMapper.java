@@ -2,6 +2,7 @@ package com.veloMTL.veloMTL.utils.Mappers;
 
 import com.veloMTL.veloMTL.DTO.BMSCore.TripDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.*;
+import com.veloMTL.veloMTL.Model.Users.Rider;
 
 public class TripMapper {
 

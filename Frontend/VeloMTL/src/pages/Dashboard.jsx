@@ -18,7 +18,7 @@ const stations = [
 ];
 
 const Dashboard = () => {
-  const { user } = useContext(AuthContext);
+  const { user, activeRole } = useContext(AuthContext);
   const navigate = useNavigate();
   const [selectedStation, setSelectedStation] = useState(null);
   const [selectedDock, setSelectedDock] = useState(null);
@@ -80,7 +80,7 @@ const Dashboard = () => {
 
   // Check if rider has payment method and plan
   const checkRiderPaymentSetup = async () => {
-    if (!user || user.role !== "RIDER") {
+    if (!user || activeRole !== "RIDER") {
       return { hasPaymentMethod: true, hasPaymentPlan: true }; // Not a rider, no check needed
     }
 
@@ -109,7 +109,7 @@ const Dashboard = () => {
     }
 
     // For riders, check payment method and plan
-    if (user.role === "RIDER") {
+    if (activeRole === "RIDER") {
       const { hasPaymentMethod, hasPaymentPlan } = await checkRiderPaymentSetup();
       
       if (!hasPaymentMethod) {

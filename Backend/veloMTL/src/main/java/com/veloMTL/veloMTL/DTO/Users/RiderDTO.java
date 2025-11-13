@@ -1,5 +1,7 @@
 package com.veloMTL.veloMTL.DTO.Users;
 
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+
 public class RiderDTO extends UserDTO {
     private String reservationId;
     private String paymentMethod; // optional: card type like "Visa"
@@ -10,7 +12,7 @@ public class RiderDTO extends UserDTO {
         super();
     }
 
-    public RiderDTO(String id, String name, String email, String role) {
+    public RiderDTO(String id, String name, String email, UserStatus role) {
         super(id, name, email, role);
     }
 

@@ -7,7 +7,10 @@ import com.stripe.model.SetupIntent;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.PaymentMethodListParams;
 import com.stripe.param.SetupIntentCreateParams;
+import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Model.Users.User;
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,60 +19,74 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PaymentMethodService {
 
     private final RiderRepository riderRepository;
+    private final OperatorRepository operatorRepository;
 
     // Inject the Stripe secret key from application.properties or environment variable
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
-    public PaymentMethodService(RiderRepository riderRepository) {
+    public PaymentMethodService(RiderRepository riderRepository, OperatorRepository operatorRepository) {
         this.riderRepository = riderRepository;
+        this.operatorRepository = operatorRepository;
     }
 
-    /**
-     * Adds a payment method for the rider.
-     * If the rider doesn't have a Stripe customer ID yet, a new customer is created in Stripe
-     * and saved to the database.
-     */
-    public Map<String, Object> addPaymentMethod(String riderEmail) {
+
+    private User findUserByEmail(String email) {
+        return riderRepository.findByEmail(email)
+                .map(rider -> (User) rider)
+                .orElseGet(() -> operatorRepository.findByEmail(email)
+                        .map(operator -> (User) operator)
+                        .orElseThrow(() -> new RuntimeException("User not found with email: " + email)));
+    }
+
+    private void saveUser(User user) {
+        if (user instanceof Rider) {
+            riderRepository.save((Rider) user);
+        } else if (user instanceof Operator) {
+            operatorRepository.save((Operator) user);
+        }
+    }
+
+    public Map<String, Object> addPaymentMethod(String userEmail) {
         Stripe.apiKey = stripeSecretKey;
 
-        // Fetch the rider from the database using their email
-        Rider rider = riderRepository.findByEmail(riderEmail)
-                .orElseThrow(() -> new RuntimeException("Rider not found with email: " + riderEmail));
+        // Fetch the user (Rider or Operator) from the database using their email
+        User user = findUserByEmail(userEmail);
 
         try {
             Customer customer;
 
-            //  create a new Stripe customer if the rider has no Stripe ID stored
-            if (rider.getStripeCustomerId() == null || rider.getStripeCustomerId().isEmpty()) {
-                System.out.println("Creating new Stripe customer for rider: " + riderEmail);
+            //  create a new Stripe customer if the user has no Stripe ID stored
+            if (user.getStripeCustomerId() == null || user.getStripeCustomerId().isEmpty()) {
+                System.out.println("Creating new Stripe customer for user: " + userEmail);
 
                 // Create Stripe customer
                 CustomerCreateParams customerParams = CustomerCreateParams.builder()
-                        .setEmail(rider.getEmail())
+                        .setEmail(user.getEmail())
                         .build();
 
                 customer = Customer.create(customerParams);
 
                 // Save the Stripe customer ID locally to avoid duplicates in future calls
-                rider.setStripeCustomerId(customer.getId());
-                riderRepository.save(rider);
+                user.setStripeCustomerId(customer.getId());
+                saveUser(user);
 
                 System.out.println("Stripe customer created with ID: " + customer.getId());
             } else {
-                System.out.println("Retrieving existing Stripe customer ID: " + rider.getStripeCustomerId());
+                System.out.println("Retrieving existing Stripe customer ID: " + user.getStripeCustomerId());
 
                 // Retrieve existing customer from Stripe
-                customer = Customer.retrieve(rider.getStripeCustomerId());
+                customer = Customer.retrieve(user.getStripeCustomerId());
 
                 // if the Stripe customer was deleted manually.
                 if (customer == null) {
-                    throw new RuntimeException("Stripe customer not found for ID: " + rider.getStripeCustomerId());
+                    throw new RuntimeException("Stripe customer not found for ID: " + user.getStripeCustomerId());
                 }
             }
 
@@ -84,50 +101,39 @@ public class PaymentMethodService {
             Map<String, Object> response = new HashMap<>();
             response.put("clientSecret", setupIntent.getClientSecret());
             response.put("customerId", customer.getId());
+            response.put("stripeCustomerId", customer.getId()); // Also include as stripeCustomerId for consistency
 
             System.out.println("SetupIntent created successfully for customer: " + customer.getId());
 
             return response;
 
         } catch (Exception e) {
-            System.err.println("Failed to add payment method for rider: " + riderEmail);
+            System.err.println("Failed to add payment method for user: " + userEmail);
             e.printStackTrace();
             throw new RuntimeException("Failed to add payment method: " + e.getMessage());
         }
     }
 
-    /**
-     * Checks if a rider has a Stripe customer ID.
-     * @param riderEmail The email of the rider
-     * @return true if the rider has a Stripe customer ID, false otherwise
-     */
-    public boolean hasStripeCustomerId(String riderEmail) {
-        Rider rider = riderRepository.findByEmail(riderEmail)
-                .orElseThrow(() -> new RuntimeException("Rider not found with email: " + riderEmail));
+    public boolean hasStripeCustomerId(String userEmail) {
+        User user = findUserByEmail(userEmail);
 
-        return rider.getStripeCustomerId() != null && !rider.getStripeCustomerId().isEmpty();
+        return user.getStripeCustomerId() != null && !user.getStripeCustomerId().isEmpty();
     }
 
-    /**
-     * Checks if a rider has at least one payment method attached to their Stripe customer.
-     * @param riderEmail The email of the rider
-     * @return true if the rider has at least one payment method, false otherwise
-     */
-    public boolean hasPaymentMethod(String riderEmail) {
+    public boolean hasPaymentMethod(String userEmail) {
         Stripe.apiKey = stripeSecretKey;
 
-        Rider rider = riderRepository.findByEmail(riderEmail)
-                .orElseThrow(() -> new RuntimeException("Rider not found with email: " + riderEmail));
+        User user = findUserByEmail(userEmail);
 
-        // If rider doesn't have a Stripe customer ID, they don't have a payment method
-        if (rider.getStripeCustomerId() == null || rider.getStripeCustomerId().isEmpty()) {
+        // If user doesn't have a Stripe customer ID, they don't have a payment method
+        if (user.getStripeCustomerId() == null || user.getStripeCustomerId().isEmpty()) {
             return false;
         }
 
         try {
             // List payment methods for the customer
             PaymentMethodListParams params = PaymentMethodListParams.builder()
-                    .setCustomer(rider.getStripeCustomerId())
+                    .setCustomer(user.getStripeCustomerId())
                     .setType(PaymentMethodListParams.Type.CARD)
                     .build();
 
@@ -136,32 +142,26 @@ public class PaymentMethodService {
             // Check if there's at least one payment method
             return paymentMethods != null && paymentMethods.getData() != null && !paymentMethods.getData().isEmpty();
         } catch (Exception e) {
-            System.err.println("Failed to check payment methods for rider: " + riderEmail);
+            System.err.println("Failed to check payment methods for user: " + userEmail);
             e.printStackTrace();
             return false;
         }
     }
 
-    /**
-     * Retrieves all payment methods for a rider with card details.
-     * @param riderEmail The email of the rider
-     * @return List of maps containing payment method details (card brand, last4, exp_month, exp_year, name)
-     */
-    public List<Map<String, Object>> getPaymentMethods(String riderEmail) {
+    public List<Map<String, Object>> getPaymentMethods(String userEmail) {
         Stripe.apiKey = stripeSecretKey;
 
-        Rider rider = riderRepository.findByEmail(riderEmail)
-                .orElseThrow(() -> new RuntimeException("Rider not found with email: " + riderEmail));
+        User user = findUserByEmail(userEmail);
 
-        // If rider doesn't have a Stripe customer ID, return empty list
-        if (rider.getStripeCustomerId() == null || rider.getStripeCustomerId().isEmpty()) {
+        // If user doesn't have a Stripe customer ID, return empty list
+        if (user.getStripeCustomerId() == null || user.getStripeCustomerId().isEmpty()) {
             return new ArrayList<>();
         }
 
         try {
             // List payment methods for the customer
             PaymentMethodListParams params = PaymentMethodListParams.builder()
-                    .setCustomer(rider.getStripeCustomerId())
+                    .setCustomer(user.getStripeCustomerId())
                     .setType(PaymentMethodListParams.Type.CARD)
                     .build();
 
@@ -193,10 +193,15 @@ public class PaymentMethodService {
             
             return result;
         } catch (Exception e) {
-            System.err.println("Failed to retrieve payment methods for rider: " + riderEmail);
+            System.err.println("Failed to retrieve payment methods for user: " + userEmail);
             e.printStackTrace();
             return new ArrayList<>();
         }
+    }
+
+    public String getStripeCustomerId(String userEmail) {
+        User user = findUserByEmail(userEmail);
+        return user.getStripeCustomerId();
     }
 }
 
