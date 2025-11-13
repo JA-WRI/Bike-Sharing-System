@@ -1,11 +1,14 @@
 package com.veloMTL.veloMTL.Service.PRC;
 
+import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.PCR.Strategy.Basic;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import com.veloMTL.veloMTL.PCR.Strategy.Premium;
 import com.veloMTL.veloMTL.Repository.PRC.BillingRepository;
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,25 +18,52 @@ import java.time.LocalDateTime;
 public class PaymentPlanService {
 
     private final RiderRepository riderRepository;
+    private final OperatorRepository operatorRepository;
     private final BillingRepository billingRepository;
     private final PaymentMethodService paymentMethodService;
 
-    public PaymentPlanService(RiderRepository riderRepository, BillingRepository billingRepository, PaymentMethodService paymentMethodService) {
+    public PaymentPlanService(RiderRepository riderRepository, OperatorRepository operatorRepository, BillingRepository billingRepository, PaymentMethodService paymentMethodService) {
         this.riderRepository = riderRepository;
+        this.operatorRepository = operatorRepository;
         this.billingRepository = billingRepository;
         this.paymentMethodService = paymentMethodService;
     }
 
     /**
-     * Gets the current plan name for a rider.
-     * @param riderEmail The email of the rider
+     * Finds a user (Rider or Operator) by email.
+     * @param email The email of the user
+     * @return The User (Rider or Operator)
+     * @throws RuntimeException if user is not found
+     */
+    private User findUserByEmail(String email) {
+        return riderRepository.findByEmail(email)
+                .map(rider -> (User) rider)
+                .orElseGet(() -> operatorRepository.findByEmail(email)
+                        .map(operator -> (User) operator)
+                        .orElseThrow(() -> new RuntimeException("User not found with email: " + email)));
+    }
+
+    /**
+     * Saves a user (Rider or Operator) to the appropriate repository.
+     * @param user The user to save
+     */
+    private void saveUser(User user) {
+        if (user instanceof Rider) {
+            riderRepository.save((Rider) user);
+        } else if (user instanceof Operator) {
+            operatorRepository.save((Operator) user);
+        }
+    }
+
+    /**
+     * Gets the current plan name for a user (rider or operator).
+     * @param userEmail The email of the user
      * @return The plan name ("Basic", "Premium") or null if no plan is set
      */
-    public String getCurrentPlan(String riderEmail) {
-        Rider rider = riderRepository.findByEmail(riderEmail)
-                .orElseThrow(() -> new RuntimeException("Rider not found with email: " + riderEmail));
+    public String getCurrentPlan(String userEmail) {
+        User user = findUserByEmail(userEmail);
         
-        Plan plan = rider.getPlan();
+        Plan plan = user.getPlan();
         if (plan == null) {
             return null;
         }
@@ -55,31 +85,48 @@ public class PaymentPlanService {
         return null;
     }
 
-    public Rider addPlan(String riderEmail, String chosenPlan){
-        Rider rider = riderRepository.findByEmail(riderEmail)
-                .orElseThrow(() -> new RuntimeException("Rider not found with email: " + riderEmail));
+    public Rider addPlan(String userEmail, String chosenPlan){
+        // Find user (can be either Rider or Operator)
+        User user = findUserByEmail(userEmail);
         
-        // First check if rider has a Stripe customer ID
-        if (!paymentMethodService.hasStripeCustomerId(riderEmail)) {
+        // First check if user has a Stripe customer ID
+        if (!paymentMethodService.hasStripeCustomerId(userEmail)) {
             throw new RuntimeException("Please add a payment method before selecting a plan.");
         }
         
-        // Then check if rider has at least one payment method attached
-        if (!paymentMethodService.hasPaymentMethod(riderEmail)) {
+        // Then check if user has at least one payment method attached
+        if (!paymentMethodService.hasPaymentMethod(userEmail)) {
             throw new RuntimeException("Please add a payment method before selecting a plan.");
         }
         
-       Plan plan = null;
+        Plan plan = null;
         if(chosenPlan.equalsIgnoreCase("Basic")){
              plan = new Basic();
         } else if(chosenPlan.equalsIgnoreCase("Premium")){
             plan = new Premium();
+        } else {
+            throw new RuntimeException("Invalid plan selected: " + chosenPlan);
         }
-        Billing billing = new Billing("Monthly Base Fee", LocalDateTime.now(), rider.getId(), plan.getBaseFee());
+        
+        // Create billing record using user's ID (works for both riders and operators)
+        Billing billing = new Billing("Monthly Base Fee", LocalDateTime.now(), user.getId(), plan.getBaseFee());
         billingRepository.save(billing);
 
-        rider.setPlan(plan);
-        return riderRepository.save(rider);
+        // Set plan on user and save
+        user.setPlan(plan);
+        saveUser(user);
+        
+        // Return as Rider for backward compatibility
+        // If user is an operator, we need to return a Rider type. Since operators can have plans
+        // and the controller doesn't use the return value, we can return null safely.
+        // However, to avoid potential NPE issues, we'll return the user if it's a Rider, otherwise null.
+        if (user instanceof Rider) {
+            return (Rider) user;
+        } else {
+            // For operators, the plan has been saved successfully
+            // The controller doesn't use the return value, so returning null is safe
+            return null;
+        }
     }
 }
 

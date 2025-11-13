@@ -5,7 +5,7 @@ import RiderCommandMenu from "./riderCommandMenu";
 import "../../styles/CommandMenu.css";
 
 const CommandMenu = ({ station, dock, onClose, onCommandSuccess }) => {
-  const { user } = useContext(AuthContext);
+  const { user, activeRole } = useContext(AuthContext);
   const [responseMessage, setResponseMessage] = useState(null);
   const [responseStatus, setResponseStatus] = useState(null);
   if (!dock || !user) return null;
@@ -37,7 +37,7 @@ const CommandMenu = ({ station, dock, onClose, onCommandSuccess }) => {
           </div>
         )}
 
-        {user.role === "OPERATOR" ? (
+        {activeRole === "OPERATOR" ? (
           <OperatorCommandMenu
             station={station} 
             dock={dock} 
