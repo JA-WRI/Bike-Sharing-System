@@ -43,10 +43,7 @@ public class PaymentPlanService {
                         .orElseThrow(() -> new RuntimeException("User not found with email: " + email)));
     }
 
-    /**
-     * Saves a user (Rider or Operator) to the appropriate repository.
-     * @param user The user to save
-     */
+
     private void saveUser(User user) {
         if (user instanceof Rider) {
             riderRepository.save((Rider) user);
@@ -55,11 +52,6 @@ public class PaymentPlanService {
         }
     }
 
-    /**
-     * Gets the current plan name for a user (rider or operator).
-     * @param userEmail The email of the user
-     * @return The plan name ("Basic", "Premium") or null if no plan is set
-     */
     public String getCurrentPlan(String userEmail) {
         User user = findUserByEmail(userEmail);
         

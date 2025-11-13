@@ -34,9 +34,6 @@ public class TripService {
         this.tripRepository = tripRepository;
     }
 
-    /**
-     * Helper class to hold either a Rider or Operator reference
-     */
     private static class UserReference {
         final Rider rider;
         final Operator operator;
@@ -56,12 +53,7 @@ public class TripService {
         }
     }
     
-    /**
-     * Finds a user (Rider or Operator) by ID or email.
-     * 
-     * @param userId The user ID or email
-     * @return UserReference containing either Rider or Operator
-     */
+
     private UserReference findUser(String userId) {
         // First, try to find as Rider by ID
         Rider rider = riderRepository.findById(userId).orElse(null);
