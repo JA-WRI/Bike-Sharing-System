@@ -7,9 +7,8 @@ import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 
 public interface Plan {
 
-    double calculateTripCostRider(long tripDuration, boolean isEbike, double flexDollars, RiderRepository riderRepository, String riderId, int arrivalStationOccupancy);
-    double calculateTripCostOperator(long tripDuration, boolean isEbike, double flexDollars, OperatorRepository operatorRepository, String operatorId, int arrivalStationOccupancy);
+    double calculateTripCost(long tripDuration, boolean isEbike, double flexDollars, RiderRepository riderRepository, String riderId, int arrivalStationOccupancy);
     int getBaseFee();
     double getRatebyMinute();
-    void addFlexDollarsRider (Rider rider, int arrivalStationOccupancy);
+    void addFlexDollars(Rider rider, int arrivalStationOccupancy);
 }  

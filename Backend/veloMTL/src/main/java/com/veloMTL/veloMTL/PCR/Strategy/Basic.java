@@ -34,7 +34,7 @@ public class Basic implements  Plan{
     public void seteBikeCharge(int eBikeCharge) {this.eBikeCharge = eBikeCharge;}
 
     @Override
-    public double calculateTripCostRider(long tripDuration, boolean isEbike,double flexDollars,RiderRepository riderRepository,String riderId, int arrivalStationOccupancy) {
+    public double calculateTripCost(long tripDuration, boolean isEbike,double flexDollars,RiderRepository riderRepository,String riderId, int arrivalStationOccupancy) {
 
         if(tripDuration<1) tripDuration = 1;
 
@@ -52,12 +52,12 @@ public class Basic implements  Plan{
         Rider rider = riderRepository.findById(riderId).orElseThrow(() -> new UsernameNotFoundException("Rider not found with id: " + riderId));
         rider.setFlexDollars(flexDollars);
 
-        addFlexDollarsRider(rider, arrivalStationOccupancy);
+        addFlexDollars(rider, arrivalStationOccupancy);
 
         return tripCost;
     }
     @Override
-    public void addFlexDollarsRider (Rider rider, int arrivalStationOccupancy){
+    public void addFlexDollars(Rider rider, int arrivalStationOccupancy){
         double flexDollars = rider.getFlexDollars();
 
         if(arrivalStationOccupancy<=25){
@@ -66,10 +66,4 @@ public class Basic implements  Plan{
         }
 
     }
-@Override
-public double calculateTripCostOperator(long tripDuration, boolean isEbike, double flexDollars, OperatorRepository operatorRepository, String operatorId, int arrivalStationOccupancy){
- return 1;
-}
-
-
 }

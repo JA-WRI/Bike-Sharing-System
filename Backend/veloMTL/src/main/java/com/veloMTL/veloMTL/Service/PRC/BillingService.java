@@ -75,37 +75,16 @@ public class BillingService {
             double ratePerMinute = plan.getRatebyMinute();
 
             if (user.getRole().contains("OPERATOR")) {
-                // code operator method
+                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository, user.getId(), arrivalStationOccupancy);
+                tripCost = tripCost*(1-0.05);
             } else {
-                tripCost = plan.calculateTripCostRider(
-                        tripDuration,
-                        isEBike,
-                        flexDollars,
-                        riderRepository,
-                        user.getId(),
-                        arrivalStationOccupancy
-                );
+                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository, user.getId(), arrivalStationOccupancy);
             }
-
-            bill = new Billing(
-                    "Trip",
-                    LocalDateTime.now(),
-                    user.getId(),
-                    bikeId,
-                    originStation,
-                    arrivalStation,
-                    startDate,
-                    endDate,
-                    ratePerMinute,
-                    tripCost
-            );
+            bill = new Billing("Trip", LocalDateTime.now(), user.getId(), bikeId, originStation, arrivalStation, startDate, endDate, ratePerMinute, tripCost);
             billingRepository.save(bill);
         }
-
         return bill;
     }
-
-
 
     public Billing generateMonthlyBillingRiders(Rider rider) {
         if (rider == null) return null;
