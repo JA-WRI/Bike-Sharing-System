@@ -34,7 +34,7 @@ public class Basic implements  Plan{
     public void seteBikeCharge(int eBikeCharge) {this.eBikeCharge = eBikeCharge;}
 
     @Override
-    public double calculateTripCost(long tripDuration, boolean isEbike,double flexDollars,RiderRepository riderRepository,OperatorRepository operatorRepository,String userId, int arrivalStationOccupancy) {
+    public double calculateTripCost(long tripDuration, boolean isEbike,double flexDollars,RiderRepository riderRepository,OperatorRepository operatorRepository,String userId, int percentageCapacity ) {
 
         if(tripDuration<1) tripDuration = 1;
 
@@ -53,15 +53,16 @@ public class Basic implements  Plan{
         if (user == null) user = operatorRepository.findById(userId).orElseThrow(()-> new RuntimeException("User does not exist with id: "+ userId));
 
         user.setFlexDollars(flexDollars);
-        addFlexDollars(user, arrivalStationOccupancy);
+        addFlexDollars(user, percentageCapacity);
 
         return tripCost;
     }
     @Override
-    public void addFlexDollars(User user, int arrivalStationOccupancy){
+    public void addFlexDollars(User user, int percentageCapacity ){
+
         double flexDollars = user.getFlexDollars();
 
-        if(arrivalStationOccupancy<=25){
+        if(percentageCapacity <=25){
            flexDollars+=1;
            user.setFlexDollars(flexDollars);
         }

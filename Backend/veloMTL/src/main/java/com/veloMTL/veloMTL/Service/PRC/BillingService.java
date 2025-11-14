@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Service.PRC;
 
+import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
@@ -66,19 +67,22 @@ public class BillingService {
             String bikeId = trip.getBike().getBikeId();
 
             // get data from the trip to perform trip calculations
-            int arrivalStationOccupancy = stationRepository.findByStationName(arrivalStation)
-                    .orElseThrow(() -> new RuntimeException("Station not found: " + arrivalStation))
-                    .getOccupancy();
+            Station station =  stationRepository.findByStationName(arrivalStation)
+                    .orElseThrow(() -> new RuntimeException("Station not found: " + arrivalStation));
+
+            int percentageCapacity = Math.round(station.getOccupancy()-1/station.getCapacity());
+
 
             boolean isEBike = trip.getBike().getBikeType().equalsIgnoreCase("e-Bike");
             long tripDuration = getTripDurationInMinutes(trip);
             double ratePerMinute = plan.getRatebyMinute();
 
             if (user instanceof Operator) {
-                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars,riderRepository,operatorRepository, user.getId(), arrivalStationOccupancy);
-                tripCost = tripCost*(1-0.05);
+                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars,riderRepository,operatorRepository, user.getId(),percentageCapacity );
+                tripCost = Math.round(((tripCost*(1-0.05))*100.0)/100.0);
             } else {
-                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository,operatorRepository, user.getId(), arrivalStationOccupancy);
+                tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository,operatorRepository, user.getId(),percentageCapacity );
+                tripCost = Math.round((tripCost*100.0)/100.0);
             }
             bill = new Billing("Trip", LocalDateTime.now(), user.getId(), bikeId, originStation, arrivalStation, startDate, endDate, ratePerMinute, tripCost);
             billingRepository.save(bill);
