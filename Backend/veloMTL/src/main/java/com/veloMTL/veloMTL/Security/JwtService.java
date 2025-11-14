@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Security;
 
 import com.veloMTL.veloMTL.Model.Enums.Permissions;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,7 +33,7 @@ public class JwtService {
     }
 
     // Convenience method to generate token for a specific role
-    public String generateToken(String email, String role, List<Permissions> permissions) {
+    public String generateToken(String email, UserStatus role, List<Permissions> permissions) {
         Map<String, Object> claims = Map.of(
                 "role", role,
                 "permissions", permissions
