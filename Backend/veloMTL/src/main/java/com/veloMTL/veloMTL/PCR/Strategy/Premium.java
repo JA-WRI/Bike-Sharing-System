@@ -1,21 +1,16 @@
 package com.veloMTL.veloMTL.PCR.Strategy;
 
-import com.veloMTL.veloMTL.Model.BMSCore.Trip;
-import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class Premium implements Plan{
     private int baseFee = 20;
     private double ratebyMinute = 0.15;
-    RiderRepository riderRepository;
-    //private int eBikeCharge = 0;
 
     public Premium(){}
 
-    public Premium(int baseFee, double ratebyMinute,RiderRepository riderRepository) {
+    public Premium(int baseFee, double ratebyMinute) {
         this.baseFee = baseFee;
         this.ratebyMinute = ratebyMinute;
     }
@@ -40,14 +35,12 @@ public class Premium implements Plan{
         User user = riderRepository.findById(userId).orElse(null);
         if (user == null) user = operatorRepository.findById(userId).orElseThrow(()-> new RuntimeException("User does not exist with id: "+ userId));
 
-
         user.setFlexDollars(flexDollars);
-
         addFlexDollars(user, arrivalStationOccupancy);
 
         return tripCost;
-
     }
+
     @Override
     public void addFlexDollars(User user, int arrivalStationOccupancy){
         double flexDollars = user.getFlexDollars();

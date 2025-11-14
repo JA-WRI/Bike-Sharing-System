@@ -8,16 +8,12 @@ import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
-import com.veloMTL.veloMTL.Repository.BMSCore.DockRepository;
-import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.utils.Mappers.TripMapper;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-
 
 @Service
 public class TripService {
@@ -52,7 +48,6 @@ public class TripService {
             return rider != null ? rider.getId() : operator.getId();
         }
     }
-
 
     private UserReference findUser(String userId) {
         // First, try to find as Rider by ID

@@ -84,7 +84,6 @@ public class BillingService {
             billingRepository.save(bill);
         }
         return bill;
-
     }
 
     public Billing generateMonthlyBillingRiders(Rider rider) {
@@ -119,6 +118,4 @@ public class BillingService {
 
         return billingRepository.findAllByriderID(user.getId());
     }
-
-
 }

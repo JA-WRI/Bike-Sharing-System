@@ -18,8 +18,6 @@ public class Basic implements  Plan{
     private Station station;
     private RiderRepository riderRepository;
 
-
-
     public Basic(){}
 
     public Basic(int baseFee, double ratebyMinute, int eBikeCharge,RiderRepository riderRepository) {
@@ -55,7 +53,6 @@ public class Basic implements  Plan{
         if (user == null) user = operatorRepository.findById(userId).orElseThrow(()-> new RuntimeException("User does not exist with id: "+ userId));
 
         user.setFlexDollars(flexDollars);
-
         addFlexDollars(user, arrivalStationOccupancy);
 
         return tripCost;

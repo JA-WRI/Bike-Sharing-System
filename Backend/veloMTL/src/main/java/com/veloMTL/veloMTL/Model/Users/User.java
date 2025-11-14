@@ -22,9 +22,7 @@ public abstract class User {
     private String stripeCustomerId;
     private Plan plan;
 
-
-    public User() {
-    }
+    public User() {}
 
     public User(String name, String email, String password, UserStatus role, List<Permissions> permissions) {
         this.name = name;
