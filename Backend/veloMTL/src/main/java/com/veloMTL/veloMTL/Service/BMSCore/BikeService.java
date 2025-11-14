@@ -97,12 +97,7 @@ public class BikeService {
 
             //if user is a rider then we create them a trip
             if (role == UserStatus.RIDER) {
-                Trip trip = tripService.findOngoingTrip(bikeId, userId);
-                if (trip != null) {
-                    tripService.startReserveTrip(trip);
-                } else {
-                    tripService.createTrip(bikeId, userId, station);
-                }
+                tripService.createTrip(bikeId, userId, station);
                 return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
             }
         }

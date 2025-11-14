@@ -1,13 +1,15 @@
 package com.veloMTL.veloMTL.DTO.auth;
 
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+
 public class LoginResponseDTO {
     private String token;
     private String id;
     private String name;
     private String email;
-    private String role;
+    private UserStatus role;
 
-    public LoginResponseDTO(String token,String id, String name, String email, String role) {
+    public LoginResponseDTO(String token,String id, String name, String email, UserStatus role) {
         this.token = token;
         this.name = name;
         this.email = email;
@@ -38,11 +40,11 @@ public class LoginResponseDTO {
         this.email = email;
     }
 
-    public String getRole() {
+    public UserStatus getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserStatus role) {
         this.role = role;
     }
 

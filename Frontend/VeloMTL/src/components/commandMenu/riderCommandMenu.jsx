@@ -22,13 +22,13 @@ const getLocalISODateTime = (date) => {
 const RESERVE_TIME = 15*60*1000; // 15 mins as MS
 
 const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus, onCommandSuccess }) => {
-  const { user } = useContext(AuthContext);
+  const { user, activeRole } = useContext(AuthContext);
   const navigate = useNavigate();
   const [timerStarted, setTimerStarted] = useState(false);
 
   // Check if rider has payment method and plan
   const checkRiderPaymentSetup = async () => {
-    if (!user || user.role !== "RIDER") {
+    if (!user || activeRole !== "RIDER") {
       return { hasPaymentMethod: true, hasPaymentPlan: true };
     }
 
@@ -66,7 +66,7 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
 
   const handleCommand = async (action, ...args) => {
     // Validate payment setup before executing any command
-    if (user?.role === "RIDER") {
+    if (activeRole === "RIDER") {
       const { hasPaymentMethod, hasPaymentPlan } = await checkRiderPaymentSetup();
       
       if (!hasPaymentMethod) {
