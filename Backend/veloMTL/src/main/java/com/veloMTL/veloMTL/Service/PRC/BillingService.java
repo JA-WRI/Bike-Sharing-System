@@ -72,17 +72,26 @@ public class BillingService {
 
             int percentageCapacity = Math.round(station.getOccupancy()-1/station.getCapacity());
 
+            System.out.println("\n\n\n\n\n\n percentageCapacity " + percentageCapacity);
 
-            boolean isEBike = trip.getBike().getBikeType().equalsIgnoreCase("e-Bike");
+
+            boolean isEBike = trip.getBike().getBikeType().equalsIgnoreCase("electric");
             long tripDuration = getTripDurationInMinutes(trip);
             double ratePerMinute = plan.getRatebyMinute();
 
             if (user instanceof Operator) {
                 tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars,riderRepository,operatorRepository, user.getId(),percentageCapacity );
-                tripCost = Math.round(((tripCost*(1-0.05))*100.0)/100.0);
+                tripCost = tripCost*(1-0.05);
+                //tripCost = Math.round(((tripCost*(1-0.05))*100.00)/100.00);
+                System.out.println("\n\n\n\n\n\n\n tripCost "+ tripCost);
+                Operator op = operatorRepository.findById(user.getId()).orElseThrow(()-> new RuntimeException("No operator found with id"));
+                operatorRepository.save(op);
             } else {
                 tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository,operatorRepository, user.getId(),percentageCapacity );
-                tripCost = Math.round((tripCost*100.0)/100.0);
+                //tripCost = Math.round((tripCost*100.00)/100.00);
+                System.out.println("\n\n\n\n\n\n\n tripCost "+ tripCost);
+                Rider ri = riderRepository.findById(user.getId()).orElseThrow(()-> new RuntimeException("No rider found with id"));
+                riderRepository.save(ri);
             }
             bill = new Billing("Trip", LocalDateTime.now(), user.getId(), bikeId, originStation, arrivalStation, startDate, endDate, ratePerMinute, tripCost);
             billingRepository.save(bill);

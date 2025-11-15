@@ -2,6 +2,7 @@ package com.veloMTL.veloMTL.PCR.Strategy;
 
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
@@ -34,14 +35,19 @@ public class Basic implements  Plan{
     public void seteBikeCharge(int eBikeCharge) {this.eBikeCharge = eBikeCharge;}
 
     @Override
-    public double calculateTripCost(long tripDuration, boolean isEbike,double flexDollars,RiderRepository riderRepository,OperatorRepository operatorRepository,String userId, int percentageCapacity ) {
+    public double calculateTripCost(long tripDuration, boolean isEbike, double flexDollars,
+                                    RiderRepository riderRepository, OperatorRepository operatorRepository,
+                                    String userId, int arrivalStationOccupancy) {
 
-        if(tripDuration<1) tripDuration = 1;
+        if (tripDuration < 1) tripDuration = 1;
 
         double tripCost = tripDuration * ratebyMinute;
-        if(isEbike){
-            tripCost+=eBikeCharge;
+
+        if (isEbike) {
+            tripCost += eBikeCharge;
         }
+
+        // Deduct flex dollars
         if (flexDollars >= tripCost) {
             flexDollars -= tripCost;
             tripCost = 0;
@@ -49,23 +55,39 @@ public class Basic implements  Plan{
             tripCost -= flexDollars;
             flexDollars = 0;
         }
-       User user = riderRepository.findById(userId).orElse(null);
-        if (user == null) user = operatorRepository.findById(userId).orElseThrow(()-> new RuntimeException("User does not exist with id: "+ userId));
 
+        // Load user
+        User user = riderRepository.findById(userId).orElse(null);
+        if (user == null)
+            user = operatorRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User does not exist with id: " + userId));
+
+        // Update flex balance
         user.setFlexDollars(flexDollars);
-        addFlexDollars(user, percentageCapacity);
+
+        // Add reward if eligible
+        addFlexDollars(user, arrivalStationOccupancy);
+
+        // REQUIRED — persist user
+        if (user instanceof Rider) {
+            riderRepository.save((Rider) user);
+        } else {
+            operatorRepository.save((Operator) user);
+        }
 
         return tripCost;
     }
-    @Override
-    public void addFlexDollars(User user, int percentageCapacity ){
 
+    @Override
+    public void addFlexDollars(User user, int arrivalStationOccupancy) {
         double flexDollars = user.getFlexDollars();
 
-        if(percentageCapacity <=25){
-           flexDollars+=1;
-           user.setFlexDollars(flexDollars);
+        if (arrivalStationOccupancy <= 25) {
+            flexDollars += 1;
+            user.setFlexDollars(flexDollars);
         }
-
     }
+
+
 }
+
