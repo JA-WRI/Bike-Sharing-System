@@ -70,7 +70,7 @@ public class BillingService {
             Station station =  stationRepository.findByStationName(arrivalStation)
                     .orElseThrow(() -> new RuntimeException("Station not found: " + arrivalStation));
 
-            int percentageCapacity = Math.round(station.getOccupancy()-1/station.getCapacity());
+            int percentageCapacity = Math.round((station.getOccupancy()-1/station.getCapacity())*10);
 
             System.out.println("\n\n\n\n\n\n percentageCapacity " + percentageCapacity);
 
@@ -81,7 +81,7 @@ public class BillingService {
 
             if (user instanceof Operator) {
                 tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars,riderRepository,operatorRepository, user.getId(),percentageCapacity );
-                tripCost = tripCost*(1-0.05);
+                tripCost = (double) Math.round((tripCost*(1-0.05))*100)/100.0;
                 //tripCost = Math.round(((tripCost*(1-0.05))*100.00)/100.00);
                 System.out.println("\n\n\n\n\n\n\n tripCost "+ tripCost);
                 Operator op = operatorRepository.findById(user.getId()).orElseThrow(()-> new RuntimeException("No operator found with id"));
