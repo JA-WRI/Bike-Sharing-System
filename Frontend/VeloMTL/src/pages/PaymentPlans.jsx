@@ -220,7 +220,7 @@ export default function PaymentPlans() {
             </div>
 
             <ul className="pp-feat-modern">
-              <li><strong>Rate per Minute:</strong> $0.10</li>
+              <li><strong>Rate per Minute:</strong> $0.20</li>
               <li><strong>E-bike Surcharge:</strong> $5</li>
               <li><strong>Free reservations:</strong> docks and bikes included</li>
               <li className="muted">Billed monthly to your account</li>
@@ -270,7 +270,7 @@ export default function PaymentPlans() {
             </div>
 
             <ul className="pp-feat-modern">
-              <li><strong>Rate per Minute:</strong> $0.05</li>
+              <li><strong>Rate per Minute:</strong> $0.15</li>
               <li><strong>E-bike Surcharge:</strong> $0</li>
               <li><strong>Free reservations:</strong> docks and bikes included</li>
               <li className="muted">Billed monthly to your account</li>
