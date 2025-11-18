@@ -37,11 +37,6 @@ public class Trip {
         this.userEmail = userEmail;
     }
 
-//    public Trip(Bike bike, Operator operator) {
-//        this.bike = bike;
-//        this.operator = operator;
-//    }
-
     public String getTripId() {
         return tripId;
     }
@@ -64,45 +59,6 @@ public class Trip {
         return bike;
     }
     public void setBike(Bike bike) {this.bike = bike;}
-//    public Rider getRider() {return rider;}
-//    public void setRider(Rider rider) {
-//        this.rider = rider;
-//        if (rider != null) {
-//            this.operator = null; // Ensure only one is set
-//        }
-//    }
-//    public Operator getOperator() {return operator;}
-//    public void setOperator(Operator operator) {
-//        this.operator = operator;
-//        if (operator != null) {
-//            this.rider = null; // Ensure only one is set
-//        }
-//    }
-
-//    /**
-//     * Gets the user ID regardless of whether it's a Rider or Operator
-//     */
-//    public String getUserId() {
-//        if (rider != null) {
-//            return rider.getId();
-//        } else if (operator != null) {
-//            return operator.getId();
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * Gets the user status (RIDER or OPERATOR) based on which field is set
-//     */
-//    public UserStatus getUserStatus() {
-//        if (rider != null) {
-//            return UserStatus.RIDER;
-//        } else if (operator != null) {
-//            return UserStatus.OPERATOR;
-//        }
-//        return null;
-//    }
-
     public String getUserEmail() {return userEmail;}
     public void setUserEmail(String userEmail) {this.userEmail = userEmail;}
     public String getOriginStation() {return originStation;}

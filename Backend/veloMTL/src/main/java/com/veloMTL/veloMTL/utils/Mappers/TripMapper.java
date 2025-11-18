@@ -20,7 +20,6 @@ public class TripMapper {
         return trip;
     }
 
-
     public static TripDTO entityToDto(Trip trip) {
         TripDTO tripdto = new TripDTO();
         tripdto.setTripId(trip.getTripId());
