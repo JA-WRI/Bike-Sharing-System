@@ -14,6 +14,7 @@ import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.Service.PRC.BillingService;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,61 +33,37 @@ import static org.mockito.Mockito.*;
 public class BikeServiceTest_UnlockBike {
 
     @Mock
-    private BikeRepository bikeRepository;
+    BikeRepository bikeRepository;
     @Mock
-    private DockRepository dockRepository;
+    DockRepository dockRepository;
     @Mock
-    private StationRepository stationRepository;
+    StationRepository stationRepository;
     @Mock
-    private StationService stationService;
+    StationService stationService;
     @Mock
-    private TripService tripService;
+    TripService tripService;
     @Mock
-    private BikeState bikeState;
+    BikeState bikeState;
     @Mock
-    private RiderRepository riderRepository;
+    RiderRepository riderRepository;
     @Mock
-    private BillingService billingService;
+    BillingService billingService;
     @Mock
-    private TimerService timerService;
+    TimerService timerService;
 
     @InjectMocks
-    private BikeService bikeService;
+    BikeService bikeService;
+
+    Station station;
+    Dock dock;
+    Bike bike;
+    BikeService spyService;
 
 
     @Test
-    void unlockBike_success_forRider_bikeState_is_available(){
-        //setup for the test (creating station, dock, and bike)
-        Station station = new Station();
-        station.setOccupancy(10);
+    void unlockBike_success_forRiders(){
 
-        Dock dock = new Dock();
-        dock.setStation(station);
-
-        Bike bike = new Bike();
-        bike.setDock(dock);
-        bike.setState(bikeState);
-
-        //creating a bike service using spy, so I can override the loadDockWithState
-        //method since I do not actually want to search in the DB
-        BikeService spyService = Mockito.spy(bikeService);
-        doReturn(bike).when(spyService).loadDockWithState("bike123");
-
-        // when the state is called, simulate success
-        StateChangeResponse mockResponse = new StateChangeResponse(
-                StateChangeStatus.SUCCESS,
-                "Bike has been unlocked"
-        );
-
-        //returning a success message when fake calling the unlockBike from (Available state)
-        when(bikeState.unlockBike(
-                eq(bike),
-                eq(dock),
-                eq(UserStatus.RIDER),
-                any(LocalDateTime.class),
-                eq("user1")
-        )).thenReturn(mockResponse);
-
+        mockStateResponse(UserStatus.RIDER, StateChangeStatus.SUCCESS, "Bike has been unlocked", "user1");
         when(bikeRepository.save(any())).thenReturn(bike);
 
         //act
@@ -106,9 +83,85 @@ public class BikeServiceTest_UnlockBike {
         verify(tripService).createTrip("bike123", "user1", station);
 
     }
-    //create tests to make sure that if unlock was performed on the wrong state that nothing happens (fail scenario)
+    @Test
+    void unlockBike_fail_forRiders(){
+        mockStateResponse(UserStatus.RIDER, StateChangeStatus.FAILURE, "You cannot unlock this bike", "user1");
 
-    //create testing method for the operator to unlock the bike success
+        //act
+        ResponseDTO<BikeDTO> response = spyService.unlockBike("bike123", "user1", UserStatus.RIDER);
 
-    //create test for operator unlocking bike fail
+        //assert
+        assertEquals(StateChangeStatus.FAILURE, response.getStatus());
+        assertEquals("You cannot unlock this bike", response.getMessage());
+
+        // Verify NO side effects happened
+        verify(stationService, never()).updateStationOccupancy(any(), anyInt());
+        verify(tripService, never()).createTrip(any(), any(), any());
+        verify(bikeRepository, never()).save(any());
+        verify(dockRepository, never()).save(any());
+    }
+
+    @Test
+    void unlockBike_success_forOperator(){
+        mockStateResponse(UserStatus.OPERATOR, StateChangeStatus.SUCCESS, "Bike is out of service and undocked", "op1");
+        when(bikeRepository.save(any())).thenReturn(bike);
+
+        ResponseDTO<BikeDTO> response = spyService.unlockBike("bike123", "op1", UserStatus.OPERATOR);
+
+        assertEquals(StateChangeStatus.SUCCESS, response.getStatus());
+        assertEquals("Bike is out of service and undocked", response.getMessage());
+
+        verify(stationService).updateStationOccupancy(station, 9);
+        verify(dockRepository).save(dock);
+        verify(bikeRepository).save(bike);
+
+        // Operators DO NOT create trips
+        verify(tripService, never()).createTrip(any(), any(), any());
+    }
+
+    @Test
+    void unlockBike_fail_forOperators(){
+        mockStateResponse(UserStatus.OPERATOR, StateChangeStatus.FAILURE, "Cannot unlock this bike", "op1");
+
+        ResponseDTO<BikeDTO> response = spyService.unlockBike("bike123", "op1", UserStatus.OPERATOR);
+
+        assertEquals(StateChangeStatus.FAILURE, response.getStatus());
+        assertEquals("Cannot unlock this bike", response.getMessage());
+
+        // Ensure nothing is saved or changed
+        verify(stationService, never()).updateStationOccupancy(any(), anyInt());
+        verify(dockRepository, never()).save(any());
+        verify(bikeRepository, never()).save(any());
+        verify(tripService, never()).createTrip(any(), any(), any());
+    }
+
+    @BeforeEach
+    void setupMocks(){
+        //setup for the test (creating station, dock, and bike)
+        station = new Station();
+        station.setOccupancy(10);
+
+        dock = new Dock();
+        dock.setStation(station);
+
+        bike = new Bike();
+        bike.setDock(dock);
+        bike.setState(bikeState);
+
+        //creating a bike service using spy, so I can override the loadDockWithState
+        //method since I do not actually want to search in the DB
+        spyService = Mockito.spy(bikeService);
+        doReturn(bike).when(spyService).loadDockWithState("bike123");
+
+    }
+
+    private void mockStateResponse(UserStatus role, StateChangeStatus status, String msg, String userId) {
+        when(bikeState.unlockBike(
+                eq(bike),
+                eq(dock),
+                eq(role),
+                any(LocalDateTime.class),
+                eq(userId)
+        )).thenReturn(new StateChangeResponse(status, msg));
+    }
 }
