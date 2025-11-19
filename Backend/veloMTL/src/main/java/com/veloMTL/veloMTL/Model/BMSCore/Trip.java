@@ -23,6 +23,10 @@ public class Trip {
     private LocalDateTime endTime;
     private String originStation;
     private String arrivalStation;
+    private LocalDateTime reserveStart;
+    private LocalDateTime reserveEnd;
+//    Not sure if this is needed
+    private boolean reservationCompleted;
 
     @DBRef(lazy = true)
     private Bike bike;
@@ -67,4 +71,28 @@ public class Trip {
     public void setArrivalStation(String arrivalStation) {this.arrivalStation = arrivalStation;}
     public Billing getBilling() { return billing; }
     public void setBilling(Billing billing) { this.billing = billing; }
+
+    public LocalDateTime getReserveStart() {
+        return this.reserveStart;
+    }
+
+    public void setReserveStart(LocalDateTime reserveStart) {
+        this.reserveStart = reserveStart;
+    }
+
+    public LocalDateTime getReserveEnd() {
+        return this.reserveEnd;
+    }
+
+    public void setReserveEnd(LocalDateTime reserveEnd) {
+        this.reserveEnd = reserveEnd;
+    }
+
+    public boolean isReservationCompleted() {
+        return this.reservationCompleted;
+    }
+
+    public void setReservationCompleted(boolean flag) {
+        this.reservationCompleted = flag;
+    }
 }

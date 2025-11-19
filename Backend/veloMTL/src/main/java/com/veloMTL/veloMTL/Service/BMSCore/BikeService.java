@@ -98,6 +98,7 @@ public class BikeService {
             //if user is a rider then we create them a trip
             if (role == UserStatus.RIDER) {
                 tripService.createTrip(bikeId, userId, station);
+                tripService.endReserveTripIfExists(bikeId, userId);
                 return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
             }
         }
@@ -156,6 +157,9 @@ public class BikeService {
         Bike savedBike = bikeRepository.save(bike);
         //Create Reserve Trip
         tripService.createReserveTrip(bikeId, username, bike.getDock().getStation());
+//        Create Reservation
+
+
         long expiryTimeMs = EXPIRY_TIME_MINS*60*1000;
         long latencyDelayMs = 1000;
         timerService.scheduleReservationExpiry(bikeId, username, expiryTimeMs + latencyDelayMs, () -> {

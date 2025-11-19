@@ -14,6 +14,7 @@ import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.utils.Mappers.TripMapper;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TripService {
@@ -139,6 +140,7 @@ public class TripService {
             trip = new Trip(bike, userRef.operator.getEmail());
         }
         trip.setOriginStation(originStation);
+        trip.setReserveStart(LocalDateTime.now());
         Trip savedTrip = tripRepository.save(trip);
         
         // Save the user entity to ensure it's persisted
@@ -149,6 +151,24 @@ public class TripService {
         }
         
         return savedTrip;
+    }
+
+    public Trip endReserveTripIfExists(String bikeId, String userId) {
+        // Find the bike
+        Bike bike = bikeRepository.findById(bikeId).orElseThrow(() -> new RuntimeException("Bike not found"));
+        // Find user (Rider or Operator)
+        UserReference userRef = findUser(userId);
+        if (userRef.rider == null) return null;
+
+        // Find the ReserveTrip, if there is more than one, pretend all is well and update the first one
+        List<Trip> reserveTrips = tripRepository.findOngoingReserveTrips(bikeId, userRef.rider.getEmail());
+        if (reserveTrips.isEmpty()) {
+            return null;
+        }
+        Trip reserveTrip = reserveTrips.getFirst();
+
+        reserveTrip.setReserveEnd(LocalDateTime.now());
+        return tripRepository.save(reserveTrip);
     }
 
     public Trip startReserveTrip(Trip trip) {
