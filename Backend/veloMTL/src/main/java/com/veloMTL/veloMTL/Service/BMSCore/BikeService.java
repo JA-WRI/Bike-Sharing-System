@@ -170,7 +170,6 @@ public class BikeService {
         return new ResponseDTO<>(message.getStatus(), message.getMessage(), BikeMapper.entityToDto(savedBike));
     }
 
-
     public ResponseDTO<BikeDTO> expireReservation(String bikeId, String userId, UserStatus userStatus) {
         List<Bike> reservedBikes = bikeRepository.findByReserveUser(userId);
         if (reservedBikes.isEmpty()) throw new RuntimeException("No existing reservations found.");

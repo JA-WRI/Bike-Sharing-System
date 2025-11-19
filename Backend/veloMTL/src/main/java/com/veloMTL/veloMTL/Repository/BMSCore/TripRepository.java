@@ -18,4 +18,7 @@ public interface TripRepository extends MongoRepository<Trip,String> {
 
     @Query("{ 'userEmail': ?0 }")
     List<Trip> fetchTripsByUserId(String userEmail);
+
+    @Query("{ 'userEmail': ?0, 'startTime': { $gte: { $dateAdd: { startDate: new Date(), unit: 'month', amount: -?1 } }, $lte: new Date() } }")
+    List<Trip> findByUserEmailAndPeriod(String userEmail, int period);
 }
