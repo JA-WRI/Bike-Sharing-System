@@ -18,9 +18,9 @@ public class TierController {
         this.tierService = tierService;
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<LoyaltyTier> getTier(@RequestParam String userId) {
-        LoyaltyTier tier = tierService.resolveTier(userId);
+    @GetMapping("/{userEmail}")
+    public ResponseEntity<LoyaltyTier> getTier(@RequestParam String userEmail) {
+        LoyaltyTier tier = tierService.resolveTier(userEmail);
         return ResponseEntity.ok(tier);
     }
 }

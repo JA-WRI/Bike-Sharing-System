@@ -2,7 +2,6 @@ package com.veloMTL.veloMTL.Service.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.LoyaltyTier;
 import com.veloMTL.veloMTL.Repository.BMSCore.*;
-import com.veloMTL.veloMTL.Service.PRC.BillingService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,23 +14,23 @@ public class TierService {
         this.reservationRepository = reservationRepository;
     }
 
-    public LoyaltyTier resolveTier(String userId) {
+    public LoyaltyTier resolveTier(String userEmail) {
         // can do chain of responsibility pattern
-        if (!verifyBronzeTier()) return LoyaltyTier.ENTRY;
-        if (!verifySilverTier()) return LoyaltyTier.BRONZE;
-        if (!verifyGoldTier()) return LoyaltyTier.SILVER;
+        if (!verifyBronzeTier(userEmail)) return LoyaltyTier.ENTRY;
+        if (!verifySilverTier(userEmail)) return LoyaltyTier.BRONZE;
+        if (!verifyGoldTier(userEmail)) return LoyaltyTier.SILVER;
         return LoyaltyTier.GOLD;
     }
 
-    private boolean verifyBronzeTier() {
+    private boolean verifyBronzeTier(String userEmail) {
         return false;
     }
 
-    private boolean verifySilverTier() {
+    private boolean verifySilverTier(String userEmail) {
         return false;
     }
 
-    private boolean verifyGoldTier() {
+    private boolean verifyGoldTier(String userEmail) {
         return false;
     }
 }
