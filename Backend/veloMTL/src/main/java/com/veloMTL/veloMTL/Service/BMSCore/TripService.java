@@ -168,6 +168,7 @@ public class TripService {
         Trip reserveTrip = reserveTrips.getFirst();
 
         reserveTrip.setReserveEnd(LocalDateTime.now());
+        reserveTrip.setReservationCompleted(true);
         return tripRepository.save(reserveTrip);
     }
 
