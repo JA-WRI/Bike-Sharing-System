@@ -84,7 +84,7 @@ public class BikeServiceTest_UnlockBike {
 
     }
     @Test
-    void unlockBike_fail_forRiders(){
+    void unlockBike_invalid_forRiders(){
         mockStateResponse(UserStatus.RIDER, StateChangeStatus.FAILURE, "You cannot unlock this bike", "user1");
 
         //act
@@ -120,7 +120,7 @@ public class BikeServiceTest_UnlockBike {
     }
 
     @Test
-    void unlockBike_fail_forOperators(){
+    void unlockBike_invalid_forOperators(){
         mockStateResponse(UserStatus.OPERATOR, StateChangeStatus.FAILURE, "Cannot unlock this bike", "op1");
 
         ResponseDTO<BikeDTO> response = spyService.unlockBike("bike123", "op1", UserStatus.OPERATOR);

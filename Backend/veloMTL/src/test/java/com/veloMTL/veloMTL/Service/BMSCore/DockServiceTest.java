@@ -53,7 +53,7 @@ public class DockServiceTest {
 
     }
     @Test
-    void mark_station_out_of_service_test_fail(){
+    void mark_station_out_of_service_test_invalid(){
         mockDockStateResponse_out_of_service(StateChangeStatus.INVALID_TRANSITION, "Bike needs to be removed first");
 
         ResponseDTO<DockDTO> response = spyService.markDockOutOfService("dock123", UserStatus.OPERATOR);
@@ -77,7 +77,7 @@ public class DockServiceTest {
 
     }
     @Test
-    void restore_dock_fail(){
+    void restore_dock_invalid(){
         mockDockStateResponse_restore_dock(StateChangeStatus.FAILURE, "Cannot mark out of service");
 
         ResponseDTO<DockDTO> response = spyService.restoreDockStatus("dock123", UserStatus.OPERATOR);
