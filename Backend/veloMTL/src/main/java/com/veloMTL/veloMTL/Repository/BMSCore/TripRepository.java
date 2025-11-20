@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface TripRepository extends MongoRepository<Trip,String> {
-    @Query("{ 'bike.$id': ?0, 'userEmail': ?1, $or: [ { 'endTime': null }, { 'endTime': { $exists: false } } ] }")
+    @Query("{ 'bike.$id': ?0, 'userEmail': ?1, 'startTime': { $exists: true }, $or: [ { 'endTime': null }, { 'endTime': { $exists: false } } ] }")
     Trip findOngoingTrip(String bikeId, String userEmail);
 
     @Query("{ 'bike.$id': ?0, 'userEmail': ?1, $or: [ { 'endTime': null }, { 'endTime': { $exists: false } } ] }")
@@ -18,4 +18,5 @@ public interface TripRepository extends MongoRepository<Trip,String> {
 
     @Query("{ 'userEmail': ?0 }")
     List<Trip> fetchTripsByUserId(String userEmail);
+
 }

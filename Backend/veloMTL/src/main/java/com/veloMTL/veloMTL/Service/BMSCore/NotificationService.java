@@ -3,8 +3,6 @@ package com.veloMTL.veloMTL.Service.BMSCore;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
-
 @Service
 public class NotificationService {
 
@@ -16,6 +14,5 @@ public class NotificationService {
 
     public void notifyOperators(String message) {
         messagingTemplate.convertAndSend("/topic/operator", message);
-        System.out.println("\n\n\n\n\n\nMeesage\n\n\n\n\n\n\n");
     }
 }
