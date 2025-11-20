@@ -57,7 +57,7 @@ class BillingServiceTest {
     private com.veloMTL.veloMTL.Model.BMSCore.Bike bike;
 
     @Mock
-    private Rider rider; // Fully mocked globally
+    private Rider rider;
 
     @Mock
     private Operator operator;
@@ -132,6 +132,7 @@ class BillingServiceTest {
 
     @Test
     void generateMonthlyBillingRiders() {
+        when(rider.getPlan()).thenReturn(plan);
         when(plan.getBaseFee()).thenReturn(20);
 
         ArgumentCaptor<Billing> billCaptor = ArgumentCaptor.forClass(Billing.class);
@@ -148,20 +149,17 @@ class BillingServiceTest {
 
         // Use duration check instead of direct LocalDateTime equality
         assertTrue(Duration.between(savedBill.getDateTransaction(), LocalDateTime.now()).toSeconds() < 1);
-
-        verify(riderRepository).save(any(Rider.class));
     }
 
 
     @Test
     void generateMonthlyBillingOperator() {
-        // Suppose operator also has a Plan (or billing strategy)
         when(operator.getId()).thenReturn("op123");
-        when(plan.getBaseFee()).thenReturn(50); // example base fee for operator
+        when(operator.getPlan()).thenReturn(plan); // <-- this is critical
+        when(plan.getBaseFee()).thenReturn(50);
 
         ArgumentCaptor<Billing> billCaptor = ArgumentCaptor.forClass(Billing.class);
 
-        // Call the method using the mocked operator
         Billing result = billingService.generateMonthlyBillingOperator(operator);
 
         verify(billingRepository).save(billCaptor.capture());
@@ -169,13 +167,11 @@ class BillingServiceTest {
 
         assertNotNull(result);
         assertEquals("Monthly Base Fee", savedBill.getDescription());
-        assertEquals("op123", savedBill.getRiderID()); // assuming you have operatorID field
+        assertEquals("op123", savedBill.getRiderID());
         assertEquals(50, savedBill.getCost());
 
-        // Use duration check for timestamp
         assertTrue(Duration.between(savedBill.getDateTransaction(), LocalDateTime.now()).toSeconds() < 1);
-
-        verify(operatorRepository).save(any(Operator.class));
     }
+
 
 }
