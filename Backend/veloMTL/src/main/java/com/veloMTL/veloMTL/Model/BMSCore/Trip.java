@@ -25,8 +25,7 @@ public class Trip {
     private String arrivalStation;
     private LocalDateTime reserveStart;
     private LocalDateTime reserveEnd;
-//    Not sure if this is needed
-    private boolean reservationCompleted;
+    private boolean reservationExpired;
 
     @DBRef(lazy = true)
     private Bike bike;
@@ -88,11 +87,11 @@ public class Trip {
         this.reserveEnd = reserveEnd;
     }
 
-    public boolean isReservationCompleted() {
-        return this.reservationCompleted;
+    public boolean isReservationExpired() {
+        return this.reservationExpired;
     }
 
-    public void setReservationCompleted(boolean flag) {
-        this.reservationCompleted = flag;
+    public void setReservationExpired(boolean flag) {
+        this.reservationExpired = flag;
     }
 }

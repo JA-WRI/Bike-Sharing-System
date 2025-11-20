@@ -168,7 +168,23 @@ public class TripService {
         Trip reserveTrip = reserveTrips.getFirst();
 
         reserveTrip.setReserveEnd(LocalDateTime.now());
-        reserveTrip.setReservationCompleted(true);
+        return tripRepository.save(reserveTrip);
+    }
+
+    public Trip expireReservation(String bikeId, String userId) {
+        // Find the bike
+        Bike bike = bikeRepository.findById(bikeId).orElseThrow(() -> new RuntimeException("Bike not found"));
+        // Find user (Rider or Operator)
+        UserReference userRef = findUser(userId);
+        if (userRef.rider == null) return null;
+
+        List<Trip> reserveTrips = tripRepository.findOngoingReserveTrips(bikeId, userRef.rider.getEmail());
+        if (reserveTrips.isEmpty()) {
+            return null;
+        }
+        Trip reserveTrip = reserveTrips.getFirst();
+
+        reserveTrip.setReservationExpired(true);
         return tripRepository.save(reserveTrip);
     }
 
