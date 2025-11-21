@@ -36,7 +36,7 @@ public class StationService {
     }
 
     public ResponseDTO<StationDTO> markStationOutOfService(String stationId, UserStatus role){
-        Station station = loadDockWithState(stationId);
+        Station station = loadStationWithState(stationId);
         StateChangeResponse message = station.getStationState().markStationOutOfService(station);
 
         if(message.isSuccess()) {
@@ -50,7 +50,7 @@ public class StationService {
     }
 
     public ResponseDTO<StationDTO> restoreStation(String stationId, UserStatus role){
-        Station station = loadDockWithState(stationId);
+        Station station = loadStationWithState(stationId);
         StateChangeResponse message = station.getStationState().restoreStation(station);
 
         if (message.isSuccess()) {
@@ -84,7 +84,7 @@ public class StationService {
         stationRepository.save(station);
     }
 
-    private Station loadDockWithState(String stationId) {
+    Station loadStationWithState(String stationId) {
         Station station = stationRepository.findById(stationId)
                 .orElseThrow(() -> new RuntimeException("Dock not found with ID: " + stationId));
         station.setStationState(createStateFromStatus(station.getStationStatus()));

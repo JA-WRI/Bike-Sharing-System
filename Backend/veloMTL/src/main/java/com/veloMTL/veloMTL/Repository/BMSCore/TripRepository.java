@@ -1,11 +1,9 @@
 package com.veloMTL.veloMTL.Repository.BMSCore;
-import java.util.List;
-
+import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import java.util.List;
 
 @Repository
 public interface TripRepository extends MongoRepository<Trip,String> {

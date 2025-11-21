@@ -149,6 +149,23 @@ const Navbar = () => {
               <div className="user-info">
                 <div className="user-header">
                   <p className="user-name"><strong>{user.name}</strong></p>
+                  {/* <span
+                    className={`user-role-badge ${
+                      activeRole === "OPERATOR" ? "operator" : "rider"
+                    }`}
+                  >
+                    {activeRole}
+                  </span> */}
+                  {/* {activeRole === "RIDER" && user.tier && (
+                    <span
+                      className={`user-role-badge ${user.tier.toLowerCase()}`}
+                    >
+                      {user.tier}
+                    </span>
+                  )} */}
+                </div>
+                <p className="user-email">{user.email}</p>
+                <div style={{ 'display': 'flex', 'gap': '8px' }}>
                   <span
                     className={`user-role-badge ${
                       activeRole === "OPERATOR" ? "operator" : "rider"
@@ -156,8 +173,14 @@ const Navbar = () => {
                   >
                     {activeRole}
                   </span>
+                  {activeRole === "RIDER" && user.tier && (
+                    <span
+                      className={`user-role-badge ${user.tier.toLowerCase()}`}
+                    >
+                      {user.tier}
+                    </span>
+                  )}
                 </div>
-                <p className="user-email">{user.email}</p>
                 {user.role === "OPERATOR" && activeRole !== user.role && (
                   <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "4px" }}>
                     Viewing as {activeRole}

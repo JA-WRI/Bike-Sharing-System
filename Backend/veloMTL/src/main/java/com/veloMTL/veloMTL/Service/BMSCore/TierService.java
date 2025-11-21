@@ -1,16 +1,5 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
-import com.veloMTL.veloMTL.DTO.Helper.LoyaltyTierDTO;
-import com.veloMTL.veloMTL.Model.BMSCore.Trip;
-import com.veloMTL.veloMTL.Model.Enums.LoyaltyTier;
-import com.veloMTL.veloMTL.Model.Users.Operator;
-import com.veloMTL.veloMTL.Model.Users.Rider;
-import com.veloMTL.veloMTL.Model.Users.User;
-import com.veloMTL.veloMTL.Repository.BMSCore.*;
-import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
-import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
-import org.springframework.stereotype.Service;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,7 +11,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.veloMTL.veloMTL.Service.BMSCore.BikeService.EXPIRY_TIME_MINS;
+import org.springframework.stereotype.Service;
+
+import com.veloMTL.veloMTL.DTO.Helper.LoyaltyTierDTO;
+import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import com.veloMTL.veloMTL.Model.Enums.LoyaltyTier;
+import com.veloMTL.veloMTL.Model.Users.Operator;
+import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Model.Users.User;
+import com.veloMTL.veloMTL.Repository.BMSCore.ReservationRepository;
+import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
+import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 
 @Service
 public class TierService {
@@ -97,7 +97,7 @@ public class TierService {
         if (allTrips.stream().filter((trip) -> trip.getReserveStart() != null && trip.getReserveEnd() != null && trip.getReserveStart().isAfter(oneYearAgo)).count() < 5) return false;
 
         // Rider surpassed 5 trips per month in the last 3 months
-        List<Trip> threeMonthsTrips = allTrips.stream().filter((trip) -> trip.getReserveStart() != null && trip.getReserveEnd() != null && trip.getReserveStart().isAfter(threeMonthsAgo)).toList();
+        List<Trip> threeMonthsTrips = allTrips.stream().filter((trip) -> trip.getStartTime() != null && trip.getEndTime() != null && trip.getStartTime().isAfter(threeMonthsAgo)).toList();
         return hasMinTripsEachMonthPastCompleteMonths(threeMonthsTrips, 3, 5);
     }
 
@@ -105,7 +105,7 @@ public class TierService {
         LocalDateTime threeMonthsAgo = LocalDateTime.now().plusMonths(-3);
 
         // Rider surpassed 5 trips per week in the last 3 months
-        List<Trip> threeMonthsTrips = allTrips.stream().filter((trip) -> trip.getReserveStart() != null && trip.getReserveEnd() != null && trip.getReserveStart().isAfter(threeMonthsAgo)).toList();
+        List<Trip> threeMonthsTrips = allTrips.stream().filter((trip) -> trip.getStartTime() != null && trip.getEndTime() != null && trip.getStartTime().isAfter(threeMonthsAgo)).toList();
         return hasMinTripsEachFullWeekPastMonths(threeMonthsTrips, 3, 5);
     }
 
