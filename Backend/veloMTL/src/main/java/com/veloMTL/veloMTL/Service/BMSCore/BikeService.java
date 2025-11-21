@@ -187,7 +187,7 @@ public class BikeService {
     }
 
     //Helper methods
-    private Bike loadDockWithState(String bikeId) {
+    Bike loadDockWithState(String bikeId) {
         Bike bike = bikeRepository.findById(bikeId)
                 .orElseThrow(() -> new RuntimeException("Bike not found with ID: " + bikeId));
         bike.setState(createStateFromStatus(bike.getBikeStatus()));

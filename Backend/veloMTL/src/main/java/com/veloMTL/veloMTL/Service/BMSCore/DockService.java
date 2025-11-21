@@ -47,19 +47,23 @@ public class DockService {
    public ResponseDTO<DockDTO> markDockOutOfService(String dockId, UserStatus role){
        Dock dock = loadDockWithState(dockId);
        StateChangeResponse message = dock.getState().markDockOutOfService(dock);
-       dockRepo.save(dock);
+       if(message.isSuccess()){
+           dockRepo.save(dock);
+       }
        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
    }
 
     public ResponseDTO<DockDTO> restoreDockStatus(String dockId, UserStatus role){
         Dock dock = loadDockWithState(dockId);
         StateChangeResponse message = dock.getState().restoreService(dock);
-        dockRepo.save(dock);
+        if(message.isSuccess()){
+            dockRepo.save(dock);
+        }
         return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(dock));
     }
 
     //helper methods
-    private Dock loadDockWithState(String dockId) {
+     Dock loadDockWithState(String dockId) {
         Dock dock = dockRepo.findById(dockId)
                 .orElseThrow(() -> new RuntimeException("Dock not found with ID: " + dockId));
         dock.setState(createStateFromStatus(dock.getStatus()));

@@ -89,7 +89,7 @@ public class BillingService {
                 operatorRepository.save(op);
             } else {
                 tripCost = plan.calculateTripCost(tripDuration, isEBike, flexDollars, riderRepository,operatorRepository, user.getId(),percentageCapacity );
-
+                tripCost = (double) Math.round((tripCost)*100)/100.0;
                 Rider ri = riderRepository.findById(user.getId()).orElseThrow(()-> new RuntimeException("No rider found with id"));
                 riderRepository.save(ri);
             }
