@@ -27,7 +27,7 @@ export default function Login() {
       const tierData = await getTierByEmail(email);
       console.log("User tier data:", tierData);
 
-      login(data.token, { id: data.id, email: data.email, name: data.name, role: data.role, tier: capitaliseStr(tierData.newTier) });
+      login(data.token, { id: data.id, email: data.email, name: data.name, role: data.role, tier: tierData.newTier });
       if (tierData.tierChanged && tierData.oldTier) alert(`Your Tier was upgraded from ${capitaliseStr(tierData.oldTier)} to ${capitaliseStr(tierData.newTier)}!`);
 
       navigate("/");
