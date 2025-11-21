@@ -31,12 +31,13 @@ public class BikeService {
     private final TripService tripService;
     private final TimerService timerService;
     private final BillingService billingService;
+    private final TierService tierService;
 
     public static final int EXPIRY_TIME_MINS = 15;
 
-    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository,
-                       StationRepository stationRepository, StationService stationService, TripService tripService,
-                       TimerService timerService, RiderRepository riderRepository, BillingService billingService) {
+    public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository,
+                       StationService stationService, TripService tripService, TimerService timerService,
+                       RiderRepository riderRepository, BillingService billingService, TierService tierService) {
         this.bikeRepository = bikeRepository;
         this.dockRepository = dockRepository;
         this.stationRepository = stationRepository;
@@ -44,6 +45,7 @@ public class BikeService {
         this.tripService = tripService;
         this.timerService = timerService;
         this.billingService = billingService;
+        this.tierService = tierService;
     }
 
     //can change this later if needed
@@ -159,8 +161,12 @@ public class BikeService {
         tripService.createReserveTrip(bikeId, username, bike.getDock().getStation());
 //        Create Reservation
 
-
-        long expiryTimeMs = EXPIRY_TIME_MINS*60*1000;
+        LoyaltyTier userTier = tierService.fetchUserTier(username);
+        long tierReserveHold = 0;
+        if (userTier != null) {
+            tierReserveHold = userTier.getExtraHold();
+        }
+        long expiryTimeMs = (EXPIRY_TIME_MINS + tierReserveHold)*60*1000;
         long latencyDelayMs = 1000;
         timerService.scheduleReservationExpiry(bikeId, username, expiryTimeMs + latencyDelayMs, () -> {
             Bike reservedBike = loadDockWithState(bikeId);
@@ -169,6 +175,7 @@ public class BikeService {
             if (reservedBike.getReserveDate() != null && now.isAfter(reservedBike.getReserveDate().plusSeconds(4))) {
                 expireReservation(bikeId, username, role);
                 tripService.expireReservation(bikeId, username);
+                tierService.checkTierChange(username);
             }
         });
 

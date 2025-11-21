@@ -44,10 +44,18 @@ public class TierService {
         User user = riderRepository.findByEmail(userEmail).orElse(null);
         if (user == null)
             user = operatorRepository.findByEmail(userEmail)
-                    .orElseThrow(() -> new RuntimeException("User does not exist with email: " + userEmail));
+                    .orElseThrow(() -> new RuntimeException("User does not exist with id: " + userEmail));
         LoyaltyTier userTier = user.getTier();
         saveUserTier(user, tier);
         return new LoyaltyTierDTO(tier, userTier, tier != userTier);
+    }
+
+    public LoyaltyTier fetchUserTier(String userEmail) {
+        User user = riderRepository.findByEmail(userEmail).orElse(null);
+        if (user == null)
+            user = operatorRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User does not exist with id: " + userEmail));
+        return user.getTier();
     }
 
 
