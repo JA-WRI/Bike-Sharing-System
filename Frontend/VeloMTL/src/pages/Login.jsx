@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/authApi";
 import { AuthContext } from "../context/AuthContext";
+import { getTierByEmail } from "../api/riderApi";
 import "../styles/login.css";
 
 
@@ -13,14 +14,22 @@ export default function Login() {
   const [role, setRole] = useState("RIDER");
   const [error, setError] = useState(null);
 
+  const capitaliseStr = (str) => str?.toLowerCase().replace(/^./, (match) => match.toUpperCase());
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
       const data = await loginUser(email, password, role);
-      login(data.token, { id: data.id, email: data.email, name: data.name, role: data.role });
       console.log("Login successful:", data);
+
+      const tierData = await getTierByEmail(email);
+      console.log("User tier data:", tierData);
+
+      login(data.token, { id: data.id, email: data.email, name: data.name, role: data.role, tier: capitaliseStr(tierData.newTier) });
+      if (tierData.tierChanged && tierData.oldTier) alert(`Your Tier was upgraded from ${capitaliseStr(tierData.oldTier)} to ${capitaliseStr(tierData.newTier)}!`);
+
       navigate("/");
     } catch (err) {
       setError("Login failed. Check your credentials.");

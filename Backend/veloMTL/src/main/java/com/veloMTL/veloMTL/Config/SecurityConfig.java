@@ -54,7 +54,8 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/rider/login",
                                 "/api/auth/operator/login",
-                                "/api/auth/**"
+                                "/api/auth/**",
+                                "/api/tiers/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
