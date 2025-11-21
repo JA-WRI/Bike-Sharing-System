@@ -1,8 +1,14 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
+import com.veloMTL.veloMTL.DTO.Helper.LoyaltyTierDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Enums.LoyaltyTier;
+import com.veloMTL.veloMTL.Model.Users.Operator;
+import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Repository.BMSCore.*;
+import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
+import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -15,18 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.veloMTL.veloMTL.Service.BMSCore.BikeService.EXPIRY_TIME_MINS;
 
 @Service
 public class TierService {
     private final TripRepository tripRepository;
+    private final OperatorRepository operatorRepository;
     private final ReservationRepository reservationRepository;
+    private final RiderRepository riderRepository;
 
-    public TierService(TripRepository tripRepository, ReservationRepository reservationRepository) {
+    public TierService(TripRepository tripRepository, ReservationRepository reservationRepository,
+                       RiderRepository riderRepository, OperatorRepository operatorRepository) {
         this.tripRepository = tripRepository;
         this.reservationRepository = reservationRepository;
+        this.riderRepository = riderRepository;
+        this.operatorRepository = operatorRepository;
     }
 
     public LoyaltyTier resolveTier(String userEmail) {
@@ -36,6 +46,24 @@ public class TierService {
         if (!verifySilverTier(userEmail, allTrips)) return LoyaltyTier.BRONZE;
         if (!verifyGoldTier(userEmail, allTrips)) return LoyaltyTier.SILVER;
         return LoyaltyTier.GOLD;
+    }
+
+    public LoyaltyTierDTO checkTierChange(String userEmail) {
+        LoyaltyTier tier = resolveTier(userEmail);
+        User user = riderRepository.findById(userEmail).orElse(null);
+        if (user == null)
+            user = operatorRepository.findById(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User does not exist with id: " + userEmail));
+        LoyaltyTier userTier = user.getTier();
+        saveUserTier(user, tier);
+        return new LoyaltyTierDTO(tier, userTier, tier != userTier);
+    }
+
+
+    public void saveUserTier(User user, LoyaltyTier tier) {
+        user.setTier(tier);
+        if (user instanceof Rider) riderRepository.save((Rider) user);
+        if (user instanceof Operator) operatorRepository.save((Operator) user);
     }
 
     private boolean verifyBronzeTier(String userEmail, List<Trip> allTrips) {
@@ -156,6 +184,11 @@ public class TierService {
         // Verify each full week meets the required minimum
         return fullWeeks.stream()
                 .allMatch(week -> tripsPerWeek.getOrDefault(week, 0L) >= minTrips);
+    }
+
+    public double calculateTierDiscount(LoyaltyTier tier) {
+        if (tier == null) return 0.0;
+        return ((double) tier.getDiscount()) / 100;
     }
 }
 

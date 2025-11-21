@@ -168,6 +168,7 @@ public class BikeService {
             LocalDateTime now = LocalDateTime.now();
             if (reservedBike.getReserveDate() != null && now.isAfter(reservedBike.getReserveDate().plusSeconds(4))) {
                 expireReservation(bikeId, username, role);
+                tripService.expireReservation(bikeId, username);
             }
         });
 

@@ -38,6 +38,7 @@ public class Trip {
     public Trip(Bike bike, String userEmail) {
         this.bike = bike;
         this.userEmail = userEmail;
+        this.reservationExpired = false;
     }
 
     public String getTripId() {

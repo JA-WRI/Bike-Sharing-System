@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.Controller.BMSCore;
 
+import com.veloMTL.veloMTL.DTO.Helper.LoyaltyTierDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,8 @@ public class TierController {
     }
 
     @GetMapping("/{userEmail}")
-    public ResponseEntity<LoyaltyTier> getTier(@RequestParam String userEmail) {
-        LoyaltyTier tier = tierService.resolveTier(userEmail);
-        return ResponseEntity.ok(tier);
+    public ResponseEntity<LoyaltyTierDTO> getTier(@RequestParam String userEmail) {
+        LoyaltyTierDTO DTO = tierService.checkTierChange(userEmail);
+        return ResponseEntity.ok(DTO);
     }
 }
