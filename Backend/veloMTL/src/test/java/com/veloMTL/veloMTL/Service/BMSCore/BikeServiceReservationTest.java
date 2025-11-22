@@ -1,6 +1,6 @@
 package com.veloMTL.veloMTL.Service.BMSCore;
 
-public class BikeServiceTest_Reservations {
+public class BikeServiceReservationTest {
 
     //create test for reservation of bike success
 

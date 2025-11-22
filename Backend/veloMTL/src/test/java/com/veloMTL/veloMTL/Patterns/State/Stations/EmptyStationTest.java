@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class Empty_Station_Test {
+public class EmptyStationTest {
 
     @Mock
     NotificationService notificationService;

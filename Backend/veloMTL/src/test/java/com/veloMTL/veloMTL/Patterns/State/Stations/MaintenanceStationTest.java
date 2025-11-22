@@ -6,7 +6,6 @@ import com.veloMTL.veloMTL.Model.Enums.DockStatus;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.StationStatus;
 import com.veloMTL.veloMTL.Patterns.State.Docks.EmptyDockState;
-import com.veloMTL.veloMTL.Patterns.State.Docks.MaintenanceDockState;
 import com.veloMTL.veloMTL.Service.BMSCore.NotificationService;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public class Maintenance_Station_Test {
+public class MaintenanceStationTest {
     @Mock
     NotificationService notificationService;
 

@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class Full_Station_Test {
+public class FullStationTest {
     Station station;
 
     @Test

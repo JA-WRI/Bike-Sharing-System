@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class BikeServiceTest_UnlockBike {
+public class BikeServiceUnlockBikeTest {
 
     @Mock
     BikeRepository bikeRepository;
