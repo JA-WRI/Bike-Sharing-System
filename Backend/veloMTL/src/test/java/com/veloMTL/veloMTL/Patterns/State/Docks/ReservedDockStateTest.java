@@ -40,6 +40,10 @@ class ReservedDockStateTest {
     }
 
     @Test
-    void restoreService() {
+    void restore_reserved_dock_Service() {
+        StateChangeResponse response = dock.getState().restoreService(dock);
+        assertEquals(StateChangeStatus.ALREADY_IN_DESIRED_STATE, response.getStatus());
+        assertEquals("Dock is already in service", response.getMessage());
+
     }
 }

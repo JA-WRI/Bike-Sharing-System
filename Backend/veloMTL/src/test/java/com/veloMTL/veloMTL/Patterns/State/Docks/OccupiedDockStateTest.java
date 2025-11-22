@@ -15,7 +15,7 @@ class OccupiedDockStateTest {
     Dock dock = new Dock();
     @BeforeEach
     void setup() {
-        dock.setStatus(DockStatus.EMPTY);
+        dock.setStatus(DockStatus.OCCUPIED);
         dock.setState(new OccupiedDockState());
     }
     LocalDateTime date = LocalDateTime.now();
