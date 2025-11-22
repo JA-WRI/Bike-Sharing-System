@@ -18,6 +18,7 @@ public class ReservedDockState implements DockState{
     public StateChangeResponse markDockOutOfService(Dock dock) {
         dock.setStatus(DockStatus.OUT_OF_SERVICE);
         dock.setState(new MaintenanceDockState());
+        dock.setReserveUser(null);
         return new StateChangeResponse(StateChangeStatus.SUCCESS, "Dock is set to out of service");
         //Add logic to cancel the reservation
     }
