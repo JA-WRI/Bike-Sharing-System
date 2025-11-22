@@ -36,6 +36,7 @@ class ReservedDockStateTest {
 
         assertEquals(DockStatus.OUT_OF_SERVICE, dock.getStatus());
         assertInstanceOf(MaintenanceDockState.class,dock.getState());
+        assertEquals(null, dock.getReserveUser());
     }
 
     @Test
