@@ -11,9 +11,9 @@ import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 import java.util.List;
 
-public class EmptyStationState implements StationState, OccupancyChange{
+public class EmptyStationState implements StationState{
 
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     public EmptyStationState(NotificationService notificationService) {
         this.notificationService = notificationService;
@@ -38,9 +38,4 @@ public class EmptyStationState implements StationState, OccupancyChange{
         return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Station is already in service");
     }
 
-    @Override
-    public void handleOccupancyChange(Station station) {
-        String message = "Station '" + station.getStationName() + "' is now EMPTY!";
-        notificationService.notifyOperators(message);
-    }
 }
