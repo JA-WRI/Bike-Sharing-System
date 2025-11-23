@@ -20,16 +20,19 @@ import java.time.LocalDateTime;
 public class DockService {
     private final DockRepository dockRepo;
     private final StationRepository stationRepo;
+    private final TimerService timerService;
 
-    public DockService(DockRepository dockRepo, StationRepository stationRepo){
+    public static final int EXPIRY_TIME_MINS = 15;
+
+    public DockService(DockRepository dockRepo, StationRepository stationRepo, TimerService timerService){
         this.dockRepo = dockRepo;
         this.stationRepo = stationRepo;
+        this.timerService = timerService;
     }
 
    public DockDTO createDock(DockDTO dockDTO){
         Station station = stationRepo.findById(dockDTO.getStationId()).orElseThrow(() -> new RuntimeException("Station not found"));
         Dock dock = new Dock(dockDTO.getDockId(),station);
-
         Dock savedDock = dockRepo.save(dock);
         station.getDocks().add(savedDock);
         stationRepo.save(station);
@@ -37,11 +40,22 @@ public class DockService {
         return new DockDTO(savedDock.getDockId(), savedDock.getStatus(), savedDock.getStation().getId(), null);
    }
 
-   public ResponseDTO<DockDTO> reserveDock(String dockId, String riderId, LocalDateTime reservationTime, UserStatus role){
-        Dock dock = loadDockWithState(dockId);
-        StateChangeResponse message = dock.getState().reserveDock(dock, riderId, reservationTime);
-        Dock savedDock = dockRepo.save(dock);
-        return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(savedDock));
+   public ResponseDTO<DockDTO> reserveDock(String dockId, String riderId, LocalDateTime reservationTime, UserStatus role) {
+       Dock dock = loadDockWithState(dockId);
+       StateChangeResponse message = dock.getState().reserveDock(dock, riderId, reservationTime);
+       Dock savedDock = dockRepo.save(dock);
+       long expiryTimeMs = (EXPIRY_TIME_MINS)*60*1000;
+       long latencyDelayMs = 1000;
+       timerService.scheduleReservationExpiry(dockId, riderId, expiryTimeMs + latencyDelayMs, () -> {
+           Dock reservedDock = loadDockWithState(dockId);
+           LocalDateTime now = LocalDateTime.now();
+           if (reservedDock.getReserveDate() != null && now.isAfter(reservedDock.getReserveDate().plusSeconds(4))) {
+               reservedDock.setStatus(DockStatus.EMPTY);
+               reservedDock.setState(new EmptyDockState());
+               dockRepo.save(reservedDock);
+           }
+       });
+      return new ResponseDTO<>(message.getStatus(),message.getMessage(),DockMapper.entityToDto(savedDock));
    }
 
    public ResponseDTO<DockDTO> markDockOutOfService(String dockId, UserStatus role){
