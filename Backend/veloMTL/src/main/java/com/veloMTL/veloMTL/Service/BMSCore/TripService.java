@@ -49,6 +49,7 @@ public class TripService {
         String getId() {
             return rider != null ? rider.getId() : operator.getId();
         }
+        String getEmail() { return rider != null ? rider.getEmail() : operator.getEmail(); }
     }
 
     private UserReference findUser(String userId) {
@@ -212,5 +213,13 @@ public class TripService {
         //save the trip
         Trip savedTrip = tripRepository.save(trip);
         return savedTrip;
+    }
+
+    public Trip findOngoingReservation(String userId) {
+        String userEmail = findUser(userId).getEmail();
+        List<Trip> reserveTrips = tripRepository.findOngoingReserveTripsByUser(userEmail);
+
+        if (reserveTrips.isEmpty()) return null;
+        return reserveTrips.getFirst();
     }
 }
