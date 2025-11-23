@@ -47,7 +47,7 @@ public class BikeService {
     private final BillingService billingService;
     private final TierService tierService;
 
-    public static final int EXPIRY_TIME_MINS = 1;
+    public static final int EXPIRY_TIME_MINS = 15;
 
     public BikeService(BikeRepository bikeRepository, DockRepository dockRepository, StationRepository stationRepository,
                        StationService stationService, TripService tripService, TimerService timerService,
