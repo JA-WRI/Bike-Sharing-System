@@ -27,7 +27,7 @@ public interface TripRepository extends MongoRepository<Trip,String> {
     @Query("{ 'bike.$id': ?0, 'userEmail': ?1, 'reservationExpired': false, 'reserveStart': { $exists: true }, $or: [ { 'reserveEnd': null }, { 'reserveEnd': '' }, { 'reserveEnd': { $exists: false } } ] }")
     List<Trip> findOngoingReserveTrips(String bikeId, String userEmail);
 
-    @Query("{ 'userEmail': ?0, 'reservationExpired': false, 'reserveStart': { $exists: true }, $or: [ { 'reserveEnd': null }, { 'reserveEnd': '' }, { 'reserveEnd': { $exists: false } } ] }")
+    @Query("{ 'userEmail': ?0, 'reservationExpired': false, 'reserveStart': { $exists: true }, 'endTime' : {null}, $or: [ { 'reserveEnd': null }, { 'reserveEnd': '' }, { 'reserveEnd': { $exists: false } } ] }")
     List<Trip> findOngoingReserveTripsByUser(String userEmail);
     
 //    Finds reservations in the past 'period' number of months
