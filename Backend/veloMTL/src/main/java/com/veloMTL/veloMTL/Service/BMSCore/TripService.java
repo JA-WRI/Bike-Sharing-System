@@ -4,6 +4,7 @@ import com.veloMTL.veloMTL.DTO.BMSCore.TripDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Billing;
@@ -48,6 +49,7 @@ public class TripService {
         String getId() {
             return rider != null ? rider.getId() : operator.getId();
         }
+        String getEmail() { return rider != null ? rider.getEmail() : operator.getEmail(); }
     }
 
     private UserReference findUser(String userId) {
@@ -184,6 +186,9 @@ public class TripService {
         }
         Trip reserveTrip = reserveTrips.getFirst();
 
+        bike.getState().lockBike(bike, bike.getDock(), UserStatus.RIDER);
+        bikeRepository.save(bike);
+
         reserveTrip.setReservationExpired(true);
         return tripRepository.save(reserveTrip);
     }
@@ -208,5 +213,13 @@ public class TripService {
         //save the trip
         Trip savedTrip = tripRepository.save(trip);
         return savedTrip;
+    }
+
+    public Trip findOngoingReservation(String userId) {
+        String userEmail = findUser(userId).getEmail();
+        List<Trip> reserveTrips = tripRepository.findOngoingReserveTripsByUser(userEmail);
+
+        if (reserveTrips.isEmpty()) return null;
+        return reserveTrips.getFirst();
     }
 }
