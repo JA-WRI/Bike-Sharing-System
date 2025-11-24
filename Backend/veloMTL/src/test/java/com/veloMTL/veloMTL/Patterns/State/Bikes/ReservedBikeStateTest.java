@@ -79,6 +79,8 @@ class ReservedBikeStateTest {
         
         assertEquals(BikeStatus.ON_TRIP, this.bike.getBikeStatus());
         assertTrue(() -> this.bike.getState() instanceof OnTripBikeState);
+        assertNull(this.bike.getReserveDate());
+        assertNull(this.bike.getReserveUser());
         
         assertEquals(DockStatus.EMPTY, this.dock.getStatus());
         assertTrue(() -> this.dock.getState() instanceof EmptyDockState);

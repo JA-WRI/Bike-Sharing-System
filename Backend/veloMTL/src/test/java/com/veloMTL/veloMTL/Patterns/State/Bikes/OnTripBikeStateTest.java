@@ -55,8 +55,12 @@ class OnTripBikeStateTest {
         
         assertEquals(DockStatus.OCCUPIED, this.dock.getStatus());
         assertTrue(() -> this.dock.getState() instanceof OccupiedDockState);
+        assertNull(this.dock.getReserveDate());
+        assertNull(this.dock.getReserveUser());
+
+        assertEquals(this.dock, this.bike.getDock());
         assertEquals(this.bike.getBikeId(), this.dock.getBike());
-        
+
         assertEquals(StateChangeStatus.SUCCESS, response.getStatus());
     }
 
@@ -64,6 +68,7 @@ class OnTripBikeStateTest {
     void lockBikeOnTripToReservedDockExpired() {
         this.dock.setStatus(DockStatus.RESERVED);
         this.dock.setReserveDate(LocalDateTime.now().minusMinutes(20));
+        this.dock.setReserveUser(this.userId);
         
         StateChangeResponse response = this.bike.getState().lockBike(this.bike, this.dock, UserStatus.RIDER);
         
@@ -84,11 +89,16 @@ class OnTripBikeStateTest {
         
         assertEquals(BikeStatus.AVAILABLE, this.bike.getBikeStatus());
         assertTrue(() -> this.bike.getState() instanceof AvailableBikeState);
-        
+        assertNull(this.bike.getReserveDate());
+        assertNull(this.bike.getReserveUser());
+
         assertEquals(DockStatus.OCCUPIED, this.dock.getStatus());
         assertTrue(() -> this.dock.getState() instanceof OccupiedDockState);
         assertNull(this.dock.getReserveDate());
         assertNull(this.dock.getReserveUser());
+
+        assertEquals(this.dock, this.bike.getDock());
+        assertEquals(this.bike.getBikeId(), this.dock.getBike());
         
         assertEquals(StateChangeStatus.SUCCESS, response.getStatus());
     }

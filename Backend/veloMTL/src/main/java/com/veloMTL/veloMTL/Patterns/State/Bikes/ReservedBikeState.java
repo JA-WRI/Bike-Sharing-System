@@ -33,7 +33,7 @@ public class ReservedBikeState implements BikeState{
                 response = unlockPrivateBike(bike, dock, currentTime, username);
                 break;
             default:
-                return new StateChangeResponse(StateChangeStatus.SUCCESS, "You have to be signed in to unlock a bike");
+                return new StateChangeResponse(StateChangeStatus.FAILURE, "You have to be signed in to unlock a bike");
         }
         return response;
     }
@@ -75,6 +75,8 @@ public class ReservedBikeState implements BikeState{
             dock.setStatus(DockStatus.EMPTY);
             bike.setState(new OnTripBikeState());
             dock.setState(new EmptyDockState());
+            bike.setReserveUser(null);
+            bike.setReserveDate(null);
             response = new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike was unlocked with reservation");
         }
         return response;

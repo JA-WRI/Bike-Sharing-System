@@ -65,6 +65,9 @@ public class OnTripBikeState implements BikeState{
                 dock.setReserveDate(null);
                 dock.setReserveUser(null);
 
+                bike.setDock(dock);
+                dock.setBike(bike.getBikeId());
+
                 return new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike has been successfully put back");
             }
 
