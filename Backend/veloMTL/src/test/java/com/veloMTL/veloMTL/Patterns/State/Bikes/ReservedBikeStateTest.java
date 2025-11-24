@@ -20,10 +20,10 @@ import com.veloMTL.veloMTL.Service.BMSCore.BikeService;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 class ReservedBikeStateTest {
-    Bike bike = new Bike();
-    Dock dock = new Dock();
-    String userId = "user123";
-    String otherUserId = "user456";
+    Bike bike;
+    Dock dock;
+    String userId;
+    String otherUserId;
     LocalDateTime now = LocalDateTime.now();
 
     @BeforeEach

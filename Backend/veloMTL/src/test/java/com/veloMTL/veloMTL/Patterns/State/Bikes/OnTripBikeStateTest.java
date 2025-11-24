@@ -19,9 +19,9 @@ import com.veloMTL.veloMTL.Patterns.State.Docks.OccupiedDockState;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 class OnTripBikeStateTest {
-    Bike bike = new Bike();
-    Dock dock = new Dock();
-    String userId = "user123";
+    Bike bike;
+    Dock dock;
+    String userId;
     LocalDateTime now = LocalDateTime.now();
 
     @BeforeEach

@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AvailableBikeStateTest {
-    Bike bike = new Bike();
-    Dock dock = new Dock();
-    String userId = "user123";
+    Bike bike;
+    Dock dock;
+    String userId;
     LocalDateTime now = LocalDateTime.now();
 
     @BeforeEach
