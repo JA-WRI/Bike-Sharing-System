@@ -9,6 +9,7 @@ import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
 import com.veloMTL.veloMTL.Model.Enums.LoyaltyTier;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.AvailableBikeState;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.BikeState;
@@ -67,6 +68,7 @@ public class BikeServiceTest_Reservations {
     Station station;
     Dock dock;
     Bike bike;
+    Rider user;
     BikeService spyService;
 
 
@@ -74,12 +76,12 @@ public class BikeServiceTest_Reservations {
     @Test
     void reserveBike_success () {
 //        mockStateResponse(StateChangeStatus.SUCCESS, "Bike has been unlocked", "user1");
-        List<Bike> reservedBikes = new ArrayList<>();
         dock.setDockId("dock1");
-        when(bikeRepository.findByReserveUser(anyString())).thenReturn(reservedBikes);
+        user = new Rider("mockUser", "user@email.com", "123");
         when(dockRepository.findById("dock1")).thenReturn(Optional.of(dock));
         when(tierService.fetchUserTier(anyString())).thenReturn(LoyaltyTier.ENTRY);
         when(bikeRepository.save(any())).thenReturn(bike);
+        when(riderRepository.findById("user1")).thenReturn(Optional.of(user));
         //act
         ResponseDTO<BikeDTO> response = spyService.reserveBike("bike123", "user1", dock.getDockId(),
                 LocalDateTime.now(), UserStatus.RIDER);
@@ -99,9 +101,6 @@ public class BikeServiceTest_Reservations {
     //create test for reservation bike fail
     @Test
     void reserveBike_fail() {
-        List<Bike> reservedBikes = new ArrayList<>();
-        reservedBikes.add(bike);
-        when(bikeRepository.findByReserveUser(anyString())).thenReturn(reservedBikes);
         assertThrows(RuntimeException.class, () -> spyService.reserveBike("bike123", "user1", dock.getDockId(),
                 LocalDateTime.now(), UserStatus.RIDER));
         verify(bikeRepository, never()).save(any());
