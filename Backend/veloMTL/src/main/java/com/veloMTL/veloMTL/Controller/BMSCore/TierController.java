@@ -4,7 +4,6 @@ import com.veloMTL.veloMTL.DTO.Helper.LoyaltyTierDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.veloMTL.veloMTL.Model.Enums.LoyaltyTier;
 import com.veloMTL.veloMTL.Service.BMSCore.TierService;
 
 @RestController
@@ -18,7 +17,9 @@ public class TierController {
 
     @GetMapping("/{userEmail}")
     public ResponseEntity<LoyaltyTierDTO> getTier(@PathVariable String userEmail) {
-        LoyaltyTierDTO DTO = tierService.checkTierChange(userEmail);
+        // Only return current tier without checking for changes
+        // Tier changes are checked and notified only upon login
+        LoyaltyTierDTO DTO = tierService.getCurrentTier(userEmail);
         return ResponseEntity.ok(DTO);
     }
 }

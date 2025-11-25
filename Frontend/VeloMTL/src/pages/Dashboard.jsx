@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import MapView from "../components/MapView";
 import SidePanel from "../components/SidePanel";
 import '../styles/Dashboard.css';
@@ -20,11 +20,67 @@ const stations = [
 const Dashboard = () => {
   const { user, activeRole } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedStation, setSelectedStation] = useState(null);
   const [selectedDock, setSelectedDock] = useState(null);
   const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
+  const hasShownTierChangeRef = useRef(false);
+
+  // Show tier change notification after dashboard loads (only once)
+  useEffect(() => {
+    // Small delay to ensure localStorage is written and component is mounted
+    const checkTierChange = () => {
+      // Try to get tier change from navigation state first, then fallback to localStorage
+      let tierChange = location.state?.tierChange;
+      
+      // If state is null, check localStorage as backup
+      if (!tierChange) {
+        const storedTierChange = localStorage.getItem("pendingTierChange");
+        
+        if (storedTierChange) {
+          try {
+            tierChange = JSON.parse(storedTierChange);
+          } catch (e) {
+            console.error("Failed to parse stored tier change:", e);
+          }
+        }
+      }
+      
+      // Only show if we have tier change data and haven't shown it yet
+      if (tierChange && tierChange.oldTier && tierChange.newTier && !hasShownTierChangeRef.current) {
+        hasShownTierChangeRef.current = true; // Mark as shown
+        
+        // Remove from localStorage after reading
+        localStorage.removeItem("pendingTierChange");
+        
+        // Store values before clearing state
+        const { oldTier, newTier } = tierChange;
+        
+        // Clear state immediately
+        navigate(location.pathname, { replace: true, state: {} });
+        
+        // Small delay to ensure dashboard is fully rendered
+        setTimeout(() => {
+          const capitaliseStr = (str) => str?.toLowerCase().replace(/^./, (match) => match.toUpperCase());
+          alert(`Your Tier was changed from ${capitaliseStr(oldTier)} to ${capitaliseStr(newTier)}.`);
+        }, 100);
+      } else {
+        // Reset ref when there's no tier change (new login without tier change)
+        if (!tierChange) {
+          hasShownTierChangeRef.current = false;
+        }
+      }
+    };
+    
+    // Small delay to ensure localStorage is available
+    const timeoutId = setTimeout(checkTierChange, 50);
+    
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [location.state, navigate]);
 
   // Fetch full station data + all bikes
   const fetchStationData = async (stationId) => {

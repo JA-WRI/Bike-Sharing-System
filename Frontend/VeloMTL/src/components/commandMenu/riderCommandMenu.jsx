@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { reserveDock, reserveBike, unlockBike, lockBike, getTierByEmail } from "../../api/riderApi";
+import { reserveDock, reserveBike, unlockBike, lockBike } from "../../api/riderApi";
 import { checkPaymentMethod } from "../../api/paymentMethodApi";
 import { getCurrentPlan } from "../../api/planApi";
 
@@ -53,10 +53,7 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
   
   const startTimer = () => {
     const id = setTimeout(() => {
-      getTierByEmail(user.email).then(tierData => {
-        update({ tier: tierData.newTier });
-        if (tierData.tierChanged) alert(`Your Tier was changed from ${tierData.oldTier} to ${tierData.newTier}.`);
-      });
+      // Tier changes are only checked and notified upon login, not when reservations expire
       alert("Reservation time has expired.");
       setTimerStarted(false);
     }, RESERVE_TIME);
@@ -128,11 +125,7 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
           break;
         case "LB":
           response = await lockBike(user.id, extraParams.bikeId, dock.dockId);
-          const tierData = await getTierByEmail(user.email);
-          if (tierData.tierChanged) {
-            update({ tier: tierData.newTier });
-            alert(`Your Tier was changed from ${tierData.oldTier} to ${tierData.newTier}.`);
-          }
+          // Tier changes are only checked and notified upon login, not when locking bikes
           break;
         default:
           console.warn("Unknown operator command:", action);

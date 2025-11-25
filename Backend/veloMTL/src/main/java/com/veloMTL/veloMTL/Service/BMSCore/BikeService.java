@@ -212,7 +212,7 @@ public class BikeService {
             if (reservedBike.getReserveDate() != null && now.isAfter(reservedBike.getReserveDate().plusSeconds(4))) {
                 expireReservation(bikeId, userId, role);
                 tripService.expireReservation(bikeId, userId);
-                tierService.checkTierChange(finalUserEmail);
+                // Tier changes are now checked only upon login, not after locking bikes
             }
         });
 
