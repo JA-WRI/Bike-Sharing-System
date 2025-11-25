@@ -1,5 +1,6 @@
 package com.veloMTL.veloMTL.DTO.auth;
 
+import com.veloMTL.veloMTL.DTO.Helper.LoyaltyTierDTO;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 
 public class LoginResponseDTO {
@@ -8,6 +9,7 @@ public class LoginResponseDTO {
     private String name;
     private String email;
     private UserStatus role;
+    private LoyaltyTierDTO tierChange;
 
     public LoginResponseDTO(String token,String id, String name, String email, UserStatus role) {
         this.token = token;
@@ -15,6 +17,16 @@ public class LoginResponseDTO {
         this.email = email;
         this.role = role;
         this.id = id;
+        this.tierChange = null;
+    }
+
+    public LoginResponseDTO(String token,String id, String name, String email, UserStatus role, LoyaltyTierDTO tierChange) {
+        this.token = token;
+        this.name = name;
+        this.email = email;
+        this.role = role;
+        this.id = id;
+        this.tierChange = tierChange;
     }
     public String getToken() {
         return token;
@@ -51,4 +63,12 @@ public class LoginResponseDTO {
     public String getId() {return id;}
 
     public void setId(String id) {this.id = id;}
+
+    public LoyaltyTierDTO getTierChange() {
+        return tierChange;
+    }
+
+    public void setTierChange(LoyaltyTierDTO tierChange) {
+        this.tierChange = tierChange;
+    }
 }

@@ -58,6 +58,21 @@ public class TierService {
         return user.getTier();
     }
 
+    /**
+     * Returns the current tier without checking for changes or updating.
+     * Use this for getting tier information without triggering notifications.
+     * For tier change checks, use checkTierChange() which is only called on login.
+     */
+    public LoyaltyTierDTO getCurrentTier(String userEmail) {
+        User user = riderRepository.findByEmail(userEmail).orElse(null);
+        if (user == null)
+            user = operatorRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User does not exist with email: " + userEmail));
+        LoyaltyTier currentTier = user.getTier();
+        // Return DTO with isTierChanged = false since we're not checking for changes
+        return new LoyaltyTierDTO(currentTier, currentTier, false);
+    }
+
 
     public void saveUserTier(User user, LoyaltyTier tier) {
         user.setTier(tier);

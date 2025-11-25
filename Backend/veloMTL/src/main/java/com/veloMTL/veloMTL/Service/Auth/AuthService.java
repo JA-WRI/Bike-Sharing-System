@@ -4,12 +4,14 @@ import com.veloMTL.veloMTL.DTO.auth.LoginDTO;
 import com.veloMTL.veloMTL.DTO.Users.RegistrationDTO;
 import com.veloMTL.veloMTL.DTO.auth.LoginResponseDTO;
 import com.veloMTL.veloMTL.DTO.auth.AccountInfoDTO;
+import com.veloMTL.veloMTL.DTO.Helper.LoyaltyTierDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.Security.JwtService;
+import com.veloMTL.veloMTL.Service.BMSCore.TierService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,12 +26,14 @@ public class AuthService {
         private final OperatorRepository operatorRepository;
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
+        private final TierService tierService;
 
-        public AuthService(RiderRepository riderRepository, OperatorRepository operatorRepository, PasswordEncoder passwordEncoder, JwtService jwtService){
+        public AuthService(RiderRepository riderRepository, OperatorRepository operatorRepository, PasswordEncoder passwordEncoder, JwtService jwtService, TierService tierService){
             this.riderRepository = riderRepository;
             this.operatorRepository = operatorRepository;
             this.passwordEncoder = passwordEncoder;
             this.jwtService = jwtService;
+            this.tierService = tierService;
         }
 
     public LoginResponseDTO registerRider (RegistrationDTO registrationDTO){
@@ -46,12 +50,16 @@ public class AuthService {
         Rider savedRider = riderRepository.save(rider);
         String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
+        // Check for tier changes upon registration (new users start at ENTRY tier, so no change expected)
+        LoyaltyTierDTO tierChange = tierService.checkTierChange(savedRider.getEmail());
+
     return new LoginResponseDTO(
             token,
             savedRider.getId(),
             savedRider.getName(),
             savedRider.getEmail(),
-            savedRider.getRole()
+            savedRider.getRole(),
+            tierChange
     );
     }
 
@@ -67,7 +75,11 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
-        return new LoginResponseDTO(token, rider.getId(), rider.getName(), rider.getEmail(), rider.getRole());
+        
+        // Check for tier changes upon login
+        LoyaltyTierDTO tierChange = tierService.checkTierChange(rider.getEmail());
+        
+        return new LoginResponseDTO(token, rider.getId(), rider.getName(), rider.getEmail(), rider.getRole(), tierChange);
 
     }
 
@@ -80,12 +92,16 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
     }
     String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
+    // Check for tier changes upon login
+    LoyaltyTierDTO tierChange = tierService.checkTierChange(rider.getEmail());
+
     return new LoginResponseDTO(
             token,
             rider.getId(),
             rider.getName(),
             rider.getEmail(),
-            rider.getRole()
+            rider.getRole(),
+            tierChange
     );
 }
 
@@ -98,12 +114,16 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
         }
         String token = jwtService.generateToken(operator.getEmail(),operator.getRole(), operator.getPermissions());
 
+        // Check for tier changes upon login
+        LoyaltyTierDTO tierChange = tierService.checkTierChange(operator.getEmail());
+
         return new LoginResponseDTO(
                 token,
                 operator.getId(),
                 operator.getName(),
                 operator.getEmail(),
-                operator.getRole()
+                operator.getRole(),
+                tierChange
         );
     }
 
