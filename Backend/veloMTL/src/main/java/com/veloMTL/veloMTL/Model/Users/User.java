@@ -4,9 +4,9 @@ import com.veloMTL.veloMTL.Model.Enums.Permissions;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
-import java.util.Set;
 
 public abstract class User {
 
@@ -17,9 +17,14 @@ public abstract class User {
     private String password;
     private UserStatus role;
     private List<Permissions> permissions;
+
+    @Field("flex_dollars")  // Explicitly map to "flex_dollars" in MongoDB
     private double flexDollars;
-    private String reservationId; //only if a user reserves a bike
+
+    private String reservationId;  // Only if a user reserves a bike
     private String stripeCustomerId;
+
+    @Field("plan")  // Use @Field annotation for Plan if you want to store it in MongoDB
     private Plan plan;
 
     public User() {}
@@ -32,6 +37,7 @@ public abstract class User {
         this.permissions = permissions;
     }
 
+    // Getters and setters for all fields...
     public String getId() {
         return id;
     }
@@ -87,6 +93,7 @@ public abstract class User {
     public void setFlexDollars(double flexDollars) {
         this.flexDollars = flexDollars;
     }
+
     public String getReservationId() {
         return reservationId;
     }

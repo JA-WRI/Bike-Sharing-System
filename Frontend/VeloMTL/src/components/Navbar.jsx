@@ -24,8 +24,8 @@ const Navbar = () => {
 
   const handleLogout = () => {
     setShowDropdown(false);
-     logout();
-     navigate("/login");
+    logout();
+    navigate("/login");
   };
 
   const handleBellClick = () => {
@@ -42,16 +42,16 @@ const Navbar = () => {
       <div className="navbar-left">
         <Link to="/" className="navbar-link">Dashboard</Link>
         {user && <Link to="/History" className="navbar-link">History</Link>}
-        {/* Show Payment Plans for all users (logged in and logged out) */}
-        <Link to="/payment-plans" className="navbar-link">
-          Payment Plans
-        </Link>
+        <Link to="/payment-plans" className="navbar-link">Payment Plans</Link>
 
         {/* Show Billing only for riders (active role) */}
         {activeRole === "RIDER" && (
-          <Link to="/billing" className="navbar-link">
-            Billing
-          </Link>
+          <Link to="/billing" className="navbar-link">Billing</Link>
+        )}
+
+        {/* Show Account Information tab only for riders */}
+        {activeRole === "RIDER" && (
+          <Link to="/account-info" className="navbar-link">Account Information</Link>
         )}
       </div>
 
@@ -60,12 +60,9 @@ const Navbar = () => {
           <Link to="/login" className="navbar-link">Login</Link>
         ) : (
           <div className="navbar-user-container">
-            {/* Only show bell for operators when in operator view */}
             {activeRole === "OPERATOR" && user?.role === "OPERATOR" && (
               <div className="notification-bell-container" onClick={handleBellClick}>
-                <FaBell
-                  className="notification-bell-icon"
-                />
+                <FaBell className="notification-bell-icon" />
                 {unreadCount > 0 && (
                   unreadCount > 9 ? (
                     <span className="red-dot"></span>
@@ -78,11 +75,7 @@ const Navbar = () => {
                   <div className="notification-dropdown-title">
                     <strong>Notifications</strong>
                     {notifications.length > 0 && (
-                      <span style={{ 
-                        fontSize: "0.85rem", 
-                        color: "var(--text-muted)",
-                        fontWeight: "500"
-                      }}>
+                      <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: "500" }}>
                         {notifications.length} {notifications.length === 1 ? 'notification' : 'notifications'}
                       </span>
                     )}
@@ -91,16 +84,12 @@ const Navbar = () => {
                     {notifications.length === 0 ? (
                       <div className="notification-item empty">
                         <div>No notifications</div>
-                        <div style={{ fontSize: "0.85rem", marginTop: "0.5rem" }}>
-                          You're all caught up!
-                        </div>
+                        <div style={{ fontSize: "0.85rem", marginTop: "0.5rem" }}>You're all caught up!</div>
                       </div>
                     ) : (
                       notifications.map((msg, i) => (
                         <div key={i} className="notification-item">
-                          <div className="notification-item-content">
-                            {msg}
-                          </div>
+                          <div className="notification-item-content">{msg}</div>
                           <FaTimes
                             className="delete-notification-icon"
                             onClick={(e) => {
@@ -139,42 +128,25 @@ const Navbar = () => {
                 {activeRole === "OPERATOR" ? "👤 Operator" : "🚴 Rider"}
               </button>
             )}
-          <div className="navbar-user">
-            <FaUserCircle
-              className="user-icon"
-              onClick={() => setShowDropdown(!showDropdown)}
-            />
-            {showDropdown && (
-            <div className="user-dropdown">
-              <div className="user-info">
-                <div className="user-header">
-                  <p className="user-name"><strong>{user.name}</strong></p>
-                  <span
-                    className={`user-role-badge ${
-                      activeRole === "OPERATOR" ? "operator" : "rider"
-                    }`}
-                  >
-                    {activeRole}
-                  </span>
+            <div className="navbar-user">
+              <FaUserCircle
+                className="user-icon"
+                onClick={() => setShowDropdown(!showDropdown)}
+              />
+              {showDropdown && (
+                <div className="user-dropdown">
+                  <div className="user-info">
+                    <div className="user-header">
+                      <p className="user-name"><strong>{user.name}</strong></p>
+                      <span className={`user-role-badge ${activeRole === "OPERATOR" ? "operator" : "rider"}`}>
+                        {activeRole}
+                      </span>
+                    </div>
+                    <p className="user-email">{user.email}</p>
+                  </div>
+                  <button className="logout-btn" onClick={handleLogout}>Logout</button>
                 </div>
-                <p className="user-email">{user.email}</p>
-                {user.role === "OPERATOR" && activeRole !== user.role && (
-                  <p style={{ fontSize: "0.85rem", color: "#666", marginTop: "4px" }}>
-                    Viewing as {activeRole}
-                  </p>
-                )}
-              </div>
-                 {/* Add Payment button only for riders (active role) */}
-                                  {activeRole === "RIDER" && (
-                                    <button onClick={() => navigate("/add-payment")}>
-                                      Add Payment
-                                    </button>
-                                  )}
-              <button className="logout-btn" onClick={handleLogout}>
-                Logout
-              </button>
-            </div>
-          )}
+              )}
             </div>
           </div>
         )}

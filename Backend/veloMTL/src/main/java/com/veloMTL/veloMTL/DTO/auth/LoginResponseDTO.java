@@ -8,14 +8,19 @@ public class LoginResponseDTO {
     private String name;
     private String email;
     private UserStatus role;
+    private double flexDollars;  // Add Flex Dollars field
 
-    public LoginResponseDTO(String token,String id, String name, String email, UserStatus role) {
+    // Constructor including Flex Dollars
+    public LoginResponseDTO(String token, String id, String name, String email, UserStatus role, double flexDollars) {
         this.token = token;
+        this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
-        this.id = id;
+        this.flexDollars = flexDollars;  // Initialize Flex Dollars
     }
+
+    // Getters and Setters for all fields
     public String getToken() {
         return token;
     }
@@ -48,7 +53,20 @@ public class LoginResponseDTO {
         this.role = role;
     }
 
-    public String getId() {return id;}
+    public String getId() {
+        return id;
+    }
 
-    public void setId(String id) {this.id = id;}
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    // Getter and Setter for Flex Dollars
+    public double getFlexDollars() {
+        return flexDollars;
+    }
+
+    public void setFlexDollars(double flexDollars) {
+        this.flexDollars = flexDollars;
+    }
 }

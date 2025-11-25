@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
+import AccountInfo from "./AccountInfo";  
+
+
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import MapView from "../components/MapView";

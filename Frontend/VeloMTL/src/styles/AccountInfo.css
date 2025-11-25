@@ -1,0 +1,26 @@
+/* AccountInfo.css */
+.account-info-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flex-dollars {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.role-toggle button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.role-toggle button:hover {
+    background-color: #0056b3;
+}

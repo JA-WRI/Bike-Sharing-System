@@ -27,5 +27,6 @@ public class RiderController {
         return ResponseEntity.ok(response);
     }
 
+
 }
 

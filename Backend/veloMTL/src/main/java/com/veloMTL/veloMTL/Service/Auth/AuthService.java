@@ -13,24 +13,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
 public class AuthService {
-        private final RiderRepository riderRepository;
-        private final OperatorRepository operatorRepository;
-        private final PasswordEncoder passwordEncoder;
-        private final JwtService jwtService;
 
-        public AuthService(RiderRepository riderRepository, OperatorRepository operatorRepository, PasswordEncoder passwordEncoder, JwtService jwtService){
-            this.riderRepository = riderRepository;
-            this.operatorRepository = operatorRepository;
-            this.passwordEncoder = passwordEncoder;
-            this.jwtService = jwtService;
-        }
+    private final RiderRepository riderRepository;
+    private final OperatorRepository operatorRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public LoginResponseDTO registerRider (RegistrationDTO registrationDTO){
-        if(riderRepository.existsByEmail(registrationDTO.getEmail())){
-            throw  new RuntimeException("Email already used");
+    public AuthService(RiderRepository riderRepository, OperatorRepository operatorRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+        this.riderRepository = riderRepository;
+        this.operatorRepository = operatorRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+    }
+
+    // Register a Rider
+    public LoginResponseDTO registerRider(RegistrationDTO registrationDTO) {
+        if (riderRepository.existsByEmail(registrationDTO.getEmail())) {
+            throw new RuntimeException("Email already used");
         }
         String encodedPassword = passwordEncoder.encode(registrationDTO.getPassword());
         Rider rider = new Rider(
@@ -42,15 +43,18 @@ public class AuthService {
         Rider savedRider = riderRepository.save(rider);
         String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
-    return new LoginResponseDTO(
-            token,
-            savedRider.getId(),
-            savedRider.getName(),
-            savedRider.getEmail(),
-            savedRider.getRole()
-    );
+        // Return the response including Flex Dollars
+        return new LoginResponseDTO(
+                token,
+                savedRider.getId(),
+                savedRider.getName(),
+                savedRider.getEmail(),
+                savedRider.getRole(),
+                savedRider.getFlexDollars()  // Include Flex Dollars in the response
+        );
     }
 
+    // Register a Google User (for external login)
     public LoginResponseDTO registerGoogleUser(String name, String email) {
         Optional<Rider> existing = riderRepository.findByEmail(email);
 
@@ -63,43 +67,59 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
-        return new LoginResponseDTO(token, rider.getId(), rider.getName(), rider.getEmail(), rider.getRole());
 
+        // Return the response including Flex Dollars
+        return new LoginResponseDTO(
+                token,
+                rider.getId(),
+                rider.getName(),
+                rider.getEmail(),
+                rider.getRole(),
+                rider.getFlexDollars()  // Include Flex Dollars in the response
+        );
     }
 
-public LoginResponseDTO loginRider(LoginDTO loginDTO){
+    // Login a Rider
+    public LoginResponseDTO loginRider(LoginDTO loginDTO) {
         Rider rider = riderRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("wrong email"));
 
-    if(!passwordEncoder.matches(loginDTO.getPassword(), rider.getPassword())) {
-        throw new RuntimeException("Invalid password");
+        if (!passwordEncoder.matches(loginDTO.getPassword(), rider.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
+
+        // Return the response including Flex Dollars
+        return new LoginResponseDTO(
+                token,
+                rider.getId(),
+                rider.getName(),
+                rider.getEmail(),
+                rider.getRole(),
+                rider.getFlexDollars()  // Include Flex Dollars in the response
+        );
     }
-    String token = jwtService.generateToken(rider.getEmail(), rider.getRole(), rider.getPermissions());
 
-    return new LoginResponseDTO(
-            token,
-            rider.getId(),
-            rider.getName(),
-            rider.getEmail(),
-            rider.getRole()
-    );
-}
-
+    // Login an Operator
     public LoginResponseDTO loginOperator(LoginDTO loginDTO) {
-        Operator operator = (Operator) operatorRepository.findByEmail(loginDTO.getEmail())
+        Operator operator = operatorRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("wrong email"));
 
         if (!loginDTO.getPassword().equals(operator.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
-        String token = jwtService.generateToken(operator.getEmail(),operator.getRole(), operator.getPermissions());
 
+        String token = jwtService.generateToken(operator.getEmail(), operator.getRole(), operator.getPermissions());
+
+        // Return the response for Operator (No Flex Dollars for operator)
         return new LoginResponseDTO(
                 token,
                 operator.getId(),
                 operator.getName(),
                 operator.getEmail(),
-                operator.getRole()
+                operator.getRole(),
+                0.0  // Operator doesn't have Flex Dollars
         );
     }
 }
