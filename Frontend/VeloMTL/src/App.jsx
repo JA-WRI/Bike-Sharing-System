@@ -12,6 +12,8 @@ import OauthRedirect from "./pages/OauthRedirect";
 import BillingPage from "./pages/BillingPage";
 import History from "./pages/History";
 import AccountInfo from "./pages/AccountInfo"; 
+import { AuthProvider } from "./context/AuthContext"; 
+
 
 
 const App = () => {
