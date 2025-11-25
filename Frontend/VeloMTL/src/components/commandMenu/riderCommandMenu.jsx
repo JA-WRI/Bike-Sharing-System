@@ -55,7 +55,7 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
     const id = setTimeout(() => {
       getTierByEmail(user.email).then(tierData => {
         update({ tier: tierData.newTier });
-        if (tierData.tierChanged) alert(`Your Tier was changed from ${tierData.oldTier} to ${tierData.newTier}.`);
+        // if (tierData.tierChanged) alert(`Your Tier was changed from ${tierData.oldTier} to ${tierData.newTier}.`);
       });
       alert("Reservation time has expired.");
       setTimerStarted(false);
@@ -131,7 +131,7 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
           const tierData = await getTierByEmail(user.email);
           if (tierData.tierChanged) {
             update({ tier: tierData.newTier });
-            alert(`Your Tier was changed from ${tierData.oldTier} to ${tierData.newTier}.`);
+            // alert(`Your Tier was changed from ${tierData.oldTier} to ${tierData.newTier}.`);
           }
           break;
         default:
