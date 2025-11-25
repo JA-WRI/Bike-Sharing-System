@@ -23,6 +23,7 @@ public class AvailableBikeState implements BikeState{
                 bike.setState(new MaintenanceBikeState());
                 dock.setStatus(DockStatus.EMPTY);
                 dock.setState(new EmptyDockState());
+                bike.setReserveUser(null);
                 message = "Bike is out of service and undocked";
                 break;
             case UserStatus.RIDER:

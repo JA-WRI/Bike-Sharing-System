@@ -2,9 +2,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { reserveDock, reserveBike, unlockBike, lockBike } from "../../api/riderApi";
+import { reserveDock, reserveBike, unlockBike, lockBike, getTierByEmail } from "../../api/riderApi";
 import { checkPaymentMethod } from "../../api/paymentMethodApi";
 import { getCurrentPlan } from "../../api/planApi";
+
 
 const getLocalISODateTime = (date) => {
     const pad = (num) => num.toString().padStart(2, '0');
@@ -22,9 +23,10 @@ const getLocalISODateTime = (date) => {
 const RESERVE_TIME = 15*60*1000; // 15 mins as MS
 
 const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus, onCommandSuccess }) => {
-  const { user, activeRole } = useContext(AuthContext);
+  const { user, activeRole, update } = useContext(AuthContext);
   const navigate = useNavigate();
   const [timerStarted, setTimerStarted] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
 
   // Check if rider has payment method and plan
   const checkRiderPaymentSetup = async () => {
@@ -50,18 +52,26 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
 
   
   const startTimer = () => {
-    clearTimeout();
-    setTimeout(() => {
+    const id = setTimeout(() => {
+      getTierByEmail(user.email).then(tierData => {
+        update({ tier: tierData.newTier });
+        if (tierData.tierChanged) alert(`Your Tier was changed from ${tierData.oldTier} to ${tierData.newTier}.`);
+      });
       alert("Reservation time has expired.");
       setTimerStarted(false);
     }, RESERVE_TIME);
+    setTimeoutId(id);
   };
 
   useEffect(() => {
     if (timerStarted) {
       startTimer();
     }
-    return () => clearTimeout();
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [timerStarted]);
 
   const handleCommand = async (action, ...args) => {
@@ -118,6 +128,11 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
           break;
         case "LB":
           response = await lockBike(user.id, extraParams.bikeId, dock.dockId);
+          const tierData = await getTierByEmail(user.email);
+          if (tierData.tierChanged) {
+            update({ tier: tierData.newTier });
+            alert(`Your Tier was changed from ${tierData.oldTier} to ${tierData.newTier}.`);
+          }
           break;
         default:
           console.warn("Unknown operator command:", action);

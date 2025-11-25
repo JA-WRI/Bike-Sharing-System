@@ -18,11 +18,14 @@ public class Billing {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private double ratePerMinute;
+    private double tierDiscount;
     private double cost;
 
     public Billing() {}
 
-    public Billing(String description, LocalDateTime dateTransaction, String riderID, String bikeID, String originStation, String arrivalStation, LocalDateTime startDate, LocalDateTime endDate, double ratePerMinute, double cost) {
+    public Billing(String description, LocalDateTime dateTransaction, String riderID, String bikeID,
+                   String originStation, String arrivalStation, LocalDateTime startDate, LocalDateTime endDate,
+                   double ratePerMinute, double cost, double tierDiscount) {
 
         this.description = description;
         this.dateTransaction = dateTransaction;
@@ -34,6 +37,7 @@ public class Billing {
         this.endDate = endDate;
         this.ratePerMinute = ratePerMinute;
         this.cost = cost;
+        this.tierDiscount = tierDiscount;
     }
 
     public Billing( String description,LocalDateTime dateTransaction, String riderID,double cost) {

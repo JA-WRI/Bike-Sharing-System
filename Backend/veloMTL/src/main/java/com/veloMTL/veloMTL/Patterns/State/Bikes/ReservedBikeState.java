@@ -24,6 +24,8 @@ public class ReservedBikeState implements BikeState{
         switch(role) {
             case UserStatus.OPERATOR:
                 bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
+                bike.setReserveDate(null);
+                bike.setReserveUser(null);
                 dock.setStatus(DockStatus.EMPTY);
                 dock.setState(new EmptyDockState());
                 bike.setState(new MaintenanceBikeState());
@@ -45,7 +47,10 @@ public class ReservedBikeState implements BikeState{
         bike.setBikeStatus(BikeStatus.AVAILABLE);
         dock.setStatus(DockStatus.OCCUPIED);
         bike.setState(new AvailableBikeState());
+
+//        need to externally call dockRepository.save(dock);
         dock.setState(new OccupiedDockState());
+
         bike.setReserveUser(null);
         bike.setReserveDate(null);
 

@@ -169,11 +169,36 @@
   border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
+.user-role-badge.entry {
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(75, 85, 99, 0.15) 100%);
+  color: #6b7280;
+  border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.user-role-badge.bronze {
+  background: linear-gradient(135deg, rgba(180, 83, 9, 0.15) 0%, rgba(146, 64, 14, 0.15) 100%);
+  color: #b45309;
+  border: 1px solid rgba(180, 83, 9, 0.2);
+}
+
+.user-role-badge.silver {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.15) 0%, rgba(100, 116, 139, 0.15) 100%);
+  color: #64748b;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.user-role-badge.gold {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(180, 83, 9, 0.15) 100%);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.2);
+}
+
 .user-email {
   margin: 0;
   color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 400;
+  margin-bottom: 0.5rem;
 }
 
 .user-dropdown button {

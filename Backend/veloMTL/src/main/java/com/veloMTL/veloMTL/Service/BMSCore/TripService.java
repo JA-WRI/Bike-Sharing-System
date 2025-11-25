@@ -4,6 +4,7 @@ import com.veloMTL.veloMTL.DTO.BMSCore.TripDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Bike;
 import com.veloMTL.veloMTL.Model.BMSCore.Station;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Billing;
@@ -14,6 +15,7 @@ import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.utils.Mappers.TripMapper;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TripService {
@@ -47,6 +49,7 @@ public class TripService {
         String getId() {
             return rider != null ? rider.getId() : operator.getId();
         }
+        String getEmail() { return rider != null ? rider.getEmail() : operator.getEmail(); }
     }
 
     private UserReference findUser(String userId) {
@@ -139,6 +142,7 @@ public class TripService {
             trip = new Trip(bike, userRef.operator.getEmail());
         }
         trip.setOriginStation(originStation);
+        trip.setReserveStart(LocalDateTime.now());
         Trip savedTrip = tripRepository.save(trip);
         
         // Save the user entity to ensure it's persisted
@@ -149,6 +153,44 @@ public class TripService {
         }
         
         return savedTrip;
+    }
+
+    public Trip endReserveTripIfExists(String bikeId, String userId) {
+        // Find the bike
+        Bike bike = bikeRepository.findById(bikeId).orElseThrow(() -> new RuntimeException("Bike not found"));
+        // Find user (Rider or Operator)
+        UserReference userRef = findUser(userId);
+        if (userRef.rider == null) return null;
+
+        // Find the ReserveTrip, if there is more than one, pretend all is well and update the first one
+        List<Trip> reserveTrips = tripRepository.findOngoingReserveTrips(bikeId, userRef.rider.getEmail());
+        if (reserveTrips.isEmpty()) {
+            return null;
+        }
+        Trip reserveTrip = reserveTrips.getFirst();
+
+        reserveTrip.setReserveEnd(LocalDateTime.now());
+        return tripRepository.save(reserveTrip);
+    }
+
+    public Trip expireReservation(String bikeId, String userId) {
+        // Find the bike
+        Bike bike = bikeRepository.findById(bikeId).orElseThrow(() -> new RuntimeException("Bike not found"));
+        // Find user (Rider or Operator)
+        UserReference userRef = findUser(userId);
+        if (userRef.rider == null) return null;
+
+        List<Trip> reserveTrips = tripRepository.findOngoingReserveTrips(bikeId, userRef.rider.getEmail());
+        if (reserveTrips.isEmpty()) {
+            return null;
+        }
+        Trip reserveTrip = reserveTrips.getFirst();
+
+        bike.getState().lockBike(bike, bike.getDock(), UserStatus.RIDER);
+        bikeRepository.save(bike);
+
+        reserveTrip.setReservationExpired(true);
+        return tripRepository.save(reserveTrip);
     }
 
     public Trip startReserveTrip(Trip trip) {
@@ -171,5 +213,13 @@ public class TripService {
         //save the trip
         Trip savedTrip = tripRepository.save(trip);
         return savedTrip;
+    }
+
+    public Trip findOngoingReservation(String userId) {
+        String userEmail = findUser(userId).getEmail();
+        List<Trip> reserveTrips = tripRepository.findOngoingReserveTripsByUser(userEmail);
+
+        if (reserveTrips.isEmpty()) return null;
+        return reserveTrips.getFirst();
     }
 }
