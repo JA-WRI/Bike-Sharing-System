@@ -38,3 +38,8 @@ export const unlockBike = (userId, bikeId, dockId) => {
 
 export const lockBike = (userId, bikeId, dockId) =>
   sendCommand("LB", { userId, objectId: bikeId, dockId });
+
+export const getTierByEmail = async (email) => {
+  const response = await api.get(`/api/tiers/${email}`);
+  return response.data;
+} 

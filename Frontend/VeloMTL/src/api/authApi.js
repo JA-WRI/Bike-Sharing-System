@@ -1,4 +1,4 @@
-
+import api from "./api";
 import axios from "axios";
 
 
@@ -30,4 +30,15 @@ export const registerUser = async (name, email, password) => {
     { headers: { "Content-Type": "application/json" } }
   );
   return response.data;
+};
+
+// get account information
+export const getAccountInfo = async () => {
+  try {
+    const response = await api.get("/api/auth/account");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching account info:", error);
+    throw error;
+  }
 };

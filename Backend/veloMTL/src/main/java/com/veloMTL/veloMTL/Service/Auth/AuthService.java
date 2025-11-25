@@ -3,11 +3,15 @@ package com.veloMTL.veloMTL.Service.Auth;
 import com.veloMTL.veloMTL.DTO.auth.LoginDTO;
 import com.veloMTL.veloMTL.DTO.Users.RegistrationDTO;
 import com.veloMTL.veloMTL.DTO.auth.LoginResponseDTO;
+import com.veloMTL.veloMTL.DTO.auth.AccountInfoDTO;
 import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.Security.JwtService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +104,29 @@ public LoginResponseDTO loginRider(LoginDTO loginDTO){
                 operator.getName(),
                 operator.getEmail(),
                 operator.getRole()
+        );
+    }
+
+    public AccountInfoDTO getAccountInfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new RuntimeException("USER NOT AUTHENTICATED");
+        }
+        String email = auth.getName();
+        
+        User user = operatorRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            user = riderRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        }
+        
+        return new AccountInfoDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole(),
+                user.getFlexDollars(),
+                user.getTier()
         );
     }
 }

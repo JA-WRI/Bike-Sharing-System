@@ -21,7 +21,7 @@ const handleSubmit = async (e) => {
 
     try {
       const data = await registerUser(name, email, password);
-      login(data.token, {name: data.name, email: data.email, role: data.role, id: data.id});
+      login(data.token, {name: data.name, email: data.email, role: data.role, id: data.id, tier: "ENTRY" });
       navigate("/"); // go straight to dashboard
     } catch (err) {
       console.error("Registration failed:", err);

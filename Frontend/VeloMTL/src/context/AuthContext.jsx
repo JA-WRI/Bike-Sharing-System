@@ -46,6 +46,12 @@ export const AuthProvider = ({ children }) => {
     setActiveRole(null);
   };
 
+  const update = (newUserData) => {
+    const newUser = { ...user, ...newUserData };
+    setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser));
+  }
+
   const toggleRole = () => {
     // Only allow role toggle for operators
     if (user && user.role === "OPERATOR") {
@@ -56,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, activeRole, login, logout, toggleRole }}>
+    <AuthContext.Provider value={{ user, activeRole, login, logout, update, toggleRole }}>
       {children}
     </AuthContext.Provider>
   );

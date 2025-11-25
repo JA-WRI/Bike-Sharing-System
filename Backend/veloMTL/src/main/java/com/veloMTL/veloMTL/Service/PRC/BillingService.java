@@ -11,6 +11,7 @@ import com.veloMTL.veloMTL.Repository.PRC.BillingRepository;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
+import com.veloMTL.veloMTL.Service.BMSCore.TierService;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -24,12 +25,16 @@ public class BillingService {
     private final RiderRepository riderRepository;
     private final OperatorRepository operatorRepository;
     private final StationRepository stationRepository;
+    private final TierService tierService;
 
-    public BillingService(BillingRepository billingRepository, RiderRepository riderRepository, OperatorRepository operatorRepository,StationRepository stationRepository) {
+    public BillingService(BillingRepository billingRepository, RiderRepository riderRepository,
+                          OperatorRepository operatorRepository,StationRepository stationRepository,
+                          TierService tierService) {
         this.billingRepository = billingRepository;
         this.riderRepository = riderRepository;
         this.operatorRepository = operatorRepository;
         this.stationRepository = stationRepository;
+        this.tierService = tierService;
     }
 
     private long getTripDurationInMinutes(Trip trip) {
@@ -88,7 +93,10 @@ public class BillingService {
                 Rider ri = riderRepository.findById(user.getId()).orElseThrow(()-> new RuntimeException("No rider found with id"));
                 riderRepository.save(ri);
             }
-            bill = new Billing("Trip", LocalDateTime.now(), user.getId(), bikeId, originStation, arrivalStation, startDate, endDate, ratePerMinute, tripCost);
+            tripCost = tripCost - (tripCost * tierService.calculateTierDiscount(user.getTier()));
+            bill = new Billing("Trip", LocalDateTime.now(), user.getId(), bikeId, originStation,
+                    arrivalStation, startDate, endDate, ratePerMinute, tripCost,
+                    tierService.calculateTierDiscount(user.getTier()));
             billingRepository.save(bill);
         }
         return bill;

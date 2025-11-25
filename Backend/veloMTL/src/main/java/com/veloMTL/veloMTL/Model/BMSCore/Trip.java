@@ -23,6 +23,9 @@ public class Trip {
     private LocalDateTime endTime;
     private String originStation;
     private String arrivalStation;
+    private LocalDateTime reserveStart;
+    private LocalDateTime reserveEnd;
+    private boolean reservationExpired;
 
     @DBRef(lazy = true)
     private Bike bike;
@@ -35,6 +38,7 @@ public class Trip {
     public Trip(Bike bike, String userEmail) {
         this.bike = bike;
         this.userEmail = userEmail;
+        this.reservationExpired = false;
     }
 
     public String getTripId() {
@@ -67,4 +71,28 @@ public class Trip {
     public void setArrivalStation(String arrivalStation) {this.arrivalStation = arrivalStation;}
     public Billing getBilling() { return billing; }
     public void setBilling(Billing billing) { this.billing = billing; }
+
+    public LocalDateTime getReserveStart() {
+        return this.reserveStart;
+    }
+
+    public void setReserveStart(LocalDateTime reserveStart) {
+        this.reserveStart = reserveStart;
+    }
+
+    public LocalDateTime getReserveEnd() {
+        return this.reserveEnd;
+    }
+
+    public void setReserveEnd(LocalDateTime reserveEnd) {
+        this.reserveEnd = reserveEnd;
+    }
+
+    public boolean isReservationExpired() {
+        return this.reservationExpired;
+    }
+
+    public void setReservationExpired(boolean flag) {
+        this.reservationExpired = flag;
+    }
 }
