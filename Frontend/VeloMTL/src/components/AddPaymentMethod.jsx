@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { createSetupIntent } from "../api/paymentMethodApi";
 
-export default function AddCardForm({ riderEmail }) {
+export default function AddCardForm({ riderEmail, riderName, onCardAdded }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -61,7 +61,10 @@ export default function AddCardForm({ riderEmail }) {
       const result = await stripe.confirmCardSetup(clientSecret, {
         payment_method: {
           card: cardElement,
-          billing_details: { email: riderEmail },
+          billing_details: { 
+            email: riderEmail,
+            name: riderName || undefined
+          },
         },
       });
 
@@ -69,10 +72,21 @@ export default function AddCardForm({ riderEmail }) {
         console.error("Error confirming card setup:", result.error);
         setMessage(result.error.message);
       } else {
-        setMessage(
-          `Card added successfully! Payment Method ID`
-        );
+        setMessage("Card added successfully!");
         console.log("SetupIntent:", result.setupIntent);
+        
+        // Clear the form
+        if (cardElement) {
+          cardElement.clear();
+        }
+        
+        // Notify parent component to refresh payment methods list
+        if (onCardAdded) {
+          // Small delay to ensure Stripe has processed the payment method
+          setTimeout(() => {
+            onCardAdded();
+          }, 500);
+        }
       }
     } catch (err) {
       console.error("Unexpected error during payment setup:", err);
