@@ -51,7 +51,7 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
   };
 
   
-  const startTimer = () => {
+  const startTimer = (extraHoldMins) => {
     const id = setTimeout(() => {
       getTierByEmail(user.email).then(tierData => {
         update({ tier: tierData.newTier });
@@ -59,13 +59,15 @@ const RiderCommandMenu = ({ station, dock, setResponseMessage, setResponseStatus
       });
       alert("Reservation time has expired.");
       setTimerStarted(false);
-    }, RESERVE_TIME);
+    }, RESERVE_TIME + (extraHoldMins*60*1000 || 0));
     setTimeoutId(id);
   };
 
   useEffect(() => {
     if (timerStarted) {
-      startTimer();
+      userTier = user?.tier?.toLowerCase();
+      extraHoldMins = userTier === "gold" ? 5 : userTier === "silver" ? 2 : 0;
+      startTimer(extraHoldMins);
     }
     return () => {
       if (timeoutId) {
