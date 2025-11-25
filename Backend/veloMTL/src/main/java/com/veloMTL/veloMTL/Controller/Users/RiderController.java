@@ -4,7 +4,7 @@ import com.veloMTL.veloMTL.DTO.Helper.CommandDTO;
 import com.veloMTL.veloMTL.DTO.Helper.ResponseDTO;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.PCR.Billing;
-import com.veloMTL.veloMTL.PCR.BillingService;
+import com.veloMTL.veloMTL.Service.PRC.BillingService;
 import com.veloMTL.veloMTL.Patterns.Command.Command;
 import com.veloMTL.veloMTL.Patterns.Factory.RiderCommandFactory;
 import com.veloMTL.veloMTL.Service.Users.RiderService;
