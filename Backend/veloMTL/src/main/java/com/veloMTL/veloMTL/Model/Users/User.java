@@ -1,9 +1,13 @@
 package com.veloMTL.veloMTL.Model.Users;
 
+import com.veloMTL.veloMTL.Model.Enums.LoyaltyTier;
 import com.veloMTL.veloMTL.Model.Enums.Permissions;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
+import java.util.Set;
 
 public abstract class User {
 
@@ -12,18 +16,33 @@ public abstract class User {
     private String name;
     private String email;
     private String password;
-    private String role;
+    private UserStatus role;
     private List<Permissions> permissions;
+    private double flexDollars;
+    private String reservationId; //only if a user reserves a bike
+    private String stripeCustomerId;
+    private Plan plan;
+    private LoyaltyTier tier;
 
-    public User() {
-    }
+    public User() {}
 
-    public User(String name, String email, String password, String role, List<Permissions> permissions) {
+    public User(String name, String email, String password, UserStatus role, List<Permissions> permissions) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
         this.permissions = permissions;
+        this.tier = LoyaltyTier.ENTRY; //if no tier is found set to Entry
+    }
+
+    public User(String name, String email, String password, UserStatus role, List<Permissions> permissions,
+                LoyaltyTier tier) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.permissions = permissions;
+        this.tier = tier;
     }
 
     public String getId() {
@@ -58,11 +77,11 @@ public abstract class User {
         this.password = password;
     }
 
-    public String getRole() {
+    public UserStatus getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserStatus role) {
         this.role = role;
     }
 
@@ -73,4 +92,39 @@ public abstract class User {
     public void setPermissions(List<Permissions> permissions) {
         this.permissions = permissions;
     }
+
+    public double getFlexDollars() {
+        return flexDollars;
+    }
+
+    public void setFlexDollars(double flexDollars) {
+        this.flexDollars = flexDollars;
+    }
+    public String getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(String reservationId) {
+        this.reservationId = reservationId;
+    }
+
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
+
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+
+    public LoyaltyTier getTier() { return tier; }
+
+    public void setTier(LoyaltyTier tier) { this.tier = tier; }
 }

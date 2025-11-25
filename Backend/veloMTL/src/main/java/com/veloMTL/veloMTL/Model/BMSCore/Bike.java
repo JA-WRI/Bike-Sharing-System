@@ -28,7 +28,6 @@ public class Bike {
     @Transient
     private BikeState state;
 
-
     public Bike() {}
 
     public Bike(String bikeId, String bikeType, BikeStatus bikeStatus, Dock dock) {
@@ -80,9 +79,7 @@ public class Bike {
         this.dock = dock;
     }
 
-    public BikeState getState() {
-        return state;
-    }
+    public BikeState getState() {return state;}
 
     public void setState(BikeState state) {
         this.state = state;

@@ -1,6 +1,7 @@
 package com.veloMTL.veloMTL.Config;
 
 import com.veloMTL.veloMTL.Model.Enums.Permissions;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
 import com.veloMTL.veloMTL.Security.JWTFilter;
@@ -53,7 +54,8 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/rider/login",
                                 "/api/auth/operator/login",
-                                "/api/auth/**"
+                                "/api/auth/**",
+                                "/api/tiers/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -102,10 +104,10 @@ public class SecurityConfig {
                             String email = user.getAttribute("email");
                             String name = user.getAttribute("name");
 
-                            String role;
+                            UserStatus role;
                             List<Permissions> permissions;
                             if (riderRepository.existsByEmail(email)) {
-                                role = "RIDER";
+                                role = UserStatus.RIDER;
                                 permissions = List.of(
                                         Permissions.BIKE_UNLOCK,
                                         Permissions.BIKE_RETURN,
@@ -113,7 +115,7 @@ public class SecurityConfig {
                                         Permissions.DOCK_RESERVE
                                 );
                             } else if (operatorRepository.existsByEmail(email)) {
-                                role = "OPERATOR";
+                                role = UserStatus.OPERATOR;
                                 permissions = List.of(
                                         Permissions.DOCK_OOS,
                                         Permissions.RESTORE_DOCK,
@@ -135,7 +137,7 @@ public class SecurityConfig {
                                     java.net.URLEncoder.encode(token, java.nio.charset.StandardCharsets.UTF_8),
                                     java.net.URLEncoder.encode(name != null ? name : "", java.nio.charset.StandardCharsets.UTF_8),
                                     java.net.URLEncoder.encode(email != null ? email : "", java.nio.charset.StandardCharsets.UTF_8),
-                                    java.net.URLEncoder.encode(role != null ? role : "", java.nio.charset.StandardCharsets.UTF_8)
+                                    java.net.URLEncoder.encode(role != null ? role.name() : "", java.nio.charset.StandardCharsets.UTF_8)
                             );
 
                             response.sendRedirect(redirectUrl);

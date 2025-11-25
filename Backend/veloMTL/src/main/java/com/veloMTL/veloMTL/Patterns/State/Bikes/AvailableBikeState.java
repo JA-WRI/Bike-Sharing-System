@@ -20,21 +20,23 @@ public class AvailableBikeState implements BikeState{
         switch(role) {
             case UserStatus.OPERATOR:
                 bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
+                bike.setState(new MaintenanceBikeState());
+                dock.setStatus(DockStatus.EMPTY);
+                dock.setState(new EmptyDockState());
+                bike.setReserveUser(null);
                 message = "Bike is out of service and undocked";
                 break;
             case UserStatus.RIDER:
                 bike.setBikeStatus(BikeStatus.ON_TRIP);
+                bike.setState(new OnTripBikeState());
+                dock.setStatus(DockStatus.EMPTY);
+                dock.setState(new EmptyDockState());
                 message = "Bike has been unlocked";
                 break;
             default:
                 message = "You have to be signed in to unlock a bike";
                 return new StateChangeResponse(StateChangeStatus.FAILURE, message);
         }
-
-        bike.setState(new MaintenanceBikeState());
-
-        dock.setStatus(DockStatus.EMPTY);
-        dock.setState(new EmptyDockState());
 
         StateChangeResponse response = new StateChangeResponse(StateChangeStatus.SUCCESS, message);
 

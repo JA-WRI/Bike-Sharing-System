@@ -29,7 +29,8 @@ public class RiderController {
 
     @PostMapping("/command")
     public ResponseEntity<ResponseDTO<?>> executeCommand(@RequestBody CommandDTO commandDTO){
-
+        // Process command with RIDER status - allows operators to use rider endpoints
+        // and have commands process as if they are riders
         Command<?> action = commandFactory.createCommand(commandDTO,UserStatus.RIDER );
         ResponseDTO<?> response = (ResponseDTO<?>) action.execute();
         return ResponseEntity.ok(response);

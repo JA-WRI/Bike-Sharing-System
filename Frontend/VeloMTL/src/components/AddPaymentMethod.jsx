@@ -40,7 +40,7 @@ export default function AddCardForm({ riderEmail }) {
     };
 
     initPayment();
-  }, [riderEmail, clientSecret]);
+  }, [riderEmail]); // Removed clientSecret from dependencies
 
   const handleSubmit = async (e) => {
     e.preventDefault();

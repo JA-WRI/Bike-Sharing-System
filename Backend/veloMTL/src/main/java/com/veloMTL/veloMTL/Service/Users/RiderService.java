@@ -7,7 +7,7 @@ import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.SetupIntentCreateParams;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Billing;
-import com.veloMTL.veloMTL.PCR.BillingRepository;
+import com.veloMTL.veloMTL.Repository.PRC.BillingRepository;
 import com.veloMTL.veloMTL.PCR.Strategy.Basic;
 import com.veloMTL.veloMTL.PCR.Strategy.Plan;
 import com.veloMTL.veloMTL.PCR.Strategy.Premium;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class RiderService implements UserDetailsService {
@@ -38,9 +37,6 @@ public class RiderService implements UserDetailsService {
         this.billingRepository = billingRepository;
     }
 
-    /**
-     * Load a rider by email (used by Spring Security).
-     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Rider rider = riderRepository.findByEmail(email)

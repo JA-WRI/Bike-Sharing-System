@@ -3,12 +3,10 @@ package com.veloMTL.veloMTL.Controller.Users;
 import com.veloMTL.veloMTL.DTO.auth.LoginDTO;
 import com.veloMTL.veloMTL.DTO.Users.RegistrationDTO;
 import com.veloMTL.veloMTL.DTO.auth.LoginResponseDTO;
-import com.veloMTL.veloMTL.Model.Users.Rider;
+import com.veloMTL.veloMTL.DTO.auth.AccountInfoDTO;
 import com.veloMTL.veloMTL.Service.Auth.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -45,5 +43,11 @@ public class AuthController {
     public ResponseEntity<?> operatorLogin(@RequestBody LoginDTO loginDTO){
         LoginResponseDTO response = authService.loginOperator(loginDTO);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/account")
+    public ResponseEntity<AccountInfoDTO> getAccountInfo() {
+        AccountInfoDTO accountInfo = authService.getAccountInfo();
+        return ResponseEntity.ok(accountInfo);
     }
 }

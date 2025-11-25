@@ -11,7 +11,7 @@ import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
 import java.util.List;
 
-public class MaintenanceStationState implements StationState, OccupancyChange{
+public class MaintenanceStationState implements StationState{
 
     private final NotificationService notificationService;
 
@@ -27,7 +27,7 @@ public class MaintenanceStationState implements StationState, OccupancyChange{
     @Override
     public StateChangeResponse restoreStation(Station station) {
         List<Dock> docks = station.getDocks();
-        for (Dock dock: docks){
+        for (Dock dock : docks) {
             dock.setStatus(DockStatus.EMPTY);
             dock.setState(new EmptyDockState());
 
@@ -35,12 +35,5 @@ public class MaintenanceStationState implements StationState, OccupancyChange{
         station.setStationStatus(StationStatus.EMPTY);
         station.setStationState(new EmptyStationState(notificationService));
         return new StateChangeResponse(StateChangeStatus.SUCCESS, "Station status is restored");
-    }
-
-    @Override
-    public void handleOccupancyChange(Station station) {
-        String message = "Station '" + station.getStationName() + "' is now Out of service!";
-        notificationService.notifyOperators(message);
-
     }
 }

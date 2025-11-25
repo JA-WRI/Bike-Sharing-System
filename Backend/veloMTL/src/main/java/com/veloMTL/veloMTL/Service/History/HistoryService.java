@@ -4,7 +4,7 @@ package com.veloMTL.veloMTL.Service.History;
 import com.veloMTL.veloMTL.DTO.History.TripHistoryDTO;
 import com.veloMTL.veloMTL.Model.BMSCore.Trip;
 import com.veloMTL.veloMTL.Model.Users.User;
-import com.veloMTL.veloMTL.PCR.BillingRepository;
+import com.veloMTL.veloMTL.Repository.PRC.BillingRepository;
 import com.veloMTL.veloMTL.Repository.BMSCore.TripRepository;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -54,7 +53,28 @@ public class HistoryService {
     }
 
     public List<TripHistoryDTO> fetchRiderTrips(String userID) {
-        List<Trip> filteredTrips = tripRepository.fetchTripsByUserId(userID);
+        // Convert userID (could be ID or email) to email for querying
+        User user = null;
+        // Try to find as Rider by ID
+        user = riderRepository.findById(userID).orElse(null);
+        if (user == null) {
+            // Try to find as Operator by ID
+            user = operatorRepository.findById(userID).orElse(null);
+        }
+        if (user == null) {
+            // Try to find as Rider by email
+            user = riderRepository.findByEmail(userID).orElse(null);
+        }
+        if (user == null) {
+            // Try to find as Operator by email
+            user = operatorRepository.findByEmail(userID).orElse(null);
+        }
+        if (user == null) {
+            throw new RuntimeException("User not found with ID or email: " + userID);
+        }
+        
+        // Query trips by user email
+        List<Trip> filteredTrips = tripRepository.fetchTripsByUserId(user.getEmail());
         return processTrips(filteredTrips);
     }
 

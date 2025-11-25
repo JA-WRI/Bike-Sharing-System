@@ -24,6 +24,8 @@ public class ReservedBikeState implements BikeState{
         switch(role) {
             case UserStatus.OPERATOR:
                 bike.setBikeStatus(BikeStatus.OUT_OF_SERVICE);
+                bike.setReserveDate(null);
+                bike.setReserveUser(null);
                 dock.setStatus(DockStatus.EMPTY);
                 dock.setState(new EmptyDockState());
                 bike.setState(new MaintenanceBikeState());
@@ -33,7 +35,7 @@ public class ReservedBikeState implements BikeState{
                 response = unlockPrivateBike(bike, dock, currentTime, username);
                 break;
             default:
-                return new StateChangeResponse(StateChangeStatus.SUCCESS, "You have to be signed in to unlock a bike");
+                return new StateChangeResponse(StateChangeStatus.FAILURE, "You have to be signed in to unlock a bike");
         }
         return response;
     }
@@ -45,7 +47,10 @@ public class ReservedBikeState implements BikeState{
         bike.setBikeStatus(BikeStatus.AVAILABLE);
         dock.setStatus(DockStatus.OCCUPIED);
         bike.setState(new AvailableBikeState());
+
+//        need to externally call dockRepository.save(dock);
         dock.setState(new OccupiedDockState());
+
         bike.setReserveUser(null);
         bike.setReserveDate(null);
 
@@ -75,6 +80,8 @@ public class ReservedBikeState implements BikeState{
             dock.setStatus(DockStatus.EMPTY);
             bike.setState(new OnTripBikeState());
             dock.setState(new EmptyDockState());
+            bike.setReserveUser(null);
+            bike.setReserveDate(null);
             response = new StateChangeResponse(StateChangeStatus.SUCCESS, "Bike was unlocked with reservation");
         }
         return response;
