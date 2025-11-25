@@ -41,6 +41,7 @@ public class StationService {
 
         if(message.isSuccess()) {
             stationRepository.save(station);
+            notificationService.notifyOperators("Station " + station.getStationName() + " is out of service");
             List<Dock> docks = station.getDocks();
             for (Dock dock : docks) {
                 dockRepository.save(dock);
@@ -55,6 +56,7 @@ public class StationService {
 
         if (message.isSuccess()) {
             stationRepository.save(station);
+            notificationService.notifyOperators("Station " + station.getStationName() + " is restored");
 
             List<Dock> docks = station.getDocks();
             for (Dock dock : docks) {
@@ -74,7 +76,7 @@ public class StationService {
             notificationService.notifyOperators("Station " + station.getStationName() + " is now EMPTY.");
         } else if (newOccupancy == station.getCapacity()) {
             station.setStationStatus(StationStatus.FULL);
-            station.setStationState(new FullStationState(notificationService));
+            station.setStationState(new FullStationState());
             notificationService.notifyOperators("Station " + station.getStationName() + " is now FULL.");
         } else {
             station.setStationStatus(StationStatus.OCCUPIED);
@@ -94,7 +96,7 @@ public class StationService {
     private StationState createStateFromStatus(StationStatus status) {
         return switch (status) {
             case EMPTY -> new EmptyStationState(notificationService);
-            case FULL -> new FullStationState(notificationService);
+            case FULL -> new FullStationState();
             case OCCUPIED -> new OccupiedStationState();
             case OUT_OF_SERVICE -> new MaintenanceStationState(notificationService);
         };

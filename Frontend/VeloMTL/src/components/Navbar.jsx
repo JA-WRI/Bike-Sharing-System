@@ -189,10 +189,22 @@ const Navbar = () => {
               </div>
                  {/* Add Payment button only for riders (active role) */}
                                   {activeRole === "RIDER" && (
-                                    <button onClick={() => navigate("/add-payment")}>
+                                    <button onClick={() => {
+                                      setShowDropdown(false);
+                                      navigate("/add-payment");
+                                    }}>
                                       Add Payment
                                     </button>
                                   )}
+              {/* Account button only for riders (active role) */}
+              {activeRole === "RIDER" && (
+                <button onClick={() => {
+                  setShowDropdown(false);
+                  navigate("/account");
+                }}>
+                  Account
+                </button>
+              )}
               <button className="logout-btn" onClick={handleLogout}>
                 Logout
               </button>

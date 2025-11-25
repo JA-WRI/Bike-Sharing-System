@@ -10,7 +10,6 @@ import com.veloMTL.veloMTL.Model.Enums.LoyaltyTier;
 import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Model.Enums.UserStatus;
 import com.veloMTL.veloMTL.Model.Users.Rider;
-import com.veloMTL.veloMTL.Model.Users.User;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.AvailableBikeState;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.BikeState;
 import com.veloMTL.veloMTL.Repository.BMSCore.BikeRepository;
