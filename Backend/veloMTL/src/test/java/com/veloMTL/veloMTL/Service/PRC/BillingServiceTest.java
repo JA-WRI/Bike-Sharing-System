@@ -10,6 +10,7 @@ import com.veloMTL.veloMTL.Repository.BMSCore.StationRepository;
 import com.veloMTL.veloMTL.Repository.PRC.BillingRepository;
 import com.veloMTL.veloMTL.Repository.Users.OperatorRepository;
 import com.veloMTL.veloMTL.Repository.Users.RiderRepository;
+import com.veloMTL.veloMTL.Service.BMSCore.TierService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +41,9 @@ class BillingServiceTest {
 
     @Mock
     private StationRepository stationRepository;
+
+    @Mock
+    TierService tierService;
 
     @InjectMocks
     private BillingService billingService;
