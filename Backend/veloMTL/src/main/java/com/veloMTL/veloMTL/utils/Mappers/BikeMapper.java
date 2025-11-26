@@ -47,7 +47,7 @@ public class BikeMapper {
 
         return dto;
     }
-
+    
     // Overloaded method that accepts dockId to avoid lazy loading
     public static BikeDTO entityToDto(Bike bike, String dockId) {
         BikeDTO dto = entityToDto(bike);

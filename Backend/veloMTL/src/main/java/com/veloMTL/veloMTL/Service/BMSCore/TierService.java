@@ -90,19 +90,27 @@ public class TierService {
         if (allTrips.stream().anyMatch((trip) -> trip.getStartTime() != null && trip.getEndTime() == null && trip.getStartTime().isAfter(trip.getStartTime().plusDays(3)))) return false;
 
         // Rider completed >= 10 trips in the last year
-        if (allTrips.stream().filter((trip) -> trip.getStartTime() != null && trip.getEndTime() != null && trip.getStartTime().isAfter(oneYearAgo)).count() < 4) return false;
+        if (allTrips.stream().filter((trip) -> trip.getStartTime() != null && trip.getEndTime() != null && trip.getStartTime().isAfter(oneYearAgo)).count() < 10) return false;
 
         return true;
     }
 
     private boolean verifySilverTier(String userEmail, List<Trip> allTrips) {
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneYearAgo = LocalDateTime.now().plusYears(-1);
+        LocalDateTime threeMonthsAgo = LocalDateTime.now().plusMonths(-3);
 
-        // Rider completed at least 3 reservations in the last year
-        if (allTrips.stream().filter((trip) -> trip.getReserveStart() != null && trip.getReserveEnd() != null && trip.getReserveStart().isAfter(oneYearAgo)).count() < 3) return false;
+        // Rider completed at least 5 reservations in the last year
+        if (allTrips.stream().filter((trip) -> trip.getReserveStart() != null && trip.getReserveEnd() != null && trip.getReserveStart().isAfter(oneYearAgo)).count() < 5) return false;
 
-        // Rider completed at least 5 trips total (including current month)
-        if (allTrips.stream().filter((trip) -> trip.getStartTime() != null && trip.getEndTime() != null).count() < 5) return false;
+        // Rider surpassed 5 trips per month in the last 3 months
+        LocalDateTime current = LocalDateTime.of(now.getYear(), now.getMonthValue(), 1, 0, 0);
+        for (int i = 0; i < 3; i++) {
+            LocalDateTime next = current.minusMonths(1);
+            LocalDateTime currentFinal = current;
+            if (allTrips.stream().filter((trip) -> trip.getStartTime() != null && trip.getEndTime() != null && trip.getStartTime().isAfter(next) && trip.getStartTime().isBefore(currentFinal)).count() < 5) return false;
+            current = next;
+        }
 
         return true;
     }
