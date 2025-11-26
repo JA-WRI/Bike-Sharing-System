@@ -1,6 +1,9 @@
 import "../styles/TripTable.css"
 import api from "../api/api"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
+const ITEMS_PER_PAGE = 10;
 
 function calculateDuration(startTime, endTime) {
     if (startTime == null) {
@@ -25,16 +28,15 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
     const [trips, setTrips] = useState([]);
     const [filterTrips, setFilterTrips] = useState([]);
     const [selectedTrip, setSelectedTrip] = useState(-1);
-
-    const handleTripClick = (index) => {
-        setSelectedTrip(selectedTrip === index ? null : index);
-        console.log(selectedTrip);
-    }
+    const [currentPage, setCurrentPage] = useState(1);
+    const { activeRole } = useContext(AuthContext);
 
     useEffect(() => {
         const loadTrips = async () => {
             try {
-                const res = await api.get("/api/history/fetch");
+                // Pass activeRole as query parameter if it exists
+                const params = activeRole ? { activeRole } : {};
+                const res = await api.get("/api/history/fetch", { params });
                 const sortedTrips = [...res.data].sort((a, b) => new Date(a.endTime) - new Date(b.endTime));
                 console.log(sortedTrips);
                 setTrips(sortedTrips);
@@ -45,7 +47,7 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
         };
         loadTrips();
 
-    },[])
+    }, [activeRole])
         
     // Search and filter function
     useEffect(() => {
@@ -63,7 +65,39 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
             setFilterTrips(filtered);
         }
     }, [trips, search, startDateFilter, endDateFilter, bikeFilter]);
-        
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, startDateFilter, endDateFilter, bikeFilter]);
+
+    // Calculate pagination
+    const totalPages = Math.ceil(filterTrips.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const currentTrips = filterTrips.slice(startIndex, endIndex);
+
+    // Adjust selectedTrip index to match the original filterTrips array
+    const handleTripClick = (pageIndex) => {
+        const actualIndex = startIndex + pageIndex;
+        setSelectedTrip(selectedTrip === actualIndex ? null : actualIndex);
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            setSelectedTrip(null); // Reset selection when changing pages
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            setSelectedTrip(null); // Reset selection when changing pages
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
 
     return (
         <div className="PageSpace">
@@ -79,13 +113,15 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                     <th>Cost</th>
                 </tr>
                 {trips.length === 0 ? 
-                <tr>No User Data Found</tr> : 
+                <tr className="empty-state"><td colSpan="8">No User Data Found</td></tr> : 
                 filterTrips.length === 0 ? 
-                <tr>Search Term and Filters don't match any trips :( try again!</tr> :
-                filterTrips.map((trip, index) => (
+                <tr className="empty-state"><td colSpan="8">Search Term and Filters don't match any trips 😔 Try again!</td></tr> :
+                currentTrips.map((trip, pageIndex) => {
+                    const actualIndex = startIndex + pageIndex;
+                    return (
                     <>
                     {/* Main Details */}
-                    <tr className="tripData" key={trip.tripId} onClick={() => handleTripClick(index)}>
+                    <tr className="tripData" key={trip.tripId} onClick={() => handleTripClick(pageIndex)}>
                         <td>{trip.tripId}</td>
                         <td>{trip.riderId}</td>
                         <td>{trip.bikeId}</td>
@@ -96,17 +132,45 @@ export default function TripTable( {search, startDateFilter, endDateFilter, bike
                         <td>{trip.cost}</td>
                     </tr>
                     {/* Drop down section for additional details */}
-                    {index === selectedTrip &&
-                        <tr>
-                            <th>Start Time: {trip.startTime != null ? new Date(trip.startTime).toLocaleString() : null}</th>
-                            <th>End Time: {trip.endTime != null ? new Date(trip.endTime).toLocaleString() : null}</th>
-                            <th>Duration: {calculateDuration(trip.startTime, trip.endTime)}</th>
-                            <th></th>
+                    {actualIndex === selectedTrip &&
+                        <tr className="expanded-row">
+                            <td colSpan="8" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
+                                <div><strong>Start Time:</strong><br />{trip.startTime != null ? new Date(trip.startTime).toLocaleString() : "N/A"}</div>
+                                <div><strong>End Time:</strong><br />{trip.endTime != null ? new Date(trip.endTime).toLocaleString() : "N/A"}</div>
+                                <div><strong>Duration:</strong><br />{calculateDuration(trip.startTime, trip.endTime)} minutes</div>
+                                <div></div>
+                            </td>
                         </tr>
                         }
                     </>
-                ))}
+                    );
+                })}
             </table>
+            
+            {/* Pagination Controls */}
+            {filterTrips.length > ITEMS_PER_PAGE && (
+                <div className="pagination-container">
+                    <button
+                        className="pagination-button"
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                    >
+                        ← Previous
+                    </button>
+                    
+                    <span className="pagination-info">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    
+                    <button
+                        className="pagination-button"
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next →
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

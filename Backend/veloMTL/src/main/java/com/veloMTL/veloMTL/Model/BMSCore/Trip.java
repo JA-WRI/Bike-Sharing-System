@@ -1,6 +1,8 @@
 package com.veloMTL.veloMTL.Model.BMSCore;
 
 import com.veloMTL.veloMTL.Model.Enums.BikeStatus;
+import com.veloMTL.veloMTL.Model.Enums.UserStatus;
+import com.veloMTL.veloMTL.Model.Users.Operator;
 import com.veloMTL.veloMTL.Model.Users.Rider;
 import com.veloMTL.veloMTL.PCR.Billing;
 import com.veloMTL.veloMTL.Patterns.State.Bikes.BikeState;
@@ -21,19 +23,22 @@ public class Trip {
     private LocalDateTime endTime;
     private String originStation;
     private String arrivalStation;
+    private LocalDateTime reserveStart;
+    private LocalDateTime reserveEnd;
+    private boolean reservationExpired;
 
     @DBRef(lazy = true)
     private Bike bike;
-    @DBRef(lazy = true)
-    private Rider rider;
+    private String userEmail;
     @DBRef (lazy = true)
     private Billing billing;
 
     public Trip(){}
 
-    public Trip(Bike bike, Rider rider) {
+    public Trip(Bike bike, String userEmail) {
         this.bike = bike;
-        this.rider = rider;
+        this.userEmail = userEmail;
+        this.reservationExpired = false;
     }
 
     public String getTripId() {
@@ -58,12 +63,36 @@ public class Trip {
         return bike;
     }
     public void setBike(Bike bike) {this.bike = bike;}
-    public Rider getRider() {return rider;}
-    public void setRider(Rider rider) {this.rider = rider;}
+    public String getUserEmail() {return userEmail;}
+    public void setUserEmail(String userEmail) {this.userEmail = userEmail;}
     public String getOriginStation() {return originStation;}
     public void setOriginStation(String originStation) {this.originStation = originStation;}
     public String getArrivalStation() {return arrivalStation;}
     public void setArrivalStation(String arrivalStation) {this.arrivalStation = arrivalStation;}
     public Billing getBilling() { return billing; }
     public void setBilling(Billing billing) { this.billing = billing; }
+
+    public LocalDateTime getReserveStart() {
+        return this.reserveStart;
+    }
+
+    public void setReserveStart(LocalDateTime reserveStart) {
+        this.reserveStart = reserveStart;
+    }
+
+    public LocalDateTime getReserveEnd() {
+        return this.reserveEnd;
+    }
+
+    public void setReserveEnd(LocalDateTime reserveEnd) {
+        this.reserveEnd = reserveEnd;
+    }
+
+    public boolean isReservationExpired() {
+        return this.reservationExpired;
+    }
+
+    public void setReservationExpired(boolean flag) {
+        this.reservationExpired = flag;
+    }
 }

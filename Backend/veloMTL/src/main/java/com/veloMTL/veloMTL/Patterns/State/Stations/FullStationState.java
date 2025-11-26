@@ -5,12 +5,7 @@ import com.veloMTL.veloMTL.Model.Enums.StateChangeStatus;
 import com.veloMTL.veloMTL.Service.BMSCore.NotificationService;
 import com.veloMTL.veloMTL.utils.Responses.StateChangeResponse;
 
-public class FullStationState implements StationState, OccupancyChange{
-    private final NotificationService notificationService;
-
-    public FullStationState(NotificationService notificationService) {
-        this.notificationService = notificationService;
-    }
+public class FullStationState implements StationState{
 
     @Override
     public StateChangeResponse markStationOutOfService(Station station) {
@@ -20,12 +15,5 @@ public class FullStationState implements StationState, OccupancyChange{
     @Override
     public StateChangeResponse restoreStation(Station station) {
         return new StateChangeResponse(StateChangeStatus.ALREADY_IN_DESIRED_STATE, "Station is already in service");
-    }
-
-    @Override
-    public void handleOccupancyChange(Station station) {
-        String message = "Station '" + station.getStationName() + "' is now FULL!";
-        notificationService.notifyOperators(message);
-
     }
 }

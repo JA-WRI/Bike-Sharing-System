@@ -11,15 +11,17 @@ public class TripHistoryDTO extends TripDTO {
     private final String arrivalStation;
     private final double cost;
     private final LocalDateTime reserveTime;
+    private final boolean reservationExpired;
 
     public TripHistoryDTO(Trip trip) {
         super(trip.getTripId(), trip.getStartTime(), trip.getEndTime(), trip.getBike().getBikeId(),
-                trip.getRider().getEmail());
+                trip.getUserEmail());
         this.bikeType = trip.getBike().getBikeType();
         this.originStation = trip.getOriginStation();
         this.arrivalStation = trip.getArrivalStation();
         this.cost = (trip.getBilling() != null) ? trip.getBilling().getCost() : 0.0;
         this.reserveTime = trip.getBike().getReserveDate() != null ? trip.getBike().getReserveDate() : null;
+        this.reservationExpired = trip.isReservationExpired();
     }
 
     public String getBikeType() {
@@ -29,4 +31,5 @@ public class TripHistoryDTO extends TripDTO {
     public String getArrivalStation() { return arrivalStation; }
     public double getCost() { return cost; }
     public LocalDateTime getReserveTime() { return reserveTime; }
+    public boolean isReservationExpired() { return reservationExpired; }
 }

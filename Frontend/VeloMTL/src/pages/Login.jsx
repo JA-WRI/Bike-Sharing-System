@@ -13,15 +13,44 @@ export default function Login() {
   const [role, setRole] = useState("RIDER");
   const [error, setError] = useState(null);
 
+  const capitaliseStr = (str) => str?.toLowerCase().replace(/^./, (match) => match.toUpperCase());
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
       const data = await loginUser(email, password, role);
-      login(data.token, { id: data.id, email: data.email, name: data.name, role: data.role });
-      console.log("Login successful:", data);
-      navigate("/");
+
+      // Get tier information from login response (tierChange is included in the response)
+      const tierChange = data.tierChange || {};
+      const newTier = tierChange.newTier || data.tier;
+      
+      login(data.token, { 
+        id: data.id, 
+        email: data.email, 
+        name: data.name, 
+        role: data.role, 
+        tier: newTier 
+      });
+      
+      // Navigate to dashboard first, then show tier change notification if applicable
+      // Pass tier change info through navigation state and localStorage as backup
+      // Jackson serializes isTierChanged() as "tierChanged" in JSON
+      const hasTierChange = (tierChange.tierChanged === true || tierChange.isTierChanged === true) 
+        && tierChange.oldTier 
+        && tierChange.newTier;
+      
+      const tierChangeInfo = hasTierChange
+        ? { oldTier: tierChange.oldTier, newTier: tierChange.newTier }
+        : null;
+      
+      // Store in localStorage as backup in case navigation state doesn't persist
+      if (tierChangeInfo) {
+        localStorage.setItem("pendingTierChange", JSON.stringify(tierChangeInfo));
+      }
+      
+      navigate("/", { state: { tierChange: tierChangeInfo } });
     } catch (err) {
       setError("Login failed. Check your credentials.");
       console.error("Login failed:", err);
