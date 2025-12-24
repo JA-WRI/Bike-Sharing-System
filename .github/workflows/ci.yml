@@ -21,7 +21,7 @@ jobs:
           java-version: '17'
 
       - name: Run backend tests
-        working-directory: Backend
+        working-directory: Backend/veloMTL
         run: ./mvnw test
 
 
@@ -42,5 +42,5 @@ jobs:
         run: npm ci
 
       - name: Build frontend
-        working-directory: Frontend
+        working-directory: Frontend/VeloMTL
         run: npm run build
