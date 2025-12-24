@@ -21,7 +21,7 @@ jobs:
           java-version: '17'
 
       - name: Run backend tests
-        working-directory: backend
+        working-directory: Backend
         run: ./mvnw test
 
 
@@ -42,5 +42,5 @@ jobs:
         run: npm ci
 
       - name: Build frontend
-        working-directory: frontend
+        working-directory: Frontend
         run: npm run build
