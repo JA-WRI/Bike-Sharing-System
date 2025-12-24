@@ -21,12 +21,12 @@ jobs:
           java-version: '25'
 
       - name: Make Maven Wrapper executable
-        working-directory: Backend
+        working-directory: Backend/veloMTL
         run: chmod +x mvnw
 
       - name: Run backend tests
-        working-directory: Backend
-        run: ./veloMTL/mvnw test
+        working-directory: Backend/veloMTL
+        run: ./mvnw test
 
 
 
